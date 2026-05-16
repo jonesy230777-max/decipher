@@ -1,0 +1,72 @@
+/* Decipher design tokens — single source of truth. See docs/ux_design.md §1. */
+:root {
+  /* colour (light) */
+  --colour-bg-base: #ffffff;
+  --colour-bg-elevated: #f7f7f8;
+  --colour-text-primary: #0a0a0a;
+  --colour-text-secondary: #5b5b5d;
+  --colour-text-tertiary: #8e8e93;
+  --colour-fill-primary: #0a0a0a;
+  --colour-fill-secondary: #eeeeef;
+  --colour-accent: #1f8a4f;
+  --colour-border-subtle: #e6e6e8;
+  --colour-band-elite: #1f8a4f;
+  --colour-band-performing: #3a82e8;
+  --colour-band-practising: #e3a13a;
+  --colour-band-developing: #c63d3d;
+
+  /* typography (HIG Dynamic Type → web clamp) */
+  --type-large-title: clamp(32px, 4vw, 44px);
+  --type-title-1: clamp(24px, 2.6vw, 30px);
+  --type-title-2: clamp(20px, 2.1vw, 24px);
+  --type-title-3: clamp(17px, 1.6vw, 19px);
+  --type-headline: 15px;
+  --type-body: 15px;
+  --type-callout: 14px;
+  --type-subhead: 13px;
+  --type-footnote: 12px;
+  --type-caption: 11px;
+
+  /* spacing — 8pt grid */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* radii + shadow */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-2: 0 4px 12px rgba(0,0,0,.06);
+
+  /* motion */
+  --duration-fast: 0.2s;
+  --duration-base: 0.3s;
+  --duration-slow: 0.4s;
+  --easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --colour-bg-base: #0a0a0a;
+    --colour-bg-elevated: #161618;
+    --colour-text-primary: #f5f5f7;
+    --colour-text-secondary: #a6a6aa;
+    --colour-text-tertiary: #6e6e73;
+    --colour-fill-primary: #f5f5f7;
+    --colour-fill-secondary: #1d1d1f;
+    --colour-border-subtle: #2a2a2c;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

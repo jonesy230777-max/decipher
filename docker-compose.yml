@@ -1,0 +1,33 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: decipher-db
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${DECIPHER_DB_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - decipher_pgdata:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mail:
+    image: axllent/mailpit:latest
+    container_name: decipher-mail
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${DECIPHER_MAIL_PORT}:8025"   # web UI
+      - "127.0.0.1:1025:1025"                    # SMTP (host port pinned for simplicity)
+    environment:
+      MP_MAX_MESSAGES: 5000
+
+volumes:
+  decipher_pgdata:
