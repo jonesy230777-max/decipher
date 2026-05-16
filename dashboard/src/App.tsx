@@ -5,6 +5,7 @@ import MissionControl from "./pages/MissionControl";
 import Audits from "./pages/Audits";
 import CohortInsights from "./pages/CohortInsights";
 import Teams from "./pages/Teams";
+import TeamExecutive from "./pages/TeamExecutive";
 import Industries from "./pages/Industries";
 import Bespoke from "./pages/Bespoke";
 import PromoCodes from "./pages/PromoCodes";
@@ -26,6 +27,9 @@ const PAGES: { path: string; label: string }[] = [
 ];
 
 function HeaderStrip({ boot }: { boot: Bootstrap | null }) {
+  const pipe = boot?.pipeline_aud != null
+    ? `AUD $${Math.round(boot.pipeline_aud).toLocaleString("en-AU")}`
+    : "-";
   return (
     <div
       style={{
@@ -50,13 +54,14 @@ function HeaderStrip({ boot }: { boot: Bootstrap | null }) {
       >
         Decipher
       </span>
-      <span>audits today {boot?.counts.audits_today ?? "—"}</span>
-      <span>this month {boot?.counts.audits_month ?? "—"}</span>
-      <span>respondents {boot?.counts.respondents ?? "—"}</span>
-      <span>industries {boot?.counts.industries ?? "—"}</span>
-      <span>patterns {boot?.counts.patterns_doubt_passed ?? "—"}</span>
+      <span>audits today {boot?.counts.audits_today ?? "-"}</span>
+      <span>this month {boot?.counts.audits_month ?? "-"}</span>
+      <span>respondents {boot?.counts.respondents ?? "-"}</span>
+      <span>teams {boot?.counts.teams ?? "-"}</span>
+      <span>patterns {boot?.counts.patterns_doubt_passed ?? "-"}</span>
+      <span>pipeline {pipe}</span>
       <span style={{ marginLeft: "auto" }}>
-        ports DB {boot?.ports.db ?? "—"} · API {boot?.ports.api ?? "—"} · WEB {boot?.ports.web ?? "—"} · MAIL {boot?.ports.mail ?? "—"}
+        ports DB {boot?.ports.db ?? "-"} · API {boot?.ports.api ?? "-"} · WEB {boot?.ports.web ?? "-"} · MAIL {boot?.ports.mail ?? "-"}
       </span>
     </div>
   );
@@ -86,6 +91,7 @@ function Nav() {
             color: isActive ? "var(--colour-text-primary)" : "var(--colour-text-secondary)",
             background: isActive ? "var(--colour-fill-secondary)" : "transparent",
             whiteSpace: "nowrap",
+            textDecoration: "none",
           })}
         >
           {p.label}
@@ -113,7 +119,7 @@ export default function App() {
       }
     };
     tick();
-    const id = setInterval(tick, 10_000);
+    const id = setInterval(tick, 15_000);
     return () => {
       alive = false;
       clearInterval(id);
@@ -143,6 +149,7 @@ export default function App() {
           <Route path="/audits" element={<Audits />} />
           <Route path="/cohort" element={<CohortInsights />} />
           <Route path="/teams" element={<Teams />} />
+          <Route path="/teams/:teamId" element={<TeamExecutive />} />
           <Route path="/industries" element={<Industries />} />
           <Route path="/bespoke" element={<Bespoke />} />
           <Route path="/promo" element={<PromoCodes />} />

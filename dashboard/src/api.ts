@@ -9,6 +9,7 @@ export type Bootstrap = {
   counts: {
     respondents: number;
     operators: number;
+    executives: number;
     audits: number;
     audits_today: number;
     audits_month: number;
@@ -16,8 +17,10 @@ export type Bootstrap = {
     patterns_doubt_passed: number;
     industries: number;
     bespoke_clients: number;
+    teams: number;
     events_24h: number;
   };
+  pipeline_aud: number;
   archetype_taxonomy_active: { taxonomy_id: number; name: string } | null;
   served_at: string;
 };

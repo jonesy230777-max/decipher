@@ -54,8 +54,8 @@ export default function MissionControl({ boot }: { boot: Bootstrap | null }) {
           Active archetype taxonomy
         </h2>
         <p style={{ color: "var(--colour-text-secondary)", margin: 0 }}>
-          {boot.archetype_taxonomy_active?.name ?? "—"} (taxonomy id{" "}
-          {boot.archetype_taxonomy_active?.taxonomy_id ?? "—"}). Switch in Settings once Steve confirms.
+          {boot.archetype_taxonomy_active?.name ?? "-"} (taxonomy id{" "}
+          {boot.archetype_taxonomy_active?.taxonomy_id ?? "-"}). Switch in Settings once Steve confirms.
         </p>
       </section>
 

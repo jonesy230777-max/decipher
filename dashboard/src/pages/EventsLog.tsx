@@ -50,10 +50,10 @@ export default function EventsLog() {
                   {new Date(e.occurred_at).toLocaleString("en-AU")}
                 </td>
                 <td style={{ padding: "var(--space-2)", color: SEV_COLOUR[e.severity] }}>{e.severity}</td>
-                <td style={{ padding: "var(--space-2)" }}>{e.actor ?? "—"}</td>
+                <td style={{ padding: "var(--space-2)" }}>{e.actor ?? "-"}</td>
                 <td style={{ padding: "var(--space-2)" }}>{e.action}</td>
                 <td style={{ padding: "var(--space-2)", fontFamily: "ui-monospace", fontSize: "var(--type-footnote)" }}>
-                  {e.subject_id ?? "—"}
+                  {e.subject_id ?? "-"}
                 </td>
               </tr>
             ))}

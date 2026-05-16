@@ -1,4 +1,4 @@
-/* Decipher design tokens — single source of truth. See docs/ux_design.md §1. */
+/* Decipher design tokens - single source of truth. See docs/ux_design.md §1. */
 :root {
   /* colour (light) */
   --colour-bg-base: #ffffff;
@@ -27,7 +27,7 @@
   --type-footnote: 12px;
   --type-caption: 11px;
 
-  /* spacing — 8pt grid */
+  /* spacing - 8pt grid */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
