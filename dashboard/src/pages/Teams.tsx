@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
-import { Card } from "../components/Card";
 
 type Team = {
   team_id: number;
@@ -17,37 +16,63 @@ export default function Teams() {
     api<{ teams: Team[] }>("/api/teams").then((d) => setTeams(d.teams));
   }, []);
   return (
-    <div>
-      <h1 style={{ fontSize: "var(--type-title-1)", fontWeight: 600, margin: 0 }}>Teams</h1>
-      <p style={{ color: "var(--colour-text-secondary)", marginTop: "var(--space-2)" }}>
+    <div style={{ maxWidth: 1100 }}>
+      <h1 className="hig-large-title" style={{ margin: 0 }}>Teams</h1>
+      <p className="hig-body" style={{ color: "var(--colour-label-secondary)", marginTop: "var(--space-2)" }}>
         Executive teams Steve manages. Click in to view as the sales director sees it.
       </p>
-      <div style={{ marginTop: "var(--space-5)", display: "grid", gap: "var(--space-3)" }}>
-        {teams?.map((t) => (
-          <Link
+
+      <ul
+        style={{
+          marginTop: "var(--space-5)",
+          listStyle: "none",
+          padding: 0,
+          background: "var(--colour-bg-system-secondary)",
+          border: "1px solid var(--colour-separator-opaque)",
+          borderRadius: "var(--radius-lg)",
+          overflow: "hidden",
+        }}
+      >
+        {teams?.map((t, i) => (
+          <li
             key={t.team_id}
-            to={`/teams/${t.team_id}`}
-            style={{ textDecoration: "none", color: "inherit" }}
+            style={{
+              borderTop: i === 0 ? "none" : "1px solid var(--colour-separator)",
+            }}
           >
-            <Card>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <div style={{ fontSize: "var(--type-title-3)", fontWeight: 600 }}>{t.name}</div>
-                  <div style={{ color: "var(--colour-text-secondary)", marginTop: "var(--space-1)" }}>
-                    {t.organisation} · {t.role_label} Dashboard
-                  </div>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: "var(--type-large-title)", fontWeight: 700 }}>{t.n_respondents}</div>
-                  <div style={{ color: "var(--colour-text-tertiary)", fontSize: "var(--type-footnote)" }}>
-                    respondents
-                  </div>
-                </div>
+            <Link
+              to={`/teams/${t.team_id}`}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-4)",
+                padding: "var(--space-4) var(--space-5)",
+                color: "var(--colour-label)",
+                textDecoration: "none",
+              }}
+            >
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="hig-headline">{t.name}</div>
+                <div className="hig-footnote">{t.organisation} · {t.role_label} Dashboard</div>
               </div>
-            </Card>
-          </Link>
+              <div style={{ textAlign: "right" }}>
+                <div className="hig-title-3 hig-numeric">{t.n_respondents}</div>
+                <div className="hig-caption-1">respondents</div>
+              </div>
+              <span
+                aria-hidden="true"
+                style={{
+                  color: "var(--colour-label-tertiary)",
+                  fontSize: "var(--type-title-3)",
+                  lineHeight: 1,
+                }}
+              >
+                ›
+              </span>
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

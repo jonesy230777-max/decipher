@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
+import { SortableTable, type Column } from "../components/SortableTable";
 
 type Audit = {
   audit_id: number;
@@ -21,16 +22,15 @@ type Audit = {
 };
 
 const STATUS_COLOUR: Record<Audit["status"], string> = {
-  in_progress: "var(--colour-text-tertiary)",
-  completed: "var(--colour-band-performing)",
-  scored: "var(--colour-band-performing)",
-  reported: "var(--colour-band-elite)",
-  failed_quality_gate: "var(--colour-band-developing)",
+  in_progress: "var(--colour-label-tertiary)",
+  completed:   "var(--colour-system-blue)",
+  scored:      "var(--colour-system-blue)",
+  reported:    "var(--colour-system-green)",
+  failed_quality_gate: "var(--colour-system-red)",
 };
 
-function fmtPct(v: number | null) {
-  return v === null || v === undefined ? "-" : `${(v * 100).toFixed(0)}`;
-}
+const fmtPct = (v: number | null) =>
+  v === null || v === undefined ? "·" : `${(v * 100).toFixed(0)}`;
 
 export default function Audits() {
   const [rows, setRows] = useState<Audit[] | null>(null);
@@ -47,91 +47,97 @@ export default function Audits() {
       }, {})
     : {};
 
+  const columns: Column<Audit>[] = [
+    {
+      key: "audit_id", label: "ID",
+      style: { fontVariantNumeric: "tabular-nums" },
+    },
+    {
+      key: "respondent_name", label: "Respondent",
+      sortValue: (a) => (a.respondent_name ?? a.email ?? "").toLowerCase(),
+      format: (a) => (
+        <>
+          <div>{a.respondent_name ?? a.email}</div>
+          <div className="hig-caption-1">{a.email}</div>
+        </>
+      ),
+    },
+    { key: "industry", label: "Industry" },
+    {
+      key: "status", label: "Status",
+      format: (a) => (
+        <span style={{ color: STATUS_COLOUR[a.status] }}>
+          {a.status.replace("_", " ")}
+        </span>
+      ),
+    },
+    { key: "cognitive_empathy",  label: "CE", align: "right", format: (a) => fmtPct(a.cognitive_empathy),  style: { fontVariantNumeric: "tabular-nums" } },
+    { key: "eq",                 label: "EQ", align: "right", format: (a) => fmtPct(a.eq),                 style: { fontVariantNumeric: "tabular-nums" } },
+    { key: "pressure_composure", label: "PC", align: "right", format: (a) => fmtPct(a.pressure_composure), style: { fontVariantNumeric: "tabular-nums" } },
+    { key: "storytelling",       label: "ST", align: "right", format: (a) => fmtPct(a.storytelling),       style: { fontVariantNumeric: "tabular-nums" } },
+    { key: "archetype_name",     label: "Archetype" },
+    {
+      key: "started_at", label: "Started",
+      format: (a) => (
+        <span style={{ color: "var(--colour-label-tertiary)" }}>
+          {new Date(a.started_at).toLocaleDateString("en-AU")}
+        </span>
+      ),
+    },
+  ];
+
   return (
     <div>
-      <h1 style={{ fontSize: "var(--type-title-1)", fontWeight: 600, margin: 0 }}>Audits</h1>
-      <p style={{ color: "var(--colour-text-secondary)", marginTop: "var(--space-2)" }}>
-        Every audit across every client. {rows?.length ?? "…"} rows shown.
+      <h1 className="hig-large-title" style={{ margin: 0 }}>Audits</h1>
+      <p className="hig-body" style={{ color: "var(--colour-label-secondary)", marginTop: "var(--space-2)" }}>
+        Every audit across every client. <span className="hig-numeric">{rows?.length ?? "..."}</span> rows shown. Click any column heading to sort.
       </p>
 
-      <div style={{ display: "flex", gap: "var(--space-2)", margin: "var(--space-4) 0" }}>
-        {(["all", "reported", "scored", "completed", "in_progress"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            style={{
-              padding: "var(--space-2) var(--space-3)",
-              borderRadius: "var(--radius-sm)",
-              border: "1px solid var(--colour-border-subtle)",
-              background:
-                filter === f ? "var(--colour-fill-primary)" : "var(--colour-bg-elevated)",
-              color:
-                filter === f ? "var(--colour-bg-base)" : "var(--colour-text-primary)",
-              fontSize: "var(--type-footnote)",
-              cursor: "pointer",
-            }}
-          >
-            {f.replace("_", " ")}
-            {f !== "all" && counts[f] !== undefined ? ` (${counts[f]})` : ""}
-          </button>
-        ))}
-      </div>
-
       <div
+        role="tablist"
         style={{
-          border: "1px solid var(--colour-border-subtle)",
-          borderRadius: "var(--radius-md)",
-          overflow: "auto",
+          display: "inline-flex",
+          gap: 2,
+          background: "var(--colour-fill-tertiary)",
+          padding: 2,
+          borderRadius: "var(--radius-sm)",
+          marginTop: "var(--space-4)",
+          marginBottom: "var(--space-4)",
         }}
       >
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--type-footnote)" }}>
-          <thead style={{ background: "var(--colour-bg-elevated)" }}>
-            <tr style={{ textAlign: "left", color: "var(--colour-text-secondary)" }}>
-              <th style={{ padding: "var(--space-3)" }}>ID</th>
-              <th style={{ padding: "var(--space-3)" }}>Respondent</th>
-              <th style={{ padding: "var(--space-3)" }}>Industry</th>
-              <th style={{ padding: "var(--space-3)" }}>Status</th>
-              <th style={{ padding: "var(--space-3)", textAlign: "right" }}>CE</th>
-              <th style={{ padding: "var(--space-3)", textAlign: "right" }}>EQ</th>
-              <th style={{ padding: "var(--space-3)", textAlign: "right" }}>PC</th>
-              <th style={{ padding: "var(--space-3)", textAlign: "right" }}>ST</th>
-              <th style={{ padding: "var(--space-3)" }}>Archetype</th>
-              <th style={{ padding: "var(--space-3)" }}>Started</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows?.map((a) => (
-              <tr key={a.audit_id} style={{ borderTop: "1px solid var(--colour-border-subtle)" }}>
-                <td style={{ padding: "var(--space-3)", fontFamily: "ui-monospace" }}>{a.audit_id}</td>
-                <td style={{ padding: "var(--space-3)" }}>
-                  <div>{a.respondent_name ?? a.email}</div>
-                  <div style={{ color: "var(--colour-text-tertiary)" }}>{a.email}</div>
-                </td>
-                <td style={{ padding: "var(--space-3)" }}>{a.industry ?? "-"}</td>
-                <td style={{ padding: "var(--space-3)", color: STATUS_COLOUR[a.status] }}>
-                  {a.status.replace("_", " ")}
-                </td>
-                <td style={{ padding: "var(--space-3)", textAlign: "right", fontFamily: "ui-monospace" }}>
-                  {fmtPct(a.cognitive_empathy)}
-                </td>
-                <td style={{ padding: "var(--space-3)", textAlign: "right", fontFamily: "ui-monospace" }}>
-                  {fmtPct(a.eq)}
-                </td>
-                <td style={{ padding: "var(--space-3)", textAlign: "right", fontFamily: "ui-monospace" }}>
-                  {fmtPct(a.pressure_composure)}
-                </td>
-                <td style={{ padding: "var(--space-3)", textAlign: "right", fontFamily: "ui-monospace" }}>
-                  {fmtPct(a.storytelling)}
-                </td>
-                <td style={{ padding: "var(--space-3)" }}>{a.archetype_name ?? "-"}</td>
-                <td style={{ padding: "var(--space-3)", color: "var(--colour-text-tertiary)" }}>
-                  {new Date(a.started_at).toLocaleDateString("en-AU")}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {(["all", "reported", "scored", "completed", "in_progress"] as const).map((f) => {
+          const active = filter === f;
+          return (
+            <button
+              key={f}
+              role="tab"
+              aria-selected={active}
+              onClick={() => setFilter(f)}
+              className="hig-footnote"
+              style={{
+                padding: "6px 10px",
+                borderRadius: 4,
+                border: "none",
+                background: active ? "var(--colour-bg-system)" : "transparent",
+                color: "var(--colour-label)",
+                fontWeight: active ? 600 : 400,
+                cursor: "pointer",
+                boxShadow: active ? "var(--shadow-1)" : "none",
+              }}
+            >
+              {f.replace("_", " ")}
+              {f !== "all" && counts[f] !== undefined ? ` (${counts[f]})` : ""}
+            </button>
+          );
+        })}
       </div>
+
+      <SortableTable
+        rows={rows}
+        columns={columns}
+        rowKey={(a) => a.audit_id}
+        initialSort={{ key: "started_at", dir: "desc" }}
+      />
     </div>
   );
 }

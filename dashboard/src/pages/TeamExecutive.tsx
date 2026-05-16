@@ -1,15 +1,7 @@
 /**
- * Executive Dashboard - spec §7B. Mirrors Steve's mockup slide 1:1.
- *
- * Layout (top to bottom):
- *  1. Page title strip
- *  2. Top KPI strip (4 equal-width cards)
- *  3. SCORE DISTRIBUTION BY BAND (one stacked bar per trait)
- *  4. Team Trait Averages (4 cards)
- *  5. ARCHETYPE BREAKDOWN (horizontal bars)
- *  6. PRIORITY COACHING INTERVENTIONS (4 cards)
- *  7. Download Executive Summary (PDF) - top-right action
- *  8. Footer: decipher.com.au · Confidential · {Role} Use Only · {Month YYYY}
+ * Executive Dashboard — spec §7B. Mirrors Steve's mockup slide 1:1.
+ * HIG-conformant: SF Pro typography, tabular numerals, semantic colours,
+ * 14-pt corner radius cards, 8-pt grid spacing, accent-tinted primary button.
  */
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -59,58 +51,50 @@ export default function TeamExecutive() {
     api<{ interventions: Intervention[] }>(`/api/teams/${id}/interventions`).then((d) => setInterventions(d.interventions));
   }, [id]);
 
-  if (!overview) {
-    return <p style={{ color: "var(--colour-text-tertiary)" }}>Loading executive view...</p>;
-  }
+  if (!overview) return <p className="hig-footnote">Loading executive view...</p>;
 
   const role = overview.team.role_label ?? "Executive";
   const nReps = overview.n_respondents;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
-      {/* 1. Page title strip + export action */}
-      <header style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "var(--space-4)" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)", maxWidth: 1400 }}>
+      {/* Title + export */}
+      <header style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "var(--space-5)" }}>
         <div>
-          <h1 style={{ fontSize: "var(--type-title-1)", fontWeight: 600, margin: 0, letterSpacing: "-0.02em" }}>
+          <h1 className="hig-large-title" style={{ margin: 0 }}>
             {overview.team.name} · Decipher DNA Audit
           </h1>
-          <p style={{ margin: "var(--space-1) 0 0 0", color: "var(--colour-text-secondary)" }}>
+          <p className="hig-subhead" style={{ margin: "var(--space-1) 0 0 0" }}>
             {role} Dashboard, {nReps} Respondents · {overview.month_label}
           </p>
         </div>
-        <Button href={`/api/teams/${id}/export.pdf`} download variant="filled">
+        <Button href={`/api/teams/${id}/export.pdf`} download variant="filled" size="lg">
           Download Executive Summary (PDF) ↓
         </Button>
       </header>
 
-      {/* 2. Top KPI strip */}
-      <section
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "var(--space-4)",
-        }}
-      >
+      {/* KPI strip — 4 equal */}
+      <section style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "var(--space-4)" }}>
         <KpiCard
-          label="TEAM AVERAGE SCORE"
+          label="Team average score"
           value={overview.team_average_score_100 ?? "-"}
           suffix="/100"
           hint="across all 4 traits"
         />
         <KpiCard
-          label="ELITE PERFORMERS"
+          label="Elite performers"
           value={overview.elite_performers}
           hint="85+ across all 4 traits"
           tone="elite"
         />
         <KpiCard
-          label="AT-RISK REPS"
+          label="At-risk reps"
           value={overview.at_risk_reps}
           hint="Developing in 2+ traits"
           tone="risk"
         />
         <KpiCard
-          label="BIGGEST GAP TRAIT"
+          label="Biggest gap trait"
           value={overview.biggest_gap?.trait ?? "-"}
           hint={
             overview.biggest_gap
@@ -121,10 +105,13 @@ export default function TeamExecutive() {
         />
       </section>
 
-      {/* 3. Distribution by band */}
+      {/* Distribution by band */}
       <Card>
-        <SectionEyebrow>Score Distribution by Band</SectionEyebrow>
-        <p style={{ color: "var(--colour-text-secondary)", marginTop: "var(--space-1)", marginBottom: "var(--space-4)" }}>
+        <SectionEyebrow>Score distribution by band</SectionEyebrow>
+        <h2 className="hig-title-3" style={{ margin: "var(--space-1) 0 var(--space-3) 0" }}>
+          How the {nReps} reps split per trait
+        </h2>
+        <p className="hig-callout" style={{ color: "var(--colour-label-secondary)", marginTop: 0, marginBottom: "var(--space-4)" }}>
           Each bar shows how the {nReps} reps are distributed across the 4 performance bands per trait.
         </p>
         {dist?.distribution.map((d) => (
@@ -139,18 +126,12 @@ export default function TeamExecutive() {
         ))}
       </Card>
 
-      {/* 4. Team trait averages */}
-      <section
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "var(--space-4)",
-        }}
-      >
+      {/* Team trait averages */}
+      <section style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "var(--space-4)" }}>
         {traits?.map((t) => (
           <Card key={t.trait}>
             <SectionEyebrow>{t.trait}</SectionEyebrow>
-            <div style={{ fontSize: "var(--type-large-title)", fontWeight: 700, fontFamily: "ui-monospace", marginTop: "var(--space-2)" }}>
+            <div className="hig-large-title" style={{ marginTop: "var(--space-1)" }}>
               {t.score_100.toFixed(1)}
             </div>
             <div style={{ marginTop: "var(--space-2)" }}>
@@ -160,67 +141,56 @@ export default function TeamExecutive() {
         ))}
       </section>
 
-      {/* 5. Archetype breakdown */}
-      <Card>
-        <SectionEyebrow>Archetype Breakdown</SectionEyebrow>
-        <div style={{ marginTop: "var(--space-4)", display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
+      {/* Archetype breakdown */}
+      <Card title="Archetype breakdown">
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
           {archetypes?.map((a) => {
             const max = Math.max(...(archetypes?.map((x) => x.n) ?? [1]));
             const pct = (a.n / max) * 100;
             return (
-              <div key={a.code} style={{ display: "grid", gridTemplateColumns: "180px 1fr 40px", gap: "var(--space-3)", alignItems: "center" }}>
-                <div style={{ fontSize: "var(--type-callout)" }}>{a.name}</div>
-                <div style={{ height: 18, background: "var(--colour-fill-secondary)", borderRadius: "var(--radius-sm)", overflow: "hidden" }}>
-                  <div style={{ width: `${pct}%`, height: "100%", background: "var(--colour-fill-primary)" }} />
+              <div key={a.code} style={{ display: "grid", gridTemplateColumns: "200px 1fr 48px", gap: "var(--space-3)", alignItems: "center" }}>
+                <div className="hig-body">{a.name}</div>
+                <div style={{ height: 16, background: "var(--colour-fill-quaternary)", borderRadius: "var(--radius-sm)", overflow: "hidden" }}>
+                  <div style={{ width: `${pct}%`, height: "100%", background: "var(--colour-accent)" }} />
                 </div>
-                <div style={{ fontFamily: "ui-monospace", textAlign: "right" }}>{a.n}</div>
+                <div className="hig-numeric hig-body" style={{ textAlign: "right", color: "var(--colour-label-secondary)" }}>
+                  {a.n}
+                </div>
               </div>
             );
           })}
         </div>
       </Card>
 
-      {/* 6. Priority coaching interventions */}
-      <Card>
-        <SectionEyebrow>Priority Coaching Interventions</SectionEyebrow>
-        <div
-          style={{
-            marginTop: "var(--space-4)",
-            display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            gap: "var(--space-4)",
-          }}
-        >
+      {/* Priority coaching interventions */}
+      <Card title="Priority coaching interventions">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "var(--space-4)" }}>
           {interventions?.map((i, idx) => (
             <div
               key={idx}
               style={{
-                background: "var(--colour-bg-base)",
-                border: "1px solid var(--colour-border-subtle)",
-                borderRadius: "var(--radius-sm)",
+                background: "var(--colour-bg-system)",
+                border: "1px solid var(--colour-separator-opaque)",
+                borderRadius: "var(--radius-md)",
                 padding: "var(--space-4)",
                 borderLeft: i.kind === "leverage"
-                  ? "3px solid var(--colour-band-elite)"
-                  : "3px solid var(--colour-band-developing)",
+                  ? "3px solid var(--colour-system-green)"
+                  : "3px solid var(--colour-system-red)",
               }}
             >
-              <div style={{ fontWeight: 600, marginBottom: "var(--space-2)" }}>{i.headline}</div>
-              <div style={{ color: "var(--colour-text-secondary)", fontSize: "var(--type-callout)" }}>
-                {i.body}
-              </div>
+              <div className="hig-headline" style={{ marginBottom: "var(--space-2)" }}>{i.headline}</div>
+              <div className="hig-callout" style={{ color: "var(--colour-label-secondary)" }}>{i.body}</div>
             </div>
           ))}
         </div>
       </Card>
 
-      {/* 7. Footer */}
       <footer
+        className="hig-footnote"
         style={{
           textAlign: "center",
-          color: "var(--colour-text-tertiary)",
-          fontSize: "var(--type-footnote)",
           padding: "var(--space-5) 0",
-          borderTop: "1px solid var(--colour-border-subtle)",
+          borderTop: "1px solid var(--colour-separator-opaque)",
         }}
       >
         decipher.com.au · Confidential, For {role} Use Only · {overview.month_label}
@@ -240,29 +210,25 @@ function KpiCard({
   big?: boolean;
 }) {
   const colour =
-    tone === "elite" ? "var(--colour-band-elite)"
-    : tone === "risk" ? "var(--colour-band-developing)"
-    : "var(--colour-text-primary)";
+    tone === "elite" ? "var(--colour-system-green)"
+    : tone === "risk" ? "var(--colour-system-red)"
+    : "var(--colour-label)";
   return (
     <Card>
       <SectionEyebrow>{label}</SectionEyebrow>
       <div
-        style={{
-          fontSize: big ? "var(--type-large-title)" : "var(--type-title-2)",
-          fontWeight: 700,
-          fontFamily: big ? "ui-monospace" : undefined,
-          marginTop: "var(--space-2)",
-          color: colour,
-          lineHeight: 1.1,
-        }}
+        className={big ? "hig-large-title" : "hig-title-2"}
+        style={{ color: colour, marginTop: "var(--space-1)" }}
       >
         {value}
-        {suffix && <span style={{ fontSize: "var(--type-title-3)", color: "var(--colour-text-tertiary)" }}>{suffix}</span>}
+        {suffix && (
+          <span className="hig-title-3" style={{ color: "var(--colour-label-tertiary)", marginLeft: 2 }}>
+            {suffix}
+          </span>
+        )}
       </div>
       {hint && (
-        <div style={{ color: "var(--colour-text-tertiary)", fontSize: "var(--type-footnote)", marginTop: "var(--space-2)" }}>
-          {hint}
-        </div>
+        <div className="hig-caption-1" style={{ marginTop: "var(--space-2)" }}>{hint}</div>
       )}
     </Card>
   );
@@ -270,21 +236,21 @@ function KpiCard({
 
 function BandPill({ band }: { band: string }) {
   const colour = {
-    Elite: "var(--colour-band-elite)",
+    Elite:      "var(--colour-band-elite)",
     Performing: "var(--colour-band-performing)",
     Practising: "var(--colour-band-practising)",
     Developing: "var(--colour-band-developing)",
-  }[band] ?? "var(--colour-text-tertiary)";
+  }[band] ?? "var(--colour-label-tertiary)";
   return (
     <span
       style={{
         background: colour,
-        color: "#fff",
-        fontSize: "var(--type-caption)",
-        padding: "2px 8px",
-        borderRadius: 999,
+        color: "#FFFFFF",
+        fontSize: "var(--type-caption-1)",
+        lineHeight: "var(--lead-caption-1)",
+        padding: "2px 10px",
+        borderRadius: "var(--radius-pill)",
         fontWeight: 600,
-        letterSpacing: "0.02em",
       }}
     >
       {band}

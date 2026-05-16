@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
-import { Card } from "../components/Card";
 
 type Bespoke = {
   bespoke_client_id: number;
@@ -12,9 +11,9 @@ type Bespoke = {
 };
 
 const STATUS_COLOUR: Record<Bespoke["status"], string> = {
-  draft: "var(--colour-text-tertiary)",
-  active: "var(--colour-band-elite)",
-  archived: "var(--colour-band-developing)",
+  draft:    "var(--colour-label-tertiary)",
+  active:   "var(--colour-system-green)",
+  archived: "var(--colour-label-tertiary)",
 };
 
 export default function Bespoke() {
@@ -28,36 +27,50 @@ export default function Bespoke() {
     .reduce((acc, r) => acc + (r.estimated_value ?? 0), 0);
 
   return (
-    <div>
-      <h1 style={{ fontSize: "var(--type-title-1)", fontWeight: 600, margin: 0 }}>Bespoke clients</h1>
-      <p style={{ color: "var(--colour-text-secondary)", marginTop: "var(--space-2)" }}>
+    <div style={{ maxWidth: 1100 }}>
+      <h1 className="hig-large-title" style={{ margin: 0 }}>Bespoke clients</h1>
+      <p className="hig-body" style={{ color: "var(--colour-label-secondary)", marginTop: "var(--space-2)" }}>
         Custom audits and tailored engagements. Active pipeline:{" "}
-        <strong>AUD ${totalPipeline.toLocaleString("en-AU")}</strong>.
+        <strong className="hig-numeric">AUD ${totalPipeline.toLocaleString("en-AU")}</strong>.
       </p>
-      <div style={{ marginTop: "var(--space-5)", display: "grid", gap: "var(--space-3)" }}>
-        {rows?.map((r) => (
-          <Card key={r.bespoke_client_id}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-4)" }}>
-              <div>
-                <div style={{ fontSize: "var(--type-title-3)", fontWeight: 600 }}>{r.client_name}</div>
-                <div style={{ color: "var(--colour-text-tertiary)", fontFamily: "ui-monospace", fontSize: "var(--type-footnote)", marginTop: "var(--space-1)" }}>
-                  /audit/{r.unique_url_slug}
-                </div>
+
+      <ul
+        style={{
+          marginTop: "var(--space-5)",
+          listStyle: "none",
+          padding: 0,
+          background: "var(--colour-bg-system-secondary)",
+          border: "1px solid var(--colour-separator-opaque)",
+          borderRadius: "var(--radius-lg)",
+          overflow: "hidden",
+        }}
+      >
+        {rows?.map((r, i) => (
+          <li
+            key={r.bespoke_client_id}
+            style={{
+              padding: "var(--space-4) var(--space-5)",
+              borderTop: i === 0 ? "none" : "1px solid var(--colour-separator)",
+              display: "flex",
+              alignItems: "center",
+              gap: "var(--space-5)",
+            }}
+          >
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="hig-headline">{r.client_name}</div>
+              <div className="hig-footnote">/audit/{r.unique_url_slug}</div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ color: STATUS_COLOUR[r.status], textTransform: "capitalize", fontWeight: 600 }} className="hig-callout">
+                {r.status}
               </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ color: STATUS_COLOUR[r.status], textTransform: "capitalize", fontWeight: 600 }}>
-                  {r.status}
-                </div>
-                <div style={{ fontFamily: "ui-monospace", marginTop: "var(--space-1)" }}>
-                  {r.estimated_value
-                    ? `AUD $${r.estimated_value.toLocaleString("en-AU")}`
-                    : "-"}
-                </div>
+              <div className="hig-numeric hig-footnote">
+                {r.estimated_value ? `AUD $${r.estimated_value.toLocaleString("en-AU")}` : "·"}
               </div>
             </div>
-          </Card>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

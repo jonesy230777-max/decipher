@@ -52,9 +52,9 @@ def health() -> dict[str, Any]:
 @app.get("/api/bootstrap")
 def bootstrap() -> dict[str, Any]:
     counts = {
-        "respondents":  scalar("SELECT count(*) FROM respondents WHERE role='respondent'") or 0,
-        "operators":    scalar("SELECT count(*) FROM respondents WHERE role='operator'") or 0,
-        "executives":   scalar("SELECT count(*) FROM respondents WHERE role='executive'") or 0,
+        "respondents":  scalar("SELECT count(*) FROM respondents WHERE role='sales_person'") or 0,
+        "operators":    scalar("SELECT count(*) FROM respondents WHERE role='admin'") or 0,
+        "executives":   scalar("SELECT count(*) FROM respondents WHERE role='sales_director'") or 0,
         "audits":       scalar("SELECT count(*) FROM audits") or 0,
         "audits_today": scalar(
             "SELECT count(*) FROM audits WHERE started_at::date = current_date"
@@ -79,6 +79,63 @@ def bootstrap() -> dict[str, Any]:
     active = rows(
         "SELECT taxonomy_id, name FROM archetype_taxonomies WHERE is_active=TRUE LIMIT 1"
     )
+    # M5 will hydrate from JWT. Prototype: the implied caller is the seeded admin (Steve).
+    me_row = rows(
+        "SELECT respondent_id, email, name, role FROM respondents "
+        "WHERE role = 'admin' ORDER BY respondent_id LIMIT 1"
+    )
+
+    # 14-day sparkline series for top-of-screen metrics. One row per day,
+    # zero-filled. DB-driven; no fabrication.
+    spark_audits = rows(
+        """WITH days AS (
+              SELECT generate_series(current_date - 13, current_date, '1 day')::date AS d
+            )
+            SELECT days.d AS day,
+                   coalesce(count(a.audit_id), 0)::int AS n
+              FROM days
+         LEFT JOIN audits a ON a.started_at::date = days.d
+             GROUP BY days.d
+             ORDER BY days.d"""
+    )
+    spark_reports = rows(
+        """WITH days AS (
+              SELECT generate_series(current_date - 13, current_date, '1 day')::date AS d
+            )
+            SELECT days.d AS day,
+                   coalesce(count(r.report_id), 0)::int AS n
+              FROM days
+         LEFT JOIN reports r ON r.generated_at::date = days.d
+             GROUP BY days.d
+             ORDER BY days.d"""
+    )
+    spark_respondents = rows(
+        """WITH days AS (
+              SELECT generate_series(current_date - 13, current_date, '1 day')::date AS d
+            )
+            SELECT days.d AS day,
+                   (SELECT count(*) FROM respondents
+                     WHERE created_at::date <= days.d AND role = 'sales_person')::int AS n
+              FROM days
+             ORDER BY days.d"""
+    )
+    spark_events = rows(
+        """WITH days AS (
+              SELECT generate_series(current_date - 13, current_date, '1 day')::date AS d
+            )
+            SELECT days.d AS day,
+                   coalesce(count(e.id), 0)::int AS n
+              FROM days
+         LEFT JOIN events_log e ON e.occurred_at::date = days.d
+             GROUP BY days.d
+             ORDER BY days.d"""
+    )
+    sparks = {
+        "audits":      [int(r["n"]) for r in spark_audits],
+        "reports":     [int(r["n"]) for r in spark_reports],
+        "respondents": [int(r["n"]) for r in spark_respondents],
+        "events":      [int(r["n"]) for r in spark_events],
+    }
     return {
         "ports": {
             "db":   os.getenv("DECIPHER_DB_PORT"),
@@ -89,6 +146,16 @@ def bootstrap() -> dict[str, Any]:
         "counts": counts,
         "pipeline_aud": float(pipeline),
         "archetype_taxonomy_active": active[0] if active else None,
+        "me": me_row[0] if me_row else None,
+        "sparks": sparks,
+        "roles": [
+            {"code": "admin",               "label": "Admin"},
+            {"code": "ceo",                 "label": "CEO"},
+            {"code": "sales_director",      "label": "Sales Director"},
+            {"code": "hr",                  "label": "HR"},
+            {"code": "learning_development","label": "Learning & Development"},
+            {"code": "sales_person",        "label": "Sales Person"},
+        ],
         "served_at": datetime.utcnow().isoformat() + "Z",
     }
 
@@ -112,6 +179,116 @@ def recent_events(limit: int = 200) -> dict[str, Any]:
 @app.get("/api/industries")
 def industries() -> dict[str, Any]:
     return {"industries": rows("SELECT * FROM industries ORDER BY code")}
+
+
+@app.get("/api/search")
+def search(q: str = "", limit: int = 25) -> dict[str, Any]:
+    """Global search across respondents, audits, bespoke clients, promo codes,
+    industries, patterns, events. ILIKE for the prototype; pg_trgm + scoring
+    on a later milestone."""
+    q = (q or "").strip()
+    if not q:
+        return {"hits": []}
+    like = f"%{q}%"
+    limit = max(1, min(limit, 100))
+    hits: list[dict[str, Any]] = []
+    # respondents
+    for r in rows(
+        """SELECT respondent_id AS id, name, email, role, team_id
+             FROM respondents
+            WHERE email ILIKE %s OR name ILIKE %s OR company ILIKE %s
+            ORDER BY name LIMIT %s""",
+        (like, like, like, limit),
+    ):
+        hits.append({
+            "kind": "respondent",
+            "label": r["name"] or r["email"],
+            "sub": f"{r['email']} · {r['role']}",
+            "href": f"/audits",
+        })
+    # audits by id (numeric)
+    if q.isdigit():
+        for r in rows("SELECT audit_id, status FROM audits WHERE audit_id = %s", (int(q),)):
+            hits.append({
+                "kind": "audit",
+                "label": f"Audit #{r['audit_id']}",
+                "sub": r["status"],
+                "href": "/audits",
+            })
+    # bespoke
+    for r in rows(
+        "SELECT bespoke_client_id, client_name, unique_url_slug FROM bespoke_clients "
+        "WHERE client_name ILIKE %s OR unique_url_slug ILIKE %s ORDER BY client_name LIMIT %s",
+        (like, like, limit),
+    ):
+        hits.append({
+            "kind": "bespoke",
+            "label": r["client_name"],
+            "sub": f"/audit/{r['unique_url_slug']}",
+            "href": "/bespoke",
+        })
+    # promo codes
+    for r in rows(
+        "SELECT code, code_type, source_campaign FROM promo_codes "
+        "WHERE code ILIKE %s OR source_campaign ILIKE %s ORDER BY code LIMIT %s",
+        (like, like, limit),
+    ):
+        hits.append({
+            "kind": "promo",
+            "label": r["code"],
+            "sub": f"{r['code_type']} · {r['source_campaign'] or ''}",
+            "href": "/promo",
+        })
+    # industries
+    for r in rows(
+        "SELECT industry_id, code, name FROM industries "
+        "WHERE code ILIKE %s OR name ILIKE %s ORDER BY name LIMIT %s",
+        (like, like, limit),
+    ):
+        hits.append({
+            "kind": "industry",
+            "label": r["name"],
+            "sub": r["code"],
+            "href": "/industries",
+        })
+    # teams
+    for r in rows(
+        "SELECT team_id, name, organisation FROM teams "
+        "WHERE name ILIKE %s OR organisation ILIKE %s ORDER BY name LIMIT %s",
+        (like, like, limit),
+    ):
+        hits.append({
+            "kind": "team",
+            "label": r["name"],
+            "sub": r["organisation"] or "",
+            "href": f"/teams/{r['team_id']}",
+        })
+    # patterns
+    for r in rows(
+        "SELECT pattern_id, name, doubt_passed FROM pattern_library "
+        "WHERE name ILIKE %s ORDER BY name LIMIT %s",
+        (like, limit),
+    ):
+        hits.append({
+            "kind": "pattern",
+            "label": r["name"],
+            "sub": "DOUBT-passed" if r["doubt_passed"] else "candidate",
+            "href": "/cohort",
+        })
+    # events (action match)
+    for r in rows(
+        "SELECT id, action, severity FROM events_log "
+        "WHERE action ILIKE %s OR subject_id ILIKE %s "
+        "ORDER BY occurred_at DESC LIMIT %s",
+        (like, like, limit),
+    ):
+        hits.append({
+            "kind": "event",
+            "label": r["action"],
+            "sub": r["severity"],
+            "href": "/events",
+        })
+    return {"q": q, "hits": hits[:limit * 2], "total": len(hits)}
 
 
 @app.get("/api/archetypes")
@@ -226,7 +403,7 @@ def teams_list() -> dict[str, Any]:
         """SELECT t.team_id, t.name, t.organisation, t.role_label,
                   count(r.respondent_id) AS n_respondents
              FROM teams t
-        LEFT JOIN respondents r ON r.team_id = t.team_id AND r.role='respondent'
+        LEFT JOIN respondents r ON r.team_id = t.team_id AND r.role='sales_person'
              GROUP BY t.team_id
              ORDER BY t.name"""
     )
@@ -244,7 +421,7 @@ def _team_or_404(team_id: int) -> dict:
 def team_overview(team_id: int) -> dict[str, Any]:
     t = _team_or_404(team_id)
     n = scalar(
-        "SELECT count(*) FROM respondents WHERE team_id = %s AND role='respondent'",
+        "SELECT count(*) FROM respondents WHERE team_id = %s AND role='sales_person'",
         (team_id,),
     ) or 0
     scores = rows(

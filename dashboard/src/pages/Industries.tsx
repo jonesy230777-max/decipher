@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
+import { SortableTable, type Column } from "../components/SortableTable";
 
 type Industry = { industry_id: number; code: string; name: string; description: string | null };
 
@@ -8,30 +9,26 @@ export default function Industries() {
   useEffect(() => {
     api<{ industries: Industry[] }>("/api/industries").then((d) => setRows(d.industries));
   }, []);
+  const columns: Column<Industry>[] = [
+    { key: "code", label: "Code", style: { fontVariantNumeric: "tabular-nums" } },
+    { key: "name", label: "Name" },
+    { key: "description", label: "Description",
+      format: (r) => <span style={{ color: "var(--colour-label-secondary)" }}>{r.description}</span> },
+  ];
   return (
-    <div>
-      <h1 style={{ fontSize: "var(--type-title-1)", fontWeight: 600, margin: 0 }}>Industries</h1>
-      <p style={{ color: "var(--colour-text-secondary)", marginTop: "var(--space-3)" }}>
-        Vertical question banks. CRUD lands in M7.
+    <div style={{ maxWidth: 1100 }}>
+      <h1 className="hig-large-title" style={{ margin: 0 }}>Industries</h1>
+      <p className="hig-body" style={{ color: "var(--colour-label-secondary)", marginTop: "var(--space-2)" }}>
+        Vertical question banks. CRUD lands in M7. Click any column heading to sort.
       </p>
-      <table style={{ marginTop: "var(--space-5)", width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr style={{ textAlign: "left", color: "var(--colour-text-secondary)", fontSize: "var(--type-subhead)" }}>
-            <th style={{ padding: "var(--space-2)" }}>Code</th>
-            <th style={{ padding: "var(--space-2)" }}>Name</th>
-            <th style={{ padding: "var(--space-2)" }}>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows?.map((r) => (
-            <tr key={r.industry_id} style={{ borderTop: "1px solid var(--colour-border-subtle)" }}>
-              <td style={{ padding: "var(--space-2)", fontFamily: "ui-monospace" }}>{r.code}</td>
-              <td style={{ padding: "var(--space-2)" }}>{r.name}</td>
-              <td style={{ padding: "var(--space-2)", color: "var(--colour-text-secondary)" }}>{r.description}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div style={{ marginTop: "var(--space-5)" }}>
+        <SortableTable
+          rows={rows}
+          columns={columns}
+          rowKey={(r) => r.industry_id}
+          initialSort={{ key: "code", dir: "asc" }}
+        />
+      </div>
     </div>
   );
 }

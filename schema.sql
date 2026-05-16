@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS respondents (
     industry      TEXT,
     source        TEXT,
     promo_code    TEXT,
-    role          TEXT NOT NULL DEFAULT 'respondent'
-                  CHECK (role IN ('operator','executive','respondent')),
+    role          TEXT NOT NULL DEFAULT 'sales_person'
+                  CHECK (role IN ('admin','ceo','sales_director','hr','learning_development','sales_person')),
     team_id       BIGINT,
     consent_share_individual BOOLEAN NOT NULL DEFAULT FALSE,
     created_at    TIMESTAMPTZ NOT NULL DEFAULT now()

@@ -4,6 +4,21 @@ export async function api<T = unknown>(path: string, init?: RequestInit): Promis
   return res.json() as Promise<T>;
 }
 
+export type Role =
+  | "admin"
+  | "ceo"
+  | "sales_director"
+  | "hr"
+  | "learning_development"
+  | "sales_person";
+
+export type Me = {
+  respondent_id: number;
+  email: string;
+  name: string | null;
+  role: Role;
+};
+
 export type Bootstrap = {
   ports: { db: string; api: string; web: string; mail: string };
   counts: {
@@ -22,5 +37,22 @@ export type Bootstrap = {
   };
   pipeline_aud: number;
   archetype_taxonomy_active: { taxonomy_id: number; name: string } | null;
+  me: Me | null;
+  sparks: {
+    audits: number[];
+    reports: number[];
+    respondents: number[];
+    events: number[];
+  };
+  roles: { code: Role; label: string }[];
   served_at: string;
+};
+
+export const ROLE_LABEL: Record<Role, string> = {
+  admin:                "Admin",
+  ceo:                  "CEO",
+  sales_director:       "Sales Director",
+  hr:                   "HR",
+  learning_development: "Learning & Development",
+  sales_person:         "Sales Person",
 };

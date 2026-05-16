@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
+import { SortableTable, type Column } from "../components/SortableTable";
 
 type Event = {
   id: number;
@@ -12,9 +13,9 @@ type Event = {
 };
 
 const SEV_COLOUR: Record<Event["severity"], string> = {
-  info: "var(--colour-text-secondary)",
-  warning: "var(--colour-band-practising)",
-  error: "var(--colour-band-developing)",
+  info:    "var(--colour-label-secondary)",
+  warning: "var(--colour-system-orange)",
+  error:   "var(--colour-system-red)",
 };
 
 export default function EventsLog() {
@@ -22,44 +23,45 @@ export default function EventsLog() {
   useEffect(() => {
     api<{ events: Event[] }>("/api/events?limit=200").then((d) => setRows(d.events));
   }, []);
+
+  const columns: Column<Event>[] = [
+    {
+      key: "occurred_at", label: "When",
+      style: { fontVariantNumeric: "tabular-nums" },
+      format: (e) => (
+        <span className="hig-footnote">{new Date(e.occurred_at).toLocaleString("en-AU")}</span>
+      ),
+    },
+    {
+      key: "severity", label: "Severity",
+      format: (e) => (
+        <span style={{ color: SEV_COLOUR[e.severity], fontWeight: 600 }}>{e.severity}</span>
+      ),
+    },
+    { key: "actor",      label: "Actor" },
+    { key: "action",     label: "Action" },
+    {
+      key: "subject_id", label: "Subject",
+      style: { fontVariantNumeric: "tabular-nums" },
+      format: (e) => <span className="hig-footnote">{e.subject_id ?? "·"}</span>,
+    },
+  ];
+
   return (
     <div>
-      <h1 style={{ fontSize: "var(--type-title-1)", fontWeight: 600, margin: 0 }}>Events</h1>
-      <p style={{ color: "var(--colour-text-secondary)", marginTop: "var(--space-3)" }}>
-        Every state transition, agent run, and Claude call lands here. Last 200 rows.
+      <h1 className="hig-large-title" style={{ margin: 0 }}>Events</h1>
+      <p className="hig-body" style={{ color: "var(--colour-label-secondary)", marginTop: "var(--space-2)" }}>
+        Every state transition, agent run, and Claude call lands here. Last 200 rows. Click any column heading to sort.
       </p>
-      {rows && rows.length === 0 ? (
-        <p style={{ color: "var(--colour-text-tertiary)", marginTop: "var(--space-5)" }}>
-          No events yet. Trigger one by completing an audit (M3) or running an agent.
-        </p>
-      ) : (
-        <table style={{ marginTop: "var(--space-5)", width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ textAlign: "left", color: "var(--colour-text-secondary)", fontSize: "var(--type-subhead)" }}>
-              <th style={{ padding: "var(--space-2)" }}>When</th>
-              <th style={{ padding: "var(--space-2)" }}>Severity</th>
-              <th style={{ padding: "var(--space-2)" }}>Actor</th>
-              <th style={{ padding: "var(--space-2)" }}>Action</th>
-              <th style={{ padding: "var(--space-2)" }}>Subject</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows?.map((e) => (
-              <tr key={e.id} style={{ borderTop: "1px solid var(--colour-border-subtle)" }}>
-                <td style={{ padding: "var(--space-2)", fontFamily: "ui-monospace", fontSize: "var(--type-footnote)" }}>
-                  {new Date(e.occurred_at).toLocaleString("en-AU")}
-                </td>
-                <td style={{ padding: "var(--space-2)", color: SEV_COLOUR[e.severity] }}>{e.severity}</td>
-                <td style={{ padding: "var(--space-2)" }}>{e.actor ?? "-"}</td>
-                <td style={{ padding: "var(--space-2)" }}>{e.action}</td>
-                <td style={{ padding: "var(--space-2)", fontFamily: "ui-monospace", fontSize: "var(--type-footnote)" }}>
-                  {e.subject_id ?? "-"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <div style={{ marginTop: "var(--space-5)" }}>
+        <SortableTable
+          rows={rows}
+          columns={columns}
+          rowKey={(e) => e.id}
+          initialSort={{ key: "occurred_at", dir: "desc" }}
+          empty="No events yet. Trigger one by completing an audit (M3) or running an agent."
+        />
+      </div>
     </div>
   );
 }

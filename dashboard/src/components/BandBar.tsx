@@ -37,24 +37,21 @@ export function BandBar({ label, elite, performing, practising, developing }: Pr
           display: "flex",
           justifyContent: "space-between",
           alignItems: "baseline",
-          fontSize: "var(--type-callout)",
           marginBottom: "var(--space-2)",
         }}
       >
-        <strong>{label}</strong>
-        <span style={{ color: "var(--colour-text-tertiary)", fontSize: "var(--type-footnote)" }}>
-          {total} reps
-        </span>
+        <span className="hig-headline">{label}</span>
+        <span className="hig-footnote hig-numeric">{total} reps</span>
       </div>
       <div
         role="img"
         aria-label={`${label}: Elite ${elite}, Performing ${performing}, Practising ${practising}, Developing ${developing}`}
         style={{
           display: "flex",
-          height: 32,
+          height: 28,
           borderRadius: "var(--radius-sm)",
           overflow: "hidden",
-          background: "var(--colour-fill-secondary)",
+          background: "var(--colour-fill-quaternary)",
         }}
       >
         {segments.map((s) => (
@@ -65,12 +62,18 @@ export function BandBar({ label, elite, performing, practising, developing }: Pr
               flexGrow: s.n,
               flexBasis: 0,
               background: s.colour,
-              color: "#fff",
+              color: "#FFFFFF",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "var(--type-caption)",
+              fontSize: "var(--type-caption-1)",
+              lineHeight: "var(--lead-caption-1)",
               fontWeight: 600,
+              fontVariantNumeric: "tabular-nums",
+              minWidth: 0,
+              padding: "0 6px",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
             }}
           >
             {s.label} {s.n}

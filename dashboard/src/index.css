@@ -5,17 +5,43 @@
 @tailwind utilities;
 
 html, body, #root { height: 100%; margin: 0; }
+
 body {
-  background: var(--colour-bg-base);
-  color: var(--colour-text-primary);
-  font-family: 'SF Pro Text', 'SF Pro Display', 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--colour-bg-system);
+  color: var(--colour-label);
+  font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont',
+               'Inter', system-ui, sans-serif;
   font-size: var(--type-body);
+  line-height: var(--lead-body);
+  font-weight: var(--weight-regular);
+  font-variant-numeric: tabular-nums;       /* HIG: tabular figures for UI numbers */
   -webkit-font-smoothing: antialiased;
 }
 
-a { color: inherit; text-decoration: none; }
+a { color: var(--colour-system-blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
 
 button:focus-visible, a:focus-visible {
-  outline: 2px solid var(--colour-accent);
+  outline: 3px solid var(--colour-system-blue);
   outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
+
+/* Utility selectors used by components below; keep semantic names. */
+.hig-title-1   { font: var(--weight-semibold) var(--type-title-1)/var(--lead-title-1) 'SF Pro Display','-apple-system',Inter,system-ui,sans-serif; letter-spacing: -0.022em; }
+.hig-title-2   { font: var(--weight-semibold) var(--type-title-2)/var(--lead-title-2) 'SF Pro Display','-apple-system',Inter,system-ui,sans-serif; letter-spacing: -0.017em; }
+.hig-title-3   { font: var(--weight-semibold) var(--type-title-3)/var(--lead-title-3) 'SF Pro Display','-apple-system',Inter,system-ui,sans-serif; letter-spacing: -0.012em; }
+.hig-large-title { font: var(--weight-bold) var(--type-large-title)/var(--lead-large-title) 'SF Pro Display','-apple-system',Inter,system-ui,sans-serif; letter-spacing: -0.026em; font-variant-numeric: tabular-nums; }
+.hig-headline  { font: var(--weight-semibold) var(--type-headline)/var(--lead-headline) inherit; }
+.hig-body      { font: var(--weight-regular)  var(--type-body)/var(--lead-body) inherit; }
+.hig-callout   { font: var(--weight-regular)  var(--type-callout)/var(--lead-callout) inherit; }
+.hig-subhead   { font: var(--weight-regular)  var(--type-subhead)/var(--lead-subhead) inherit; color: var(--colour-label-secondary); }
+.hig-footnote  { font: var(--weight-regular)  var(--type-footnote)/var(--lead-footnote) inherit; color: var(--colour-label-secondary); }
+.hig-caption-1 { font: var(--weight-regular)  var(--type-caption-1)/var(--lead-caption-1) inherit; color: var(--colour-label-tertiary); }
+.hig-caption-2 { font: var(--weight-regular)  var(--type-caption-2)/var(--lead-caption-2) inherit; color: var(--colour-label-tertiary); }
+.hig-numeric   { font-variant-numeric: tabular-nums; }

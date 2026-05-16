@@ -40,7 +40,7 @@ ON CONFLICT (code) DO NOTHING;
 
 -- Operator: Steve (single sole operator)
 INSERT INTO respondents (email, name, role) VALUES
-    ('steve@decipher.com.au', 'Steve', 'operator')
+    ('steve@decipher.com.au', 'Steve', 'admin')
 ON CONFLICT (email) DO NOTHING;
 
 -- Brand voice scaffold (M10 will replace via Squarespace exporter)

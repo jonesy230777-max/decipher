@@ -27,34 +27,28 @@ export default function SquarespaceExport() {
   const current = data?.exports.find((e) => e.export_id === selected) ?? null;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-5)" }}>
-      <header style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "var(--space-4)" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-5)", maxWidth: 1400 }}>
+      <header style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "var(--space-5)" }}>
         <div>
-          <h1 style={{ fontSize: "var(--type-title-1)", fontWeight: 600, margin: 0 }}>Squarespace Export</h1>
-          <p style={{ color: "var(--colour-text-secondary)", marginTop: "var(--space-2)", maxWidth: 640 }}>
+          <h1 className="hig-large-title" style={{ margin: 0 }}>Squarespace Export</h1>
+          <p className="hig-body" style={{ color: "var(--colour-label-secondary)", marginTop: "var(--space-2)", maxWidth: 640 }}>
             Generate, preview, and download the asset bundle Steve uploads to Squarespace.
             This page is the contract between the local prototype and the public site.
           </p>
         </div>
-        <Button variant="filled" onClick={() => alert("Generation pipeline lands in M10.")}>
-          Generate New Export →
+        <Button variant="tinted" size="lg" onClick={() => alert("Generation pipeline lands in M10.")}>
+          Generate New Export
         </Button>
       </header>
 
       {current && (
         <Card>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div>
-              <SectionEyebrow>Most recent bundle</SectionEyebrow>
-              <div style={{ fontSize: "var(--type-title-3)", fontWeight: 600, marginTop: "var(--space-1)" }}>
-                {current.summary}
-              </div>
-              <div style={{ color: "var(--colour-text-tertiary)", fontSize: "var(--type-footnote)", marginTop: "var(--space-2)" }}>
-                {new Date(current.generated_at).toLocaleString("en-AU")} ·{" "}
-                {current.file_count} files · {(current.size_bytes / 1024).toFixed(1)} KB ·{" "}
-                cost USD ${current.cost_usd.toFixed(4)}
-              </div>
-            </div>
+          <SectionEyebrow>Most recent bundle</SectionEyebrow>
+          <div className="hig-title-3" style={{ marginTop: "var(--space-1)" }}>{current.summary}</div>
+          <div className="hig-footnote hig-numeric" style={{ marginTop: "var(--space-2)" }}>
+            {new Date(current.generated_at).toLocaleString("en-AU")} ·{" "}
+            {current.file_count} files · {(current.size_bytes / 1024).toFixed(1)} KB ·{" "}
+            cost USD ${current.cost_usd.toFixed(4)}
           </div>
         </Card>
       )}
@@ -63,12 +57,11 @@ export default function SquarespaceExport() {
         <Card title="Preview tree">
           <ul
             style={{
-              listStyle: "none",
-              padding: 0,
-              margin: 0,
-              fontFamily: "ui-monospace",
+              listStyle: "none", padding: 0, margin: 0,
+              fontFamily: "'SF Mono', ui-monospace, monospace",
               fontSize: "var(--type-footnote)",
-              color: "var(--colour-text-secondary)",
+              lineHeight: "var(--lead-footnote)",
+              color: "var(--colour-label-secondary)",
               maxHeight: 360,
               overflowY: "auto",
             }}
@@ -76,10 +69,7 @@ export default function SquarespaceExport() {
             {data?.file_tree.map((p) => (
               <li
                 key={p}
-                style={{
-                  padding: "2px 0",
-                  paddingLeft: `${(p.split("/").length - 1) * 16}px`,
-                }}
+                style={{ padding: "2px 0", paddingLeft: `${(p.split("/").length - 1) * 16}px` }}
               >
                 {p}
               </li>
@@ -89,54 +79,53 @@ export default function SquarespaceExport() {
 
         <Card title="History">
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {data?.exports.map((e) => (
-              <li
-                key={e.export_id}
-                style={{
-                  padding: "var(--space-3) 0",
-                  borderTop: "1px solid var(--colour-border-subtle)",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: "var(--space-3)",
-                  cursor: "pointer",
-                }}
-                onClick={() => setSelected(e.export_id)}
-              >
-                <div>
-                  <div style={{ fontWeight: selected === e.export_id ? 700 : 500 }}>
-                    v{e.export_id}
-                  </div>
-                  <div style={{ color: "var(--colour-text-tertiary)", fontSize: "var(--type-footnote)" }}>
-                    {new Date(e.generated_at).toLocaleDateString("en-AU")}
-                  </div>
-                </div>
-                <a
-                  href={`/api/squarespace/exports/${e.export_id}/download`}
-                  download
+            {data?.exports.map((e, i) => {
+              const active = selected === e.export_id;
+              return (
+                <li
+                  key={e.export_id}
                   style={{
-                    fontSize: "var(--type-footnote)",
-                    color: "var(--colour-accent)",
-                    fontWeight: 600,
+                    padding: "var(--space-3) 0",
+                    borderTop: i === 0 ? "none" : "1px solid var(--colour-separator)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "var(--space-3)",
+                    cursor: "pointer",
                   }}
-                  onClick={(ev) => ev.stopPropagation()}
+                  onClick={() => setSelected(e.export_id)}
                 >
-                  re-download
-                </a>
-              </li>
-            ))}
+                  <div style={{ flex: 1 }}>
+                    <div className="hig-callout" style={{ fontWeight: active ? 600 : 400 }}>
+                      v{e.export_id}
+                    </div>
+                    <div className="hig-footnote">
+                      {new Date(e.generated_at).toLocaleDateString("en-AU")}
+                    </div>
+                  </div>
+                  <a
+                    href={`/api/squarespace/exports/${e.export_id}/download`}
+                    download
+                    className="hig-footnote"
+                    style={{ color: "var(--colour-accent)", fontWeight: 600 }}
+                    onClick={(ev) => ev.stopPropagation()}
+                  >
+                    re-download
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </Card>
       </section>
 
-      {/* The single most important UI element on the page (spec §7D). */}
+      {/* Spec §7D: single most important UI element on this page. */}
       <div
         data-testid="download-bundle-strip"
         style={{
           display: "flex",
           justifyContent: "flex-end",
           padding: "var(--space-4) 0",
-          borderTop: "1px solid var(--colour-border-subtle)",
+          borderTop: "1px solid var(--colour-separator-opaque)",
         }}
       >
         {current && (
@@ -144,6 +133,7 @@ export default function SquarespaceExport() {
             href={`/api/squarespace/exports/${current.export_id}/download`}
             download
             variant="filled"
+            size="lg"
           >
             Download Bundle (.zip) ↓
           </Button>
