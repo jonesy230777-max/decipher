@@ -1,0 +1,43 @@
+# Decipher .gitignore
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Node
+dashboard/node_modules/
+dashboard/dist/
+dashboard/.vite/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Local config + secrets
+.env
+.env.local
+
+# Runtime artefacts
+var/
+_squarespace_exports/
+
+# Demo / build outputs
+/decipher-demo.zip
+/_demo_zip_build/
+
+# Compliance run outputs (large)
+compliance/screenshots/
+compliance/hig_mirror/
+
+# Logs
+*.log
+
+# Claude tooling
+_bmad-output/
+.claude/

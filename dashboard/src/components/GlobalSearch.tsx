@@ -73,8 +73,13 @@ export function GlobalSearch() {
     return () => clearTimeout(t);
   }, [q]);
 
+  function submit() {
+    setOpen(true);
+    inputRef.current?.focus();
+  }
+
   return (
-    <div ref={wrapRef} style={{ position: "relative", minWidth: 280 }}>
+    <div ref={wrapRef} style={{ position: "relative", width: "100%", display: "flex", gap: "var(--space-2)" }}>
       <input
         ref={inputRef}
         type="search"
@@ -82,9 +87,10 @@ export function GlobalSearch() {
         value={q}
         onChange={(e) => { setQ(e.target.value); setOpen(true); }}
         onFocus={() => setOpen(true)}
+        onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
         style={{
-          width: "100%",
-          height: 32,
+          flex: 1,
+          height: 36,
           padding: "0 var(--space-3)",
           border: "1px solid var(--colour-separator-opaque)",
           borderRadius: "var(--radius-sm)",
@@ -95,15 +101,31 @@ export function GlobalSearch() {
           fontFamily: "inherit",
         }}
       />
+      <button
+        onClick={submit}
+        className="hig-callout"
+        style={{
+          height: 36,
+          padding: "0 var(--space-4)",
+          background: "var(--colour-accent)",
+          color: "#FFFFFF",
+          border: "1px solid transparent",
+          borderRadius: "var(--radius-sm)",
+          cursor: "pointer",
+          fontWeight: 600,
+          minWidth: 88,
+        }}
+      >
+        Search
+      </button>
       {open && (q.trim().length > 0 || loading) && (
         <div
           role="listbox"
           style={{
             position: "absolute",
-            top: 36,
+            top: 40,
             left: 0,
-            right: 0,
-            minWidth: 360,
+            right: 96,
             maxHeight: 360,
             overflowY: "auto",
             background: "var(--colour-bg-system)",

@@ -4,10 +4,25 @@
  * 14-pt corner radius cards, 8-pt grid spacing, accent-tinted primary button.
  */
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { api } from "../api";
 import { Card, SectionEyebrow, Button } from "../components/Card";
 import { BandBar } from "../components/BandBar";
+import { GapAnalysis } from "../components/GapAnalysis";
+
+type RosterRow = {
+  respondent_id: number;
+  name: string;
+  email: string;
+  consent_share_individual: boolean;
+  cognitive_empathy: number | null;
+  eq: number | null;
+  pressure_composure: number | null;
+  storytelling: number | null;
+  overall: number | null;
+  archetype_name: string | null;
+  latest_audit_at: string | null;
+};
 
 type Overview = {
   team: { team_id: number; name: string; role_label: string | null; organisation: string | null };
@@ -17,6 +32,7 @@ type Overview = {
   elite_performers: number;
   at_risk_reps: number;
   biggest_gap: { trait: string; score_100: number; band: string } | null;
+  director: { respondent_id: number; name: string | null; email: string; role: string } | null;
 };
 type Distribution = {
   distribution: {
@@ -42,6 +58,7 @@ export default function TeamExecutive() {
   const [traits, setTraits] = useState<TraitAvg[] | null>(null);
   const [archetypes, setArchetypes] = useState<Archetype[] | null>(null);
   const [interventions, setInterventions] = useState<Intervention[] | null>(null);
+  const [roster, setRoster] = useState<RosterRow[] | null>(null);
 
   useEffect(() => {
     api<Overview>(`/api/teams/${id}/overview`).then(setOverview);
@@ -49,6 +66,7 @@ export default function TeamExecutive() {
     api<{ trait_averages: TraitAvg[] }>(`/api/teams/${id}/trait-averages`).then((d) => setTraits(d.trait_averages));
     api<{ archetypes: Archetype[] }>(`/api/teams/${id}/archetypes`).then((d) => setArchetypes(d.archetypes));
     api<{ interventions: Intervention[] }>(`/api/teams/${id}/interventions`).then((d) => setInterventions(d.interventions));
+    api<{ roster: RosterRow[] }>(`/api/teams/${id}/roster`).then((d) => setRoster(d.roster));
   }, [id]);
 
   if (!overview) return <p className="hig-footnote">Loading executive view...</p>;
@@ -67,10 +85,19 @@ export default function TeamExecutive() {
           <p className="hig-subhead" style={{ margin: "var(--space-1) 0 0 0" }}>
             {role} Dashboard, {nReps} Respondents · {overview.month_label}
           </p>
+          {overview.director && (
+            <p className="hig-footnote" style={{ margin: "var(--space-1) 0 0 0", color: "var(--colour-label-secondary)" }}>
+              Director: <strong style={{ color: "var(--colour-label)" }}>{overview.director.name ?? overview.director.email}</strong>
+              {" · "}{overview.director.email}
+            </p>
+          )}
         </div>
-        <Button href={`/api/teams/${id}/export.pdf`} download variant="filled" size="lg">
-          Download Executive Summary (PDF) ↓
-        </Button>
+        <div style={{ display: "flex", gap: "var(--space-2)" }}>
+          <InviteRespondentButton teamId={id} />
+          <Button href={`/api/teams/${id}/export.pdf`} download variant="filled" size="lg">
+            Download Executive Summary (PDF) ↓
+          </Button>
+        </div>
       </header>
 
       {/* KPI strip — 4 equal */}
@@ -142,7 +169,7 @@ export default function TeamExecutive() {
       </section>
 
       {/* Archetype breakdown */}
-      <Card title="Archetype breakdown">
+      <Card title="Archetype Breakdown">
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
           {archetypes?.map((a) => {
             const max = Math.max(...(archetypes?.map((x) => x.n) ?? [1]));
@@ -163,7 +190,7 @@ export default function TeamExecutive() {
       </Card>
 
       {/* Priority coaching interventions */}
-      <Card title="Priority coaching interventions">
+      <Card title="Priority Coaching Interventions">
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "var(--space-4)" }}>
           {interventions?.map((i, idx) => (
             <div
@@ -184,6 +211,41 @@ export default function TeamExecutive() {
           ))}
         </div>
       </Card>
+
+      {/* Gap analysis (team vs cohort) */}
+      <GapAnalysis kind="team" href={`/api/teams/${id}/gap-analysis`} />
+
+      {/* Team roster (consent-gated individual drill-down per user story) */}
+      {roster && (
+        <Card title={`Team roster (${roster.length})`}>
+          <p className="hig-callout" style={{ color: "var(--colour-label-secondary)", margin: "0 0 var(--space-3) 0" }}>
+            Rows with a green identity link have consented to share individual reports.
+            Anonymised rows still show scores + archetype + band; name and email are
+            withheld until consent is granted.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1.2fr 0.6fr 0.6fr 0.6fr 0.6fr 0.7fr 1fr", columnGap: "var(--space-3)", rowGap: "var(--space-2)", alignItems: "center" }}>
+            <RosterHead>Name</RosterHead>
+            <RosterHead>Email</RosterHead>
+            <RosterHead align="right">CE</RosterHead>
+            <RosterHead align="right">EQ</RosterHead>
+            <RosterHead align="right">PC</RosterHead>
+            <RosterHead align="right">ST</RosterHead>
+            <RosterHead align="right">Overall</RosterHead>
+            <RosterHead>Archetype</RosterHead>
+            {roster.slice(0, 25).map((r) => {
+              const consented = r.consent_share_individual;
+              return (
+                <RosterRowEl key={r.respondent_id} r={r} consented={consented} />
+              );
+            })}
+          </div>
+          {roster.length > 25 && (
+            <div className="hig-footnote" style={{ marginTop: "var(--space-3)", color: "var(--colour-label-tertiary)" }}>
+              Showing top 25 of {roster.length} by overall score.
+            </div>
+          )}
+        </Card>
+      )}
 
       <footer
         className="hig-footnote"
@@ -231,6 +293,96 @@ function KpiCard({
         <div className="hig-caption-1" style={{ marginTop: "var(--space-2)" }}>{hint}</div>
       )}
     </Card>
+  );
+}
+
+function InviteRespondentButton({ teamId }: { teamId: number }) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg]   = useState<string | null>(null);
+  async function send() {
+    const email = prompt("Email address to invite:");
+    if (!email) return;
+    const first = prompt("First name (optional):") || null;
+    const last  = prompt("Last name (optional):")  || null;
+    setBusy(true);
+    try {
+      const r = await fetch("/api/audit/invite", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, first_name: first, last_name: last, team_id: teamId }),
+      });
+      if (!r.ok) {
+        setMsg(`Failed: ${r.status} ${await r.text()}`);
+      } else {
+        const json = await r.json();
+        setMsg(json.delivered
+          ? `Invite delivered to ${email}.`
+          : `Recorded but SMTP failed: ${json.error}`);
+      }
+      setTimeout(() => setMsg(null), 6000);
+    } finally { setBusy(false); }
+  }
+  return (
+    <>
+      <Button variant="tinted" size="lg" onClick={send}>
+        {busy ? "Sending..." : "Invite rep ✉"}
+      </Button>
+      {msg && (
+        <div className="hig-caption-1"
+             style={{ position: "fixed", bottom: 24, right: 24, zIndex: 80,
+                      background: "var(--colour-bg-system-secondary)",
+                      border: "1px solid var(--colour-separator-opaque)",
+                      borderRadius: 8, padding: 12, boxShadow: "var(--shadow-2)",
+                      maxWidth: 360 }}>
+          {msg}
+        </div>
+      )}
+    </>
+  );
+}
+
+function RosterHead({ children, align }: { children: React.ReactNode; align?: "right" }) {
+  return (
+    <div
+      className="hig-caption-1"
+      style={{
+        textTransform: "uppercase",
+        letterSpacing: "0.04em",
+        color: "var(--colour-label-tertiary)",
+        padding: "var(--space-2) 0",
+        borderBottom: "1px solid var(--colour-separator)",
+        textAlign: align ?? "left",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function RosterRowEl({ r, consented }: { r: RosterRow; consented: boolean }) {
+  const overall = r.overall != null ? (r.overall * 100).toFixed(0) : "-";
+  const fmt = (v: number | null) => (v != null ? (v * 100).toFixed(0) : "-");
+  const nameCell = consented ? (
+    <Link to={`/respondents/${r.respondent_id}`} style={{ color: "var(--colour-accent)", fontWeight: 600, textDecoration: "none" }}>
+      {r.name}
+    </Link>
+  ) : (
+    <span style={{ color: "var(--colour-label-secondary)" }}>{r.name}</span>
+  );
+  const rowStyle = {
+    padding: "var(--space-2) 0",
+    borderBottom: "1px solid var(--colour-separator)",
+  } as React.CSSProperties;
+  return (
+    <>
+      <div className="hig-callout" style={rowStyle}>{nameCell}</div>
+      <div className="hig-footnote" style={{ ...rowStyle, color: "var(--colour-label-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.email}</div>
+      <div className="hig-callout hig-numeric" style={{ ...rowStyle, textAlign: "right" }}>{fmt(r.cognitive_empathy)}</div>
+      <div className="hig-callout hig-numeric" style={{ ...rowStyle, textAlign: "right" }}>{fmt(r.eq)}</div>
+      <div className="hig-callout hig-numeric" style={{ ...rowStyle, textAlign: "right" }}>{fmt(r.pressure_composure)}</div>
+      <div className="hig-callout hig-numeric" style={{ ...rowStyle, textAlign: "right" }}>{fmt(r.storytelling)}</div>
+      <div className="hig-callout hig-numeric" style={{ ...rowStyle, textAlign: "right", fontWeight: 600 }}>{overall}</div>
+      <div className="hig-footnote" style={{ ...rowStyle, color: "var(--colour-label-secondary)" }}>{r.archetype_name ?? "-"}</div>
+    </>
   );
 }
 

@@ -38,9 +38,11 @@ CREATE TABLE IF NOT EXISTS respondents (
                   CHECK (role IN ('admin','ceo','sales_director','hr','learning_development','sales_person')),
     team_id       BIGINT,
     consent_share_individual BOOLEAN NOT NULL DEFAULT FALSE,
+    company_id    BIGINT REFERENCES companies(company_id),
     created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_respondents_team ON respondents (team_id);
+CREATE INDEX IF NOT EXISTS idx_respondents_company ON respondents (company_id);
 
 CREATE TABLE IF NOT EXISTS magic_link_tokens (
     token_hash    TEXT PRIMARY KEY,
@@ -49,13 +51,22 @@ CREATE TABLE IF NOT EXISTS magic_link_tokens (
     consumed_at   TIMESTAMPTZ
 );
 
+CREATE TABLE IF NOT EXISTS companies (
+    company_id   BIGSERIAL PRIMARY KEY,
+    name         TEXT NOT NULL UNIQUE,
+    industry     TEXT,
+    created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS teams (
     team_id      BIGSERIAL PRIMARY KEY,
     name         TEXT NOT NULL,
-    organisation TEXT,
+    company_id   BIGINT REFERENCES companies(company_id),
+    organisation TEXT,                 -- legacy text mirror; kept for back-compat
     role_label   TEXT,
     created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+CREATE INDEX IF NOT EXISTS idx_teams_company ON teams (company_id);
 
 ------------------------------------------------------------------
 -- Audit versions, questions, audits, responses

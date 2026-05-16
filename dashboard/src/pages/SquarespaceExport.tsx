@@ -16,13 +16,33 @@ type ExportList = { exports: Export[]; file_tree: string[] };
 export default function SquarespaceExport() {
   const [data, setData] = useState<ExportList | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [flash, setFlash] = useState<string | null>(null);
 
-  useEffect(() => {
-    api<ExportList>("/api/squarespace/exports").then((d) => {
+  function refresh() {
+    return api<ExportList>("/api/squarespace/exports").then((d) => {
       setData(d);
       if (d.exports.length > 0) setSelected(d.exports[0].export_id);
     });
-  }, []);
+  }
+
+  useEffect(() => { refresh(); }, []);
+
+  async function generate() {
+    setBusy(true);
+    try {
+      const r = await fetch("/api/squarespace/generate", { method: "POST" });
+      const json = await r.json();
+      await refresh();
+      setSelected(json.export_id);
+      setFlash(`Generated export #${json.export_id} (${json.file_count} files).`);
+      setTimeout(() => setFlash(null), 4000);
+    } catch (e) {
+      setFlash(`Failed: ${String(e)}`);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   const current = data?.exports.find((e) => e.export_id === selected) ?? null;
 
@@ -36,10 +56,21 @@ export default function SquarespaceExport() {
             This page is the contract between the local prototype and the public site.
           </p>
         </div>
-        <Button variant="tinted" size="lg" onClick={() => alert("Generation pipeline lands in M10.")}>
-          Generate New Export
+        <Button variant="tinted" size="lg" onClick={generate}>
+          {busy ? "Generating..." : "Generate New Export"}
         </Button>
       </header>
+
+      {flash && (
+        <div role="status" className="hig-callout"
+             style={{ padding: "var(--space-3) var(--space-4)",
+                      background: "var(--colour-accent-tint-bg)",
+                      color: "var(--colour-accent)",
+                      border: "1px solid var(--colour-accent)",
+                      borderRadius: "var(--radius-md)" }}>
+          {flash}
+        </div>
+      )}
 
       {current && (
         <Card>
@@ -54,7 +85,7 @@ export default function SquarespaceExport() {
       )}
 
       <section style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "var(--space-5)" }}>
-        <Card title="Preview tree">
+        <Card title="Preview Tree">
           <ul
             style={{
               listStyle: "none", padding: 0, margin: 0,

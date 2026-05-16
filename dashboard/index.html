@@ -4,6 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Decipher</title>
+    <link rel="icon" type="image/svg+xml" href="/decipher-mark.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon-16.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#1B8A4F" />
+    <script>
+      // Apply the stored Decipher theme BEFORE React mounts so the choice
+      // persists across navigations and survives a hard refresh without
+      // flashing the wrong theme. Source order: cookie, then localStorage.
+      // Only ever changed via Settings > Appearance.
+      (function () {
+        var KEY = "decipher.theme";
+        function readCookie(name) {
+          var m = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
+          return m ? decodeURIComponent(m[1]) : null;
+        }
+        var choice = readCookie(KEY)
+          || (function () { try { return localStorage.getItem(KEY); } catch (e) { return null; } })()
+          || "auto";
+        if (choice === "light" || choice === "dark") {
+          document.documentElement.setAttribute("data-theme", choice);
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

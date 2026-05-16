@@ -1,7 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../api";
 import { Card, SectionEyebrow } from "../components/Card";
 import { BandBar } from "../components/BandBar";
+
+type Team = { team_id: number; name: string; company_id: number | null; n_respondents: number };
+type Company = { company_id: number; name: string };
+type Person = {
+  respondent_id: number; name: string | null; email: string;
+  role: string; team_name: string | null; latest_overall: number | null;
+};
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
 } from "recharts";
@@ -44,22 +52,80 @@ const DIM_LABEL: Record<string, string> = {
 export default function CohortInsights() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [patterns, setPatterns] = useState<Pattern[] | null>(null);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [companyFilter, setCompanyFilter] = useState<string>("");
+  const [teamFilter, setTeamFilter] = useState<string>("");
+  const [people, setPeople] = useState<Person[] | null>(null);
+
   useEffect(() => {
-    api<Stats>("/api/cohort/stats").then(setStats);
+    api<{ teams: Team[] }>("/api/teams").then((d) => setTeams(d.teams));
+    api<{ companies: Company[] }>("/api/companies").then((d) => setCompanies(d.companies));
     api<{ patterns: Pattern[] }>("/api/cohort/patterns").then((d) => setPatterns(d.patterns));
   }, []);
 
+  useEffect(() => {
+    const p = new URLSearchParams();
+    if (companyFilter) p.set("company_id", companyFilter);
+    if (teamFilter)    p.set("team_id", teamFilter);
+    const qs = p.toString() ? `?${p}` : "";
+    api<Stats>(`/api/cohort/stats${qs}`).then(setStats);
+    if (teamFilter) {
+      api<{ people: Person[] }>(`/api/people?team_id=${teamFilter}`).then((d) => setPeople(d.people));
+    } else {
+      setPeople(null);
+    }
+  }, [companyFilter, teamFilter]);
+
+  const teamsForCompany = useMemo(() => {
+    if (!companyFilter) return teams;
+    return teams.filter((t) => String(t.company_id) === companyFilter);
+  }, [teams, companyFilter]);
+
+  const scopeLabel = teamFilter
+    ? teams.find((t) => String(t.team_id) === teamFilter)?.name
+    : companyFilter
+      ? companies.find((c) => String(c.company_id) === companyFilter)?.name.replace(/^Demo:\s*/, "")
+      : "All companies and teams";
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)", maxWidth: 1400 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-5)", maxWidth: 1400 }}>
       <header>
         <h1 className="hig-large-title" style={{ margin: 0 }}>Cohort Insights</h1>
         <p className="hig-body" style={{ color: "var(--colour-label-secondary)", marginTop: "var(--space-2)" }}>
-          Global aggregate across every audit, every client. The Trojan-horse view.
+          Aggregate across <strong>{scopeLabel}</strong>. Filter to a company, drill into a team, then click a person to open their profile.
         </p>
       </header>
 
+      {/* Cascading filters */}
+      <Card>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "var(--space-3)" }}>
+          <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <span className="hig-caption-1">Company</span>
+            <select value={companyFilter}
+                    onChange={(e) => { setCompanyFilter(e.target.value); setTeamFilter(""); }}
+                    style={inputStyle}>
+              <option value="">All companies</option>
+              {companies.map((c) => (
+                <option key={c.company_id} value={c.company_id}>{c.name.replace(/^Demo:\s*/, "")}</option>
+              ))}
+            </select>
+          </label>
+          <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <span className="hig-caption-1">Team</span>
+            <select value={teamFilter} onChange={(e) => setTeamFilter(e.target.value)}
+                    style={inputStyle}>
+              <option value="">All teams{companyFilter ? " in this company" : ""}</option>
+              {teamsForCompany.map((t) => (
+                <option key={t.team_id} value={t.team_id}>{t.name} ({t.n_respondents})</option>
+              ))}
+            </select>
+          </label>
+        </div>
+      </Card>
+
       {stats?.totals && (
-        <Card title="Cohort means">
+        <Card title="Cohort Means">
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "var(--space-4)" }}>
             {[
               ["Cognitive Empathy", stats.totals.mean_cognitive_empathy],
@@ -76,7 +142,7 @@ export default function CohortInsights() {
         </Card>
       )}
 
-      <Card title="Distribution by band, every dimension">
+      <Card title="Distribution by Band, Every Dimension">
         {(["cognitive_empathy", "eq", "pressure_composure", "storytelling"] as const).map((dim) => {
           const bands = stats?.by_band.filter((b) => b.dimension === dim) ?? [];
           const get = (b: string) => bands.find((x) => x.band === b)?.n ?? 0;
@@ -93,7 +159,7 @@ export default function CohortInsights() {
         })}
       </Card>
 
-      <Card title="Trailing 14-day means">
+      <Card title="Trailing 14-Day Means">
         {stats && stats.trend.length > 0 && (
           <div style={{ width: "100%", height: 280 }}>
             <ResponsiveContainer>
@@ -119,8 +185,46 @@ export default function CohortInsights() {
         )}
       </Card>
 
+      {/* People in this team (when scoped to a team) */}
+      {people && (
+        <Card title={`People in ${scopeLabel} (${people.length})`}>
+          {people.length === 0 ? (
+            <p className="hig-footnote" style={{ margin: 0 }}>No people in this scope.</p>
+          ) : (
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {people.slice(0, 50).map((p, i) => (
+                <li key={p.respondent_id}
+                    style={{
+                      padding: "var(--space-2) 0",
+                      borderTop: i === 0 ? "none" : "1px solid var(--colour-separator)",
+                      display: "flex", alignItems: "center", gap: "var(--space-3)",
+                    }}>
+                  <Link to={`/respondents/${p.respondent_id}`}
+                        style={{ color: "var(--colour-accent)", fontWeight: 600,
+                                 textDecoration: "none", flex: 1 }}>
+                    {p.name ?? p.email}
+                  </Link>
+                  <span className="hig-footnote" style={{ color: "var(--colour-label-secondary)" }}>
+                    {p.role.replace("_", " ")}
+                  </span>
+                  <span className="hig-callout hig-numeric"
+                        style={{ width: 60, textAlign: "right" }}>
+                    {p.latest_overall != null ? `${(p.latest_overall * 100).toFixed(0)} /100` : "·"}
+                  </span>
+                </li>
+              ))}
+              {people.length > 50 && (
+                <li className="hig-footnote" style={{ marginTop: "var(--space-2)", color: "var(--colour-label-tertiary)" }}>
+                  Showing first 50 of {people.length}.
+                </li>
+              )}
+            </ul>
+          )}
+        </Card>
+      )}
+
       <Card
-        title="Validated patterns"
+        title="Validated Patterns"
         action={<span className="hig-footnote">✓ = cleared the DOUBT gate (BH p&lt;0.01, hit≥60%, OOS≥50%, robust)</span>}
       >
         {patterns && patterns.length === 0 && (
@@ -159,3 +263,13 @@ export default function CohortInsights() {
     </div>
   );
 }
+
+const inputStyle: React.CSSProperties = {
+  height: 36, padding: "0 var(--space-3)",
+  border: "1px solid var(--colour-separator-opaque)",
+  borderRadius: "var(--radius-sm)",
+  background: "var(--colour-bg-system)",
+  color: "var(--colour-label)",
+  fontSize: "var(--type-callout)", fontFamily: "inherit",
+  width: "100%", boxSizing: "border-box",
+};

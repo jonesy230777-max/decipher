@@ -1,13 +1,24 @@
-import { NavLink, Route, Routes } from "react-router-dom";
+import { NavLink, Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api, ROLE_LABEL, type Bootstrap } from "./api";
+import { useAuth } from "./auth";
+import Landing from "./pages/Landing";
+import Login from "./pages/Login";
 import { Sparkline } from "./components/Sparkline";
 import { GlobalSearch } from "./components/GlobalSearch";
+import { Logo } from "./components/Logo";
+import { AiAssistant } from "./components/AiAssistant";
 import MissionControl from "./pages/MissionControl";
 import Audits from "./pages/Audits";
 import CohortInsights from "./pages/CohortInsights";
 import Teams from "./pages/Teams";
 import TeamExecutive from "./pages/TeamExecutive";
+import Companies from "./pages/Companies";
+import CompanyDetail from "./pages/CompanyDetail";
+import RespondentDetail from "./pages/RespondentDetail";
+import AuditTake from "./pages/AuditTake";
+import Funnel from "./pages/Funnel";
+import People from "./pages/People";
 import Industries from "./pages/Industries";
 import Bespoke from "./pages/Bespoke";
 import PromoCodes from "./pages/PromoCodes";
@@ -22,6 +33,7 @@ const NAV: NavGroup[] = [
     heading: "Overview",
     items: [
       { path: "/",       label: "Mission Control" },
+      { path: "/funnel", label: "Funnel" },
       { path: "/audits", label: "Audits" },
       { path: "/cohort", label: "Cohort Insights" },
       { path: "/events", label: "Events" },
@@ -30,7 +42,9 @@ const NAV: NavGroup[] = [
   {
     heading: "Audiences",
     items: [
+      { path: "/companies",  label: "Companies" },
       { path: "/teams",      label: "Teams" },
+      { path: "/people",     label: "People" },
       { path: "/industries", label: "Industries" },
       { path: "/bespoke",    label: "Bespoke" },
     ],
@@ -62,21 +76,31 @@ function MetricChip({
     <span
       style={{
         display: "inline-flex",
-        flexDirection: "column",
-        gap: 2,
-        minWidth: 88,
+        alignItems: "center",
+        gap: 6,
+        minHeight: 24,
+        flexShrink: 0,
+        whiteSpace: "nowrap",
       }}
     >
-      <span style={{ display: "inline-flex", alignItems: "baseline", gap: "var(--space-1)" }}>
-        <span style={{ color: "var(--colour-label-tertiary)" }} className="hig-caption-1">
-          {label}
-        </span>
-        <strong className="hig-numeric" style={{ color: "var(--colour-label)" }}>
-          {value ?? "·"}
-        </strong>
+      <span
+        style={{
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: "-0.005em",
+          color: "var(--colour-label-secondary)",
+        }}
+      >
+        {label}
       </span>
+      <strong
+        className="hig-numeric"
+        style={{ color: "var(--colour-label)", textAlign: "right", fontSize: 13 }}
+      >
+        {value ?? "·"}
+      </strong>
       {spark && spark.length > 1 && (
-        <Sparkline data={spark} width={88} height={16} colour={accent ?? "var(--colour-accent)"} />
+        <Sparkline data={spark} width={40} height={12} colour={accent ?? "var(--colour-accent)"} />
       )}
     </span>
   );
@@ -89,105 +113,71 @@ function Toolbar({ boot }: { boot: Bootstrap | null }) {
         position: "sticky",
         top: 0,
         zIndex: 50,
-        display: "flex",
-        alignItems: "center",
-        gap: "var(--space-5)",
-        padding: "var(--space-3) var(--space-5)",
         background: "var(--colour-toolbar-bg)",
         backdropFilter: "saturate(180%) blur(20px)",
         WebkitBackdropFilter: "saturate(180%) blur(20px)",
         borderBottom: "1px solid var(--colour-separator)",
-        flexWrap: "wrap",
       }}
     >
-      <span className="hig-headline" style={{ color: "var(--colour-label)", letterSpacing: "-0.01em" }}>
-        Decipher
-      </span>
+      {/* Row 1: brand + metrics (single-line, no wrap, scales to viewport) */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "var(--space-4)",
+          padding: "var(--space-3) var(--space-4)",
+          flexWrap: "nowrap",
+          overflow: "hidden",
+        }}
+      >
+        <div style={{ flexShrink: 0 }}>
+          <Logo height={36} />
+        </div>
+        <div style={{
+          display: "flex", flex: 1, minWidth: 0, gap: "var(--space-3)",
+          alignItems: "center", flexWrap: "nowrap", overflow: "hidden",
+          justifyContent: "flex-end",
+        }}>
+          <MetricChip label="Audits Today" value={boot?.counts.audits_today} spark={boot?.sparks.audits}      accent="var(--colour-system-blue)" />
+          <MetricChip label="This Month"   value={boot?.counts.audits_month} spark={boot?.sparks.audits}      accent="var(--colour-system-indigo)" />
+          <MetricChip label="Respondents"  value={boot?.counts.respondents}  spark={boot?.sparks.respondents} accent="var(--colour-system-green)" />
+          <MetricChip label="Reports"      value={boot?.counts.reports}      spark={boot?.sparks.reports}     accent="var(--colour-system-mint)" />
+          <MetricChip label="Events 24h"   value={boot?.counts.events_24h}   spark={boot?.sparks.events}      accent="var(--colour-system-orange)" />
+          <MetricChip label="Teams"        value={boot?.counts.teams}              spark={boot?.sparks.teams}     accent="var(--colour-system-purple)" />
+          <MetricChip label="Companies"    value={boot?.counts.companies ?? "·"}   spark={boot?.sparks.companies} accent="var(--colour-system-teal)" />
+          <MetricChip
+            label="Pipeline"
+            value={
+              boot?.pipeline_aud != null
+                ? `$${Math.round(boot.pipeline_aud / 1000)}k`
+                : "·"
+            }
+            spark={boot?.sparks.pipeline}
+            accent="var(--colour-system-pink)"
+          />
+        </div>
+      </div>
 
-      <GlobalSearch />
-
-      <MetricChip
-        label="audits today"
-        value={boot?.counts.audits_today}
-        spark={boot?.sparks.audits}
-        accent="var(--colour-system-blue)"
-      />
-      <MetricChip
-        label="this month"
-        value={boot?.counts.audits_month}
-        spark={boot?.sparks.audits}
-        accent="var(--colour-system-indigo)"
-      />
-      <MetricChip
-        label="respondents"
-        value={boot?.counts.respondents}
-        spark={boot?.sparks.respondents}
-        accent="var(--colour-system-green)"
-      />
-      <MetricChip
-        label="reports"
-        value={boot?.counts.reports}
-        spark={boot?.sparks.reports}
-        accent="var(--colour-system-mint)"
-      />
-      <MetricChip
-        label="events 24h"
-        value={boot?.counts.events_24h}
-        spark={boot?.sparks.events}
-        accent="var(--colour-system-orange)"
-      />
-      <MetricChip
-        label="teams"
-        value={boot?.counts.teams}
-      />
-      <MetricChip
-        label="pipeline"
-        value={
-          boot?.pipeline_aud != null
-            ? `AUD $${Math.round(boot.pipeline_aud).toLocaleString("en-AU")}`
-            : "·"
-        }
-      />
-
-      {boot?.me && (
-        <span
-          title={`Signed in as ${boot.me.name ?? boot.me.email}`}
-          style={{
-            marginLeft: "auto",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "var(--space-2)",
-            padding: "4px 10px",
-            minHeight: 28,
-            background: "var(--colour-accent-tint-bg)",
-            color: "var(--colour-accent)",
-            border: "1px solid transparent",
-            borderRadius: "var(--radius-sm)",
-          }}
-          className="hig-footnote"
-        >
-          <span
-            aria-hidden="true"
-            style={{
-              width: 22, height: 22, borderRadius: "50%",
-              background: "var(--colour-accent)", color: "#FFFFFF",
-              display: "inline-flex", alignItems: "center", justifyContent: "center",
-              fontWeight: 700, fontSize: 11,
-            }}
-          >
-            {(boot.me.name ?? boot.me.email).slice(0, 1).toUpperCase()}
-          </span>
-          <span>
-            <strong style={{ color: "var(--colour-accent)" }}>{boot.me.name ?? boot.me.email}</strong>
-            <span style={{ color: "var(--colour-label-secondary)" }}> · {ROLE_LABEL[boot.me.role]}</span>
-          </span>
-        </span>
-      )}
+      {/* Row 2: centered search */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          padding: "var(--space-2) var(--space-5) var(--space-3)",
+          borderTop: "1px solid var(--colour-separator)",
+        }}
+      >
+        <div style={{ width: "100%", maxWidth: 640 }}>
+          <GlobalSearch />
+        </div>
+      </div>
     </div>
   );
 }
 
-function Sidebar() {
+function Sidebar({ boot }: { boot: Bootstrap | null }) {
+  const { me, logout } = useAuth();
+  const display = me ?? boot?.me ?? null;
   return (
     <aside
       style={{
@@ -195,63 +185,114 @@ function Sidebar() {
         flexShrink: 0,
         borderRight: "1px solid var(--colour-separator-opaque)",
         background: "var(--colour-bg-system-secondary)",
-        padding: "var(--space-5) var(--space-3)",
-        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      {NAV.map((g) => (
-        <div key={g.heading} style={{ marginBottom: "var(--space-5)" }}>
-          <div
-            className="hig-caption-1"
+      <div style={{ flex: 1, overflowY: "auto", padding: "var(--space-5) var(--space-3)" }}>
+        {NAV.map((g) => (
+          <div key={g.heading} style={{ marginBottom: "var(--space-5)" }}>
+            <div
+              className="hig-caption-1"
+              style={{
+                padding: "var(--space-2) var(--space-3)",
+                color: "var(--colour-label-tertiary)",
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+              }}
+            >
+              {g.heading}
+            </div>
+            {g.items.map((it) => (
+              <NavLink
+                key={it.path}
+                to={it.path}
+                end={it.path === "/"}
+                style={({ isActive }) => ({
+                  display: "block",
+                  padding: "var(--space-2) var(--space-3)",
+                  borderRadius: "var(--radius-sm)",
+                  fontSize: "var(--type-callout)",
+                  lineHeight: "var(--lead-callout)",
+                  color: isActive ? "#FFFFFF" : "var(--colour-label)",
+                  background: isActive ? "var(--colour-accent)" : "transparent",
+                  fontWeight: isActive ? 600 : 400,
+                  marginBottom: 2,
+                  textDecoration: "none",
+                })}
+              >
+                {it.label}
+              </NavLink>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {/* Signed-in user — bottom-left of the sidebar */}
+      {display && (
+        <div
+          style={{
+            borderTop: "1px solid var(--colour-separator-opaque)",
+            padding: "var(--space-3)",
+            display: "flex",
+            alignItems: "center",
+            gap: "var(--space-3)",
+            background: "var(--colour-bg-system-secondary)",
+          }}
+        >
+          <span
+            aria-hidden="true"
             style={{
-              padding: "var(--space-2) var(--space-3)",
-              color: "var(--colour-label-tertiary)",
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
+              width: 32, height: 32, borderRadius: "50%",
+              background: "var(--colour-accent)", color: "#FFFFFF",
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              fontWeight: 700, fontSize: 14,
+              flexShrink: 0,
             }}
           >
-            {g.heading}
+            {(display.name ?? display.email).slice(0, 1).toUpperCase()}
+          </span>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div className="hig-callout" style={{ fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {display.name ?? display.email}
+            </div>
+            <div className="hig-caption-1" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {ROLE_LABEL[display.role]}
+            </div>
           </div>
-          {g.items.map((it) => (
-            <NavLink
-              key={it.path}
-              to={it.path}
-              end={it.path === "/"}
-              style={({ isActive }) => ({
-                display: "block",
-                padding: "var(--space-2) var(--space-3)",
-                borderRadius: "var(--radius-sm)",
-                fontSize: "var(--type-callout)",
-                lineHeight: "var(--lead-callout)",
-                color: isActive ? "#FFFFFF" : "var(--colour-label)",
-                background: isActive ? "var(--colour-accent)" : "transparent",
-                fontWeight: isActive ? 600 : 400,
-                marginBottom: 2,
-                textDecoration: "none",
-              })}
-            >
-              {it.label}
-            </NavLink>
-          ))}
+          <button
+            onClick={logout}
+            title="Sign out"
+            aria-label="Sign out"
+            style={{
+              background: "transparent",
+              border: "1px solid var(--colour-separator-opaque)",
+              color: "var(--colour-label-secondary)",
+              padding: "4px 10px", borderRadius: "var(--radius-sm)",
+              fontSize: 11, fontWeight: 600, cursor: "pointer",
+            }}
+          >
+            Sign out
+          </button>
         </div>
-      ))}
+      )}
     </aside>
   );
 }
 
 export default function App() {
+  const { me, loading } = useAuth();
+  const loc = useLocation();
   const [boot, setBoot] = useState<Bootstrap | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!me) return;
     let alive = true;
     const tick = async () => {
       try {
         const data = await api<Bootstrap>("/api/bootstrap");
-        if (alive) {
-          setBoot(data);
-          setErr(null);
-        }
+        if (alive) { setBoot(data); setErr(null); }
       } catch (e) {
         if (alive) setErr(String(e));
       }
@@ -259,13 +300,33 @@ export default function App() {
     tick();
     const id = setInterval(tick, 15_000);
     return () => { alive = false; clearInterval(id); };
-  }, []);
+  }, [me]);
+
+  if (loading) return null;
+
+  // Public routes (no admin chrome / no auth required).
+  if (loc.pathname === "/landing") return <Landing />;
+  if (loc.pathname === "/login")   return <Login />;
+  if (loc.pathname.startsWith("/audit/")) {
+    return (
+      <Routes>
+        <Route path="/audit/start"     element={<AuditTake />} />
+        <Route path="/audit/:auditId"  element={<AuditTake />} />
+      </Routes>
+    );
+  }
+
+  // Not signed in → public landing for root; force login for everything else.
+  if (!me) {
+    if (loc.pathname === "/") return <Landing />;
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <Toolbar boot={boot} />
       <div style={{ flex: 1, display: "flex", minHeight: 0 }}>
-        <Sidebar />
+        <Sidebar boot={boot} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
           {err && (
             <div
@@ -282,21 +343,29 @@ export default function App() {
           )}
           <main style={{ flex: 1, overflow: "auto", padding: "var(--space-6) var(--space-7)" }}>
             <Routes>
-              <Route path="/"             element={<MissionControl boot={boot} />} />
-              <Route path="/audits"       element={<Audits />} />
-              <Route path="/cohort"       element={<CohortInsights />} />
-              <Route path="/teams"        element={<Teams />} />
-              <Route path="/teams/:teamId" element={<TeamExecutive />} />
-              <Route path="/industries"   element={<Industries />} />
-              <Route path="/bespoke"      element={<Bespoke />} />
-              <Route path="/promo"        element={<PromoCodes />} />
-              <Route path="/squarespace"  element={<SquarespaceExport />} />
-              <Route path="/events"       element={<EventsLog />} />
-              <Route path="/settings"     element={<Settings boot={boot} />} />
+              <Route path="/"              element={<MissionControl boot={boot} />} />
+              <Route path="/audits"        element={<Audits />} />
+              <Route path="/funnel"        element={<Funnel boot={boot} />} />
+              <Route path="/cohort"        element={<CohortInsights />} />
+              <Route path="/companies"           element={<Companies />} />
+              <Route path="/companies/:companyId" element={<CompanyDetail />} />
+              <Route path="/teams"               element={<Teams />} />
+              <Route path="/teams/:teamId"       element={<TeamExecutive />} />
+              <Route path="/respondents/:id"     element={<RespondentDetail />} />
+              <Route path="/people"              element={<People />} />
+              <Route path="/audit/start"         element={<AuditTake />} />
+              <Route path="/audit/:auditId"      element={<AuditTake />} />
+              <Route path="/industries"    element={<Industries />} />
+              <Route path="/bespoke"       element={<Bespoke />} />
+              <Route path="/promo"         element={<PromoCodes />} />
+              <Route path="/squarespace"   element={<SquarespaceExport />} />
+              <Route path="/events"        element={<EventsLog />} />
+              <Route path="/settings"      element={<Settings boot={boot} />} />
             </Routes>
           </main>
         </div>
       </div>
+      <AiAssistant />
     </div>
   );
 }

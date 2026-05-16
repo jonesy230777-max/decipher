@@ -35,17 +35,23 @@ WEB_PORT = os.environ.get("DECIPHER_WEB_PORT", "55173")
 BASE = f"http://127.0.0.1:{WEB_PORT}"
 
 PAGES = [
-    ("mission",      "/",                "Mission Control"),
-    ("audits",       "/audits",          "Audits"),
-    ("cohort",       "/cohort",          "Cohort Insights"),
-    ("teams",        "/teams",           "Teams"),
-    ("team_exec",    "/teams/1",         "Executive — NSW Sales Team"),
-    ("industries",   "/industries",      "Industries"),
-    ("bespoke",      "/bespoke",         "Bespoke"),
-    ("promo",        "/promo",           "Promo Codes"),
-    ("squarespace",  "/squarespace",     "Squarespace Export"),
-    ("events",       "/events",          "Events"),
-    ("settings",     "/settings",        "Settings"),
+    ("mission",       "/",                "Mission Control"),
+    ("audits",        "/audits",          "Audits"),
+    ("funnel",        "/funnel",          "Funnel"),
+    ("cohort",        "/cohort",          "Cohort Insights"),
+    ("companies",     "/companies",       "Companies"),
+    ("company_atlas", "/companies/1",     "Company - Atlas Media Group"),
+    ("teams",         "/teams",           "Teams"),
+    ("people",        "/people",          "People"),
+    ("team_exec",     "/teams/1",         "Executive - Metro Sales Team"),
+    ("respondent",    "/respondents/1368","Respondent - Grant Smith"),
+    ("audit_take",    "/audit/start",     "Audit Take (native)"),
+    ("industries",    "/industries",      "Industries"),
+    ("bespoke",       "/bespoke",         "Bespoke"),
+    ("promo",         "/promo",           "Promo Codes"),
+    ("squarespace",   "/squarespace",     "Squarespace Export"),
+    ("events",        "/events",          "Events"),
+    ("settings",      "/settings",        "Settings"),
 ]
 
 # Assertions per page. Each entry: (locator, must_contain_text)
@@ -53,21 +59,36 @@ PAGE_ASSERTIONS: dict[str, list[tuple[str, str]]] = {
     "mission": [("h1", "Mission Control")],
     "audits":  [("h1", "Audits"), ("table thead th", "Respondent")],
     "cohort":  [("h1", "Cohort Insights")],
-    "teams":   [("h1", "Teams"), ("a", "NSW Sales Team")],
+    "teams":   [("h1", "Teams"), ("a", "Metro Sales Team")],
     "team_exec": [
-        ("h1", "NSW Sales Team · Decipher DNA Audit"),
-        ("body", "Head of Sales Dashboard"),
-        ("body", "TEAM AVERAGE SCORE"),
-        ("body", "ELITE PERFORMERS"),
-        ("body", "AT-RISK REPS"),
-        ("body", "BIGGEST GAP TRAIT"),
-        ("body", "Score Distribution by Band"),
-        ("body", "Archetype Breakdown"),
-        ("body", "Priority Coaching Interventions"),
+        ("h1", "Metro Sales Team · Decipher DNA Audit"),
+        ("body", "Sales Director Dashboard"),
+        ("body", "Team average score"),
+        ("body", "Elite performers"),
+        ("body", "At-risk reps"),
+        ("body", "Biggest gap trait"),
+        ("body", "Score distribution by band"),
+        ("body", "Archetype breakdown"),
+        ("body", "Priority coaching interventions"),
+        ("body", "Team roster"),
+        ("body", "Owen Wright"),
         ("a",    "Download Executive Summary"),
         ("body", "decipher.com.au"),
         ("body", "Confidential"),
     ],
+    "companies": [("h1", "Companies"), ("body", "Atlas Media Group"),
+                  ("body", "Northwind Pharma"), ("body", "Crestline Auto"),
+                  ("body", "Pearl Tech Group")],
+    "company_atlas": [("body", "Atlas Media Group"), ("body", "Metro Sales Team"),
+                      ("body", "Field Sales Team")],
+    "respondent": [("h1", "Grant Smith"), ("body", "Metro Sales Team"),
+                   ("body", "Edge-Builder")],
+    "audit_take": [("h1", "Media Sales DNA Audit"),
+                   ("body", "Confidential"), ("body", "Begin audit")],
+    "people":     [("h1", "People"), ("body", "Search"),
+                   ("body", "Atlas Media Group")],
+    "funnel":     [("h1", "Funnel"), ("body", "Invited"), ("body", "Audit started"),
+                   ("body", "Send invites")],
     "industries": [("h1", "Industries"), ("table", "media")],
     "bespoke":   [("h1", "Bespoke"), ("body", "Atlas Media Group")],
     "promo":     [("h1", "Promo Codes"), ("table", "LAUNCH100")],
@@ -77,7 +98,8 @@ PAGE_ASSERTIONS: dict[str, list[tuple[str, str]]] = {
         ("body", "Preview tree"),
     ],
     "events":   [("h1", "Events"), ("table thead th", "Action")],
-    "settings": [("h1", "Settings"), ("body", "Resolved ports")],
+    "settings": [("h1", "Settings"), ("body", "Users and roles"),
+                 ("body", "Role permissions")],
 }
 
 # Forbidden tokens per project rules (§10 #8, #12).
@@ -99,9 +121,17 @@ def audit_page(page: Page, slug: str, path: str) -> dict:
     page.on("console", on_console)
     page.on("response", on_response)
 
+    # Seed an admin session into localStorage so the auth guard does not
+    # bounce protected pages to /login.
+    page.goto(BASE + "/landing", wait_until="domcontentloaded", timeout=15_000)
+    page.evaluate(
+        "localStorage.setItem('decipher.me', JSON.stringify("
+        "{respondent_id: 1, email: 'steve@decipher.com.au', name: 'Steve',"
+        " role: 'admin'}))"
+    )
     page.goto(BASE + path, wait_until="networkidle", timeout=15_000)
     # let any post-load tick render
-    time.sleep(0.5)
+    time.sleep(1.5)
 
     # Assertions
     failed: list[str] = []

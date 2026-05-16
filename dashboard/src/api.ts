@@ -33,6 +33,7 @@ export type Bootstrap = {
     industries: number;
     bespoke_clients: number;
     teams: number;
+    companies: number;
     events_24h: number;
   };
   pipeline_aud: number;
@@ -43,6 +44,9 @@ export type Bootstrap = {
     reports: number[];
     respondents: number[];
     events: number[];
+    companies: number[];
+    teams: number[];
+    pipeline: number[];
   };
   roles: { code: Role; label: string }[];
   served_at: string;
