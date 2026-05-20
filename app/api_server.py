@@ -31,9 +31,14 @@ def _active_taxonomy_id() -> int:
 
 app = FastAPI(title="Decipher", version="0.3.0")
 
+_CORS_ORIGINS = [
+    o.strip()
+    for o in os.getenv("DECIPHER_WEB_ORIGIN", "http://127.0.0.1:5173").split(",")
+    if o.strip()
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_CORS_ORIGINS,
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -1577,7 +1582,7 @@ def _resolve_caller_role(invited_by_email: str | None, invited_by_role: str | No
     """Prototype permission resolver. Real auth lands in M5.
     Trusts the caller's claimed role only if their email matches a
     real respondent record with that role; otherwise falls back to
-    the seeded admin (Steve)."""
+    sales_person (least privilege)."""
     if invited_by_email:
         r = rows("SELECT role FROM respondents WHERE email = %s", (invited_by_email,))
         if r:
@@ -1585,7 +1590,7 @@ def _resolve_caller_role(invited_by_email: str | None, invited_by_role: str | No
     # If only role is claimed, accept (prototype only).
     if invited_by_role and invited_by_role in VALID_ROLES:
         return invited_by_role
-    return "admin"
+    return "sales_person"
 
 
 def _send_invite_email(to_email: str, first_name: str | None, link: str) -> None:
@@ -2034,11 +2039,11 @@ def squarespace_generate() -> dict[str, Any]:
 
 
 @app.get("/api/respondents/{respondent_id}")
-def respondent_detail(respondent_id: int, viewer_role: str = "admin") -> dict[str, Any]:
+def respondent_detail(respondent_id: int) -> dict[str, Any]:
     """Individual respondent drill-down.
 
-    Per project memory (decipher-sd-drilldown-user-story): a sales_director
-    sees their own team's reps; identity gated by consent flag for non-admin.
+    Identity (name/email/mobile) is gated by consent_share_individual.
+    M5 JWT will extend this to also allow admin role unconditionally.
     """
     r = rows(
         """SELECT respondent_id, email, name, first_name, last_name, mobile,
@@ -2051,7 +2056,7 @@ def respondent_detail(respondent_id: int, viewer_role: str = "admin") -> dict[st
     if not r:
         raise HTTPException(404, "respondent not found")
     rec = r[0]
-    can_see_identity = (viewer_role == "admin") or bool(rec.get("consent_share_individual"))
+    can_see_identity = bool(rec.get("consent_share_individual"))
     if not can_see_identity:
         for k in ("name", "email", "first_name", "last_name", "mobile"):
             rec[k] = "Anonymised" if k == "name" else "anonymised"
@@ -2358,7 +2363,9 @@ def auth_login(body: LoginIn) -> dict[str, Any]:
 
 @app.get("/api/auth/demo-credentials")
 def auth_demo_credentials() -> dict[str, Any]:
-    """Surface the seeded demo credentials on the login screen."""
+    """Surface the seeded demo credentials on the login screen (dev only)."""
+    if os.getenv("DECIPHER_ENV", "dev") != "dev":
+        raise HTTPException(404, "not found")
     return {"credentials": [
         {"role": "Admin (Steve)",
          "email": "steve@decipher.com.au", "password": "Decipher2026!"},
@@ -2776,9 +2783,11 @@ def audit_answer(audit_id: int, body: AuditAnswerIn) -> dict[str, Any]:
 
 @app.post("/api/audit/{audit_id}/complete")
 def audit_complete(audit_id: int) -> dict[str, Any]:
-    a = rows("SELECT audit_id, audit_version_id FROM audits WHERE audit_id = %s", (audit_id,))
+    a = rows("SELECT audit_id, audit_version_id, status FROM audits WHERE audit_id = %s", (audit_id,))
     if not a:
         raise HTTPException(404, "audit not found")
+    if a[0]["status"] in ("scored", "reported"):
+        return {"ok": True, "audit_id": audit_id, "already_complete": True}
 
     # Completeness gate: every question on this version must have a response.
     coverage = rows(

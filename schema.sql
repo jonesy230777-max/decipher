@@ -301,3 +301,81 @@ CREATE TABLE IF NOT EXISTS audit_jobs (
 );
 CREATE INDEX IF NOT EXISTS idx_audit_jobs_queued
     ON audit_jobs (status, enqueued_at) WHERE status = 'queued';
+
+------------------------------------------------------------------
+-- Narrative library (per-trait/band text used by dna_report.py)
+------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS narrative_library (
+    id            BIGSERIAL PRIMARY KEY,
+    taxonomy_code TEXT NOT NULL,
+    dimension     TEXT NOT NULL,
+    band          TEXT NOT NULL CHECK (band IN ('developing','practising','performing','elite')),
+    strength      TEXT,
+    action        TEXT,
+    UNIQUE (taxonomy_code, dimension, band)
+);
+
+------------------------------------------------------------------
+-- Audit invites
+------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS audit_invites (
+    invite_id          BIGSERIAL PRIMARY KEY,
+    respondent_id      BIGINT REFERENCES respondents(respondent_id),
+    email              TEXT NOT NULL,
+    first_name         TEXT,
+    last_name          TEXT,
+    mobile             TEXT,
+    team_id            BIGINT,
+    company_id         BIGINT REFERENCES companies(company_id),
+    audit_version_code TEXT,
+    token_hash         TEXT NOT NULL UNIQUE,
+    invited_by_email   TEXT,
+    notes              TEXT,
+    audit_id           BIGINT REFERENCES audits(audit_id),
+    sent_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
+    expires_at         TIMESTAMPTZ NOT NULL DEFAULT (now() + interval '7 days'),
+    accepted_at        TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS idx_audit_invites_team    ON audit_invites (team_id);
+CREATE INDEX IF NOT EXISTS idx_audit_invites_company ON audit_invites (company_id);
+
+------------------------------------------------------------------
+-- Role permissions matrix
+------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS role_permissions (
+    role        TEXT NOT NULL,
+    capability  TEXT NOT NULL,
+    level       TEXT NOT NULL,
+    relevant    BOOLEAN,
+    updated_by  TEXT,
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (role, capability)
+);
+
+------------------------------------------------------------------
+-- Schema drift corrections (columns present in code, absent in DDL)
+------------------------------------------------------------------
+ALTER TABLE respondents
+    ADD COLUMN IF NOT EXISTS first_name TEXT,
+    ADD COLUMN IF NOT EXISTS last_name  TEXT,
+    ADD COLUMN IF NOT EXISTS mobile     TEXT,
+    ADD COLUMN IF NOT EXISTS job_title  TEXT,
+    ADD COLUMN IF NOT EXISTS location   TEXT,
+    ADD COLUMN IF NOT EXISTS timezone   TEXT;
+
+ALTER TABLE reports
+    ADD COLUMN IF NOT EXISTS delivered_at    TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS recipient_email TEXT;
+
+ALTER TABLE teams
+    ADD COLUMN IF NOT EXISTS contact_name   TEXT,
+    ADD COLUMN IF NOT EXISTS contact_email  TEXT,
+    ADD COLUMN IF NOT EXISTS contact_mobile TEXT;
+
+ALTER TABLE companies
+    ADD COLUMN IF NOT EXISTS contact_name   TEXT,
+    ADD COLUMN IF NOT EXISTS contact_email  TEXT,
+    ADD COLUMN IF NOT EXISTS contact_mobile TEXT,
+    ADD COLUMN IF NOT EXISTS website        TEXT,
+    ADD COLUMN IF NOT EXISTS country        TEXT,
+    ADD COLUMN IF NOT EXISTS abn            TEXT;
