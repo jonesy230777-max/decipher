@@ -1164,8 +1164,8 @@ def team_overview(team_id: int) -> dict[str, Any]:
 
 
 def _band_for(score: float) -> str:
-    if score >= 0.80: return "Elite"
-    if score >= 0.60: return "Performing"
+    if score >= 0.85: return "Elite"
+    if score >= 0.65: return "Performing"
     if score >= 0.40: return "Practising"
     return "Developing"
 
@@ -1311,8 +1311,8 @@ def team_interventions(team_id: int) -> dict[str, Any]:
              JOIN audits a USING (audit_id)
              JOIN respondents r ON r.respondent_id = a.respondent_id
             WHERE r.team_id = %s
-              AND s.cognitive_empathy >= 0.80 AND s.eq >= 0.80
-              AND s.pressure_composure >= 0.80 AND s.storytelling >= 0.80""",
+              AND s.cognitive_empathy >= 0.85 AND s.eq >= 0.85
+              AND s.pressure_composure >= 0.85 AND s.storytelling >= 0.85""",
         (team_id,),
     ) or 0
     out.append({
