@@ -2318,7 +2318,24 @@ def permissions_patch(role: str, capability: str, body: PermissionPatch) -> dict
 # Auth (prototype). Real magic-link / JWT lands in M5.
 # ---------------------------------------------------------------------------
 
-import hashlib
+import bcrypt as _bcrypt
+
+
+def _verify_password(plain: str, stored_hash: str, stored_salt: str | None) -> bool:
+    """Verify a password against its stored hash.
+
+    Bcrypt hashes start with $2b$ and are self-contained (salt embedded).
+    Legacy sha256 hashes (salt+plain → hexdigest) are accepted for existing
+    accounts and transparently upgraded to bcrypt on next successful login.
+    """
+    if stored_hash.startswith("$2b$"):
+        return _bcrypt.checkpw(plain.encode(), stored_hash.encode())
+    import hashlib
+    return hashlib.sha256(((stored_salt or "") + plain).encode()).hexdigest() == stored_hash
+
+
+def _hash_password(plain: str) -> str:
+    return _bcrypt.hashpw(plain.encode(), _bcrypt.gensalt(rounds=12)).decode()
 
 
 class LoginIn(BaseModel):
@@ -2337,9 +2354,16 @@ def auth_login(body: LoginIn) -> dict[str, Any]:
     if not r or not r[0].get("password_hash"):
         raise HTTPException(401, "invalid email or password")
     rec = r[0]
-    expected = hashlib.sha256((rec["password_salt"] + body.password).encode()).hexdigest()
-    if expected != rec["password_hash"]:
+    if not _verify_password(body.password, rec["password_hash"], rec.get("password_salt")):
         raise HTTPException(401, "invalid email or password")
+    # Upgrade legacy sha256 hash to bcrypt on first successful login.
+    if not rec["password_hash"].startswith("$2b$"):
+        new_hash = _hash_password(body.password)
+        with conn() as c:
+            c.cursor().execute(
+                "UPDATE respondents SET password_hash = %s, password_salt = NULL WHERE respondent_id = %s",
+                (new_hash, rec["respondent_id"]),
+            )
     with conn() as c:
         cur = c.cursor()
         cur.execute(

@@ -356,12 +356,14 @@ CREATE TABLE IF NOT EXISTS role_permissions (
 -- Schema drift corrections (columns present in code, absent in DDL)
 ------------------------------------------------------------------
 ALTER TABLE respondents
-    ADD COLUMN IF NOT EXISTS first_name TEXT,
-    ADD COLUMN IF NOT EXISTS last_name  TEXT,
-    ADD COLUMN IF NOT EXISTS mobile     TEXT,
-    ADD COLUMN IF NOT EXISTS job_title  TEXT,
-    ADD COLUMN IF NOT EXISTS location   TEXT,
-    ADD COLUMN IF NOT EXISTS timezone   TEXT;
+    ADD COLUMN IF NOT EXISTS first_name     TEXT,
+    ADD COLUMN IF NOT EXISTS last_name      TEXT,
+    ADD COLUMN IF NOT EXISTS mobile         TEXT,
+    ADD COLUMN IF NOT EXISTS job_title      TEXT,
+    ADD COLUMN IF NOT EXISTS location       TEXT,
+    ADD COLUMN IF NOT EXISTS timezone       TEXT,
+    ADD COLUMN IF NOT EXISTS password_hash  TEXT,
+    ADD COLUMN IF NOT EXISTS password_salt  TEXT;
 
 ALTER TABLE reports
     ADD COLUMN IF NOT EXISTS delivered_at    TIMESTAMPTZ,
