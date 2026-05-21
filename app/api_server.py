@@ -241,6 +241,25 @@ def bootstrap(request: Request) -> dict[str, Any]:
         "teams":       [int(r["n"]) for r in spark_teams],
         "pipeline":    [int(r["n"]) for r in spark_pipeline],
     }
+    # 30-day mean per-dimension scores (S031).
+    _dm = rows(
+        """SELECT round(avg(s.cognitive_empathy)  * 100, 1)::float AS cognitive_empathy,
+                  round(avg(s.eq)                 * 100, 1)::float AS eq,
+                  round(avg(s.pressure_composure) * 100, 1)::float AS pressure_composure,
+                  round(avg(s.storytelling)       * 100, 1)::float AS storytelling,
+                  count(*)::int                                     AS n_scored
+             FROM audit_scores s
+             JOIN audits a ON a.audit_id = s.audit_id
+            WHERE a.started_at > now() - interval '30 days'"""
+    )
+    _dmr = _dm[0] if _dm else {}
+    dim_means_30d = {
+        "cognitive_empathy":  float(_dmr.get("cognitive_empathy")  or 0),
+        "eq":                 float(_dmr.get("eq")                 or 0),
+        "pressure_composure": float(_dmr.get("pressure_composure") or 0),
+        "storytelling":       float(_dmr.get("storytelling")       or 0),
+        "n_scored":           int(_dmr.get("n_scored")             or 0),
+    }
     return {
         "ports": {
             "db":   os.getenv("DECIPHER_DB_PORT"),
@@ -253,6 +272,7 @@ def bootstrap(request: Request) -> dict[str, Any]:
         "archetype_taxonomy_active": active[0] if active else None,
         "me": me_row[0] if me_row else None,
         "sparks": sparks,
+        "dim_means_30d": dim_means_30d,
         "roles": [
             {"code": "admin",               "label": "Admin"},
             {"code": "ceo",                 "label": "CEO"},
@@ -1824,6 +1844,34 @@ def mission_top_archetypes() -> dict[str, Any]:
             LIMIT 8"""
     )
     return {"archetypes": data}
+
+
+@app.get("/api/mission/dim-means")
+def mission_dim_means(days: int = 30) -> dict[str, Any]:
+    """Mean score per dimension for the requested window. Used by Mission Control
+    when the operator selects a time range other than the 30-day bootstrap default.
+    """
+    days = max(1, min(days, 3650))
+    r = rows(
+        """SELECT round(avg(s.cognitive_empathy)  * 100, 1)::float AS cognitive_empathy,
+                  round(avg(s.eq)                 * 100, 1)::float AS eq,
+                  round(avg(s.pressure_composure) * 100, 1)::float AS pressure_composure,
+                  round(avg(s.storytelling)       * 100, 1)::float AS storytelling,
+                  count(*)::int                                     AS n_scored
+             FROM audit_scores s
+             JOIN audits a ON a.audit_id = s.audit_id
+            WHERE a.started_at > now() - (%s || ' days')::interval""",
+        (str(days),),
+    )
+    rec = r[0] if r else {}
+    return {
+        "cognitive_empathy":  float(rec.get("cognitive_empathy")  or 0),
+        "eq":                 float(rec.get("eq")                 or 0),
+        "pressure_composure": float(rec.get("pressure_composure") or 0),
+        "storytelling":       float(rec.get("storytelling")       or 0),
+        "n_scored":           int(rec.get("n_scored")             or 0),
+        "days":               days,
+    }
 
 
 # ---------------------------------------------------------------------------

@@ -36,8 +36,17 @@ export type Me = {
   role: Role;
 };
 
+export type DimMeans = {
+  cognitive_empathy: number;
+  eq: number;
+  pressure_composure: number;
+  storytelling: number;
+  n_scored: number;
+};
+
 export type Bootstrap = {
   ports: { db: string; api: string; web: string; mail: string };
+  dim_means_30d: DimMeans;
   counts: {
     respondents: number;
     operators: number;

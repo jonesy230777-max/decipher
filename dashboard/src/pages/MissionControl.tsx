@@ -4,9 +4,9 @@ import {
   XAxis, YAxis, Tooltip, CartesianGrid, Legend,
 } from "recharts";
 import { Stat } from "../components/Stat";
-import { Card, SectionEyebrow } from "../components/Card";
+import { Card } from "../components/Card";
 import { TimeRange, rangeDays, type TimeRangeKey } from "../components/TimeRange";
-import type { Bootstrap } from "../api";
+import type { Bootstrap, DimMeans } from "../api";
 import { api } from "../api";
 
 type Series = { day: string; n_audits: number; n_reports: number; mean_overall: number };
@@ -14,11 +14,72 @@ type Funnel = { stages: { key: string; label: string; n: number }[] };
 type RegionRow = { region: string; teams: number; reps: number; avg_overall: number };
 type TopArch = { name: string; n: number };
 
+const DIM_META: { key: keyof Omit<DimMeans, "n_scored">; label: string }[] = [
+  { key: "cognitive_empathy",  label: "Cognitive Empathy" },
+  { key: "eq",                 label: "Emotional Intelligence" },
+  { key: "pressure_composure", label: "Pressure Composure" },
+  { key: "storytelling",       label: "Narrative Persuasion" },
+];
+
+function dimBand(score: number): { label: string; colour: string } {
+  if (score >= 85) return { label: "Elite",       colour: "#34C759" };
+  if (score >= 65) return { label: "Performing",  colour: "#007AFF" };
+  if (score >= 40) return { label: "Practising",  colour: "#FF9500" };
+  return                   { label: "Developing", colour: "#FF3B30" };
+}
+
+const _EMPTY_DIM: DimMeans = {
+  cognitive_empathy: 0, eq: 0, pressure_composure: 0, storytelling: 0, n_scored: 0,
+};
+
+function DimHealthCard({ dims, nScored, rangeLabel }: { dims: DimMeans; nScored: number; rangeLabel: string }) {
+  return (
+    <Card title={`Dimension health - ${rangeLabel}`}>
+      <p className="hig-caption-1"
+         style={{ color: "var(--colour-label-secondary)", margin: "0 0 var(--space-3)" }}>
+        {nScored > 0 ? `Mean score across ${nScored} scored audit${nScored === 1 ? "" : "s"}` : "No scored audits in this window"}
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
+        {DIM_META.map(({ key, label }) => {
+          const score = dims[key] ?? 0;
+          const { label: bandLabel, colour } = dimBand(score);
+          return (
+            <div key={key}>
+              <div style={{ display: "flex", justifyContent: "space-between",
+                            alignItems: "baseline", marginBottom: 5 }}>
+                <span className="hig-callout" style={{ fontWeight: 600 }}>{label}</span>
+                <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span className="hig-numeric" style={{ fontSize: 15, fontWeight: 700,
+                                                          color: "var(--colour-label)" }}>
+                    {score > 0 ? score.toFixed(1) : "·"}
+                  </span>
+                  <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px",
+                                 borderRadius: 100, background: colour, color: "#fff",
+                                 letterSpacing: "0.01em" }}>
+                    {bandLabel}
+                  </span>
+                </span>
+              </div>
+              <div style={{ height: 8, borderRadius: 4,
+                            background: "var(--colour-separator-opaque)" }}>
+                <div style={{ height: "100%", borderRadius: 4, background: colour,
+                              width: `${Math.min(score, 100)}%`,
+                              transition: "width 0.4s ease" }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </Card>
+  );
+}
+
 export default function MissionControl({ boot }: { boot: Bootstrap | null }) {
   const [series, setSeries] = useState<Series[]>([]);
   const [funnel, setFunnel] = useState<Funnel | null>(null);
   const [regions, setRegions] = useState<RegionRow[]>([]);
   const [tops, setTops] = useState<TopArch[]>([]);
+  const [dims, setDims] = useState<DimMeans>(_EMPTY_DIM);
   const [range, setRange] = useState<TimeRangeKey>("30");
   const days = rangeDays(range);
   const rangeLabel = ({
@@ -29,11 +90,17 @@ export default function MissionControl({ boot }: { boot: Bootstrap | null }) {
     "all": "all time",
   } as const)[range];
 
+  // Seed dimension means from bootstrap (30d) on first render.
+  useEffect(() => {
+    if (boot?.dim_means_30d) setDims(boot.dim_means_30d);
+  }, [boot]);
+
   useEffect(() => {
     api<{ series: Series[] }>(`/api/mission/series?days=${days}`).then((d) => setSeries(d.series));
     api<Funnel>(`/api/funnel?days=${days}`).then(setFunnel);
     api<{ regions: RegionRow[] }>("/api/mission/by-region").then((d) => setRegions(d.regions));
     api<{ archetypes: TopArch[] }>("/api/mission/top-archetypes").then((d) => setTops(d.archetypes));
+    api<DimMeans>(`/api/mission/dim-means?days=${days}`).then(setDims);
   }, [days]);
 
   if (!boot) return <p className="hig-footnote">Loading...</p>;
@@ -104,8 +171,10 @@ export default function MissionControl({ boot }: { boot: Bootstrap | null }) {
         </div>
       </Card>
 
-      {/* Two-up: cohort mean over time + funnel bars */}
-      <section style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: "var(--space-4)" }}>
+      {/* Three-up: dimension health + cohort mean over time + funnel */}
+      <section style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr 0.9fr", gap: "var(--space-4)" }}>
+        <DimHealthCard dims={dims} nScored={dims.n_scored} rangeLabel={rangeLabel} />
+
         <Card title={`Cohort average score - ${rangeLabel}`}>
           <div style={{ width: "100%", height: 240 }}>
             <ResponsiveContainer>
