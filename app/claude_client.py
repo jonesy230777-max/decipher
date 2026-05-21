@@ -16,7 +16,7 @@ import anthropic
 from app.db import event
 
 OPUS = "claude-opus-4-7"
-HAIKU = "claude-haiku-4-5"
+HAIKU = "claude-haiku-4-5-20251001"
 
 _COST_PER_M: dict[str, dict[str, float]] = {
     OPUS:  {"input": 5.00,  "output": 25.00},

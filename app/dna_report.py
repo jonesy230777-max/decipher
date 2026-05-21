@@ -292,8 +292,8 @@ def _load_context(audit_id: int) -> dict:
                   ar.code AS archetype_code
              FROM audits a
         LEFT JOIN audit_scores s ON s.audit_id = a.audit_id
-        LEFT JOIN archetype_assignments aa ON aa.audit_id = a.audit_id
-        LEFT JOIN archetypes ar ON ar.archetype_id = aa.archetype_id
+        LEFT JOIN archetype_assignments aa ON aa.audit_id = a.audit_id AND aa.taxonomy_id = 2
+        LEFT JOIN archetypes ar ON ar.archetype_id = aa.archetype_id AND ar.taxonomy_id = 2
             WHERE a.audit_id = %s""",
         (audit_id,),
     )
