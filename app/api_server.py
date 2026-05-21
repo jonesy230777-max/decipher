@@ -243,11 +243,11 @@ def bootstrap(request: Request) -> dict[str, Any]:
     }
     # 30-day mean per-dimension scores (S031).
     _dm = rows(
-        """SELECT round(avg(s.cognitive_empathy)  * 100, 1)::float AS cognitive_empathy,
-                  round(avg(s.eq)                 * 100, 1)::float AS eq,
-                  round(avg(s.pressure_composure) * 100, 1)::float AS pressure_composure,
-                  round(avg(s.storytelling)       * 100, 1)::float AS storytelling,
-                  count(*)::int                                     AS n_scored
+        """SELECT round((avg(s.cognitive_empathy)  * 100)::numeric, 1)::float AS cognitive_empathy,
+                  round((avg(s.eq)                 * 100)::numeric, 1)::float AS eq,
+                  round((avg(s.pressure_composure) * 100)::numeric, 1)::float AS pressure_composure,
+                  round((avg(s.storytelling)       * 100)::numeric, 1)::float AS storytelling,
+                  count(*)::int                                                AS n_scored
              FROM audit_scores s
              JOIN audits a ON a.audit_id = s.audit_id
             WHERE a.started_at > now() - interval '30 days'"""
