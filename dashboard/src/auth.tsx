@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { api, type Role } from "./api";
+import { api, setToken, clearToken, type Role } from "./api";
 
 export type AuthMe = {
   respondent_id: number;
@@ -14,12 +14,17 @@ export type AuthMe = {
 type AuthCtx = {
   me: AuthMe | null;
   login: (email: string, password: string) => Promise<void>;
+  loginWithToken: (token: string, me: AuthMe) => void;
   logout: () => void;
   loading: boolean;
 };
 
 const Ctx = createContext<AuthCtx>({
-  me: null, login: async () => {}, logout: () => {}, loading: true,
+  me: null,
+  login: async () => {},
+  loginWithToken: () => {},
+  logout: () => {},
+  loading: true,
 });
 
 const STORAGE_KEY = "decipher.me";
@@ -37,20 +42,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function login(email: string, password: string) {
-    const r = await api<{ me: AuthMe }>("/api/auth/login", {
+    const r = await api<{ me: AuthMe; token: string }>("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
+    setToken(r.token);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(r.me));
     setMe(r.me);
   }
+
+  function loginWithToken(token: string, meData: AuthMe) {
+    setToken(token);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(meData));
+    setMe(meData);
+  }
+
   function logout() {
+    clearToken();
     localStorage.removeItem(STORAGE_KEY);
     setMe(null);
   }
 
-  return <Ctx.Provider value={{ me, login, logout, loading }}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={{ me, login, loginWithToken, logout, loading }}>
+      {children}
+    </Ctx.Provider>
+  );
 }
 
 export function useAuth() { return useContext(Ctx); }

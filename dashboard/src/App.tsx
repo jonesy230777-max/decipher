@@ -1,9 +1,10 @@
-import { NavLink, Route, Routes, useLocation, Navigate } from "react-router-dom";
+import { NavLink, Route, Routes, useLocation, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { api, ROLE_LABEL, type Bootstrap } from "./api";
-import { useAuth } from "./auth";
+import { api, ROLE_LABEL, type Bootstrap, type Role } from "./api";
+import { useAuth, type AuthMe } from "./auth";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
+import MyProfile from "./pages/MyProfile";
 import { Sparkline } from "./components/Sparkline";
 import { GlobalSearch } from "./components/GlobalSearch";
 import { Logo } from "./components/Logo";
@@ -28,7 +29,7 @@ import Settings from "./pages/Settings";
 
 type NavGroup = { heading: string; items: { path: string; label: string }[] };
 
-const NAV: NavGroup[] = [
+const _ALL_NAV: NavGroup[] = [
   {
     heading: "Overview",
     items: [
@@ -63,6 +64,26 @@ const NAV: NavGroup[] = [
     ],
   },
 ];
+
+// Paths permitted per role. admin = all. sales_person = own profile only.
+const _ROLE_PATHS: Partial<Record<Role, Set<string>>> = {
+  ceo:                  new Set(["/", "/funnel", "/audits", "/cohort", "/events", "/companies", "/teams", "/people"]),
+  sales_director:       new Set(["/", "/audits", "/cohort", "/teams", "/people"]),
+  hr:                   new Set(["/people", "/companies", "/cohort", "/teams"]),
+  learning_development: new Set(["/", "/audits", "/cohort", "/teams", "/people"]),
+  sales_person:         new Set(["/me"]),
+};
+
+function _navForRole(role: Role): NavGroup[] {
+  if (role === "admin") return _ALL_NAV;
+  if (role === "sales_person") return [{ heading: "My Profile", items: [{ path: "/me", label: "My Profile" }] }];
+  const allowed = _ROLE_PATHS[role];
+  if (!allowed) return _ALL_NAV;
+  return _ALL_NAV.map((g) => ({
+    ...g,
+    items: g.items.filter((it) => allowed.has(it.path)),
+  })).filter((g) => g.items.length > 0);
+}
 
 function MetricChip({
   label, value, spark, accent,
@@ -178,6 +199,7 @@ function Toolbar({ boot }: { boot: Bootstrap | null }) {
 function Sidebar({ boot }: { boot: Bootstrap | null }) {
   const { me, logout } = useAuth();
   const display = me ?? boot?.me ?? null;
+  const nav = display ? _navForRole(display.role) : _ALL_NAV;
   return (
     <aside
       style={{
@@ -190,7 +212,7 @@ function Sidebar({ boot }: { boot: Bootstrap | null }) {
       }}
     >
       <div style={{ flex: 1, overflowY: "auto", padding: "var(--space-5) var(--space-3)" }}>
-        {NAV.map((g) => (
+        {nav.map((g) => (
           <div key={g.heading} style={{ marginBottom: "var(--space-5)" }}>
             <div
               className="hig-caption-1"
@@ -280,6 +302,45 @@ function Sidebar({ boot }: { boot: Bootstrap | null }) {
   );
 }
 
+function MagicLinkConsume() {
+  const [params] = useSearchParams();
+  const { loginWithToken } = useAuth();
+  const nav = useNavigate();
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = params.get("token");
+    if (!token) { setErr("Missing token in URL."); return; }
+    api<{ ok: boolean; token: string; me: AuthMe }>(`/api/auth/magic-link/consume?token=${encodeURIComponent(token)}`)
+      .then((r) => { loginWithToken(r.token, r.me); nav("/", { replace: true }); })
+      .catch((e) => setErr(String(e.message ?? e)));
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (err) return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center",
+                  justifyContent: "center", background: "var(--colour-bg-system)" }}>
+      <div style={{ maxWidth: 380, textAlign: "center" }}>
+        <p className="hig-callout" style={{ color: "var(--colour-system-red)", fontWeight: 700 }}>
+          Sign-in link invalid
+        </p>
+        <p className="hig-footnote" style={{ color: "var(--colour-label-secondary)" }}>{err}</p>
+        <a href="/login" className="hig-callout"
+           style={{ color: "var(--colour-accent)", textDecoration: "none" }}>
+          Back to sign in
+        </a>
+      </div>
+    </div>
+  );
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center",
+                  justifyContent: "center", background: "var(--colour-bg-system)" }}>
+      <p className="hig-callout" style={{ color: "var(--colour-label-secondary)" }}>
+        Signing you in...
+      </p>
+    </div>
+  );
+}
+
 export default function App() {
   const { me, loading } = useAuth();
   const loc = useLocation();
@@ -305,8 +366,9 @@ export default function App() {
   if (loading) return null;
 
   // Public routes (no admin chrome / no auth required).
-  if (loc.pathname === "/landing") return <Landing />;
-  if (loc.pathname === "/login")   return <Login />;
+  if (loc.pathname === "/landing")           return <Landing />;
+  if (loc.pathname === "/login")             return <Login />;
+  if (loc.pathname === "/auth/magic-link")   return <MagicLinkConsume />;
   if (loc.pathname.startsWith("/audit/")) {
     return (
       <Routes>
@@ -361,6 +423,7 @@ export default function App() {
               <Route path="/squarespace"   element={<SquarespaceExport />} />
               <Route path="/events"        element={<EventsLog />} />
               <Route path="/settings"      element={<Settings boot={boot} />} />
+              <Route path="/me"            element={<MyProfile />} />
             </Routes>
           </main>
         </div>

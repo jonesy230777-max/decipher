@@ -1,5 +1,22 @@
+const _TOKEN_KEY = "decipher.token";
+
+export function setToken(token: string): void {
+  localStorage.setItem(_TOKEN_KEY, token);
+}
+
+export function clearToken(): void {
+  localStorage.removeItem(_TOKEN_KEY);
+}
+
+export function getToken(): string | null {
+  return localStorage.getItem(_TOKEN_KEY);
+}
+
 export async function api<T = unknown>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(path, init);
+  const token = getToken();
+  const headers: Record<string, string> = { ...(init?.headers as Record<string, string> ?? {}) };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetch(path, { ...init, headers });
   if (!res.ok) throw new Error(`${path} → ${res.status}`);
   return res.json() as Promise<T>;
 }

@@ -5,19 +5,21 @@ land at M5; the prototype currently treats the operator as the implied caller.
 """
 from __future__ import annotations
 
+import hashlib
 import io
 import json
 import os
 import zipfile
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
-from fastapi import BackgroundTasks, FastAPI, HTTPException
+import jwt as _jwt
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from .db import conn, rows, scalar
+from .db import conn, event, rows, scalar
 
 
 def _active_taxonomy_id() -> int:
@@ -111,7 +113,7 @@ def health_scoring() -> dict[str, Any]:
 
 
 @app.get("/api/bootstrap")
-def bootstrap() -> dict[str, Any]:
+def bootstrap(request: Request) -> dict[str, Any]:
     counts = {
         "respondents":  scalar("SELECT count(*) FROM respondents WHERE role='sales_person'") or 0,
         "operators":    scalar("SELECT count(*) FROM respondents WHERE role='admin'") or 0,
@@ -141,11 +143,18 @@ def bootstrap() -> dict[str, Any]:
     active = rows(
         "SELECT taxonomy_id, name FROM archetype_taxonomies WHERE is_active=TRUE LIMIT 1"
     )
-    # M5 will hydrate from JWT. Prototype: the implied caller is the seeded admin (Steve).
-    me_row = rows(
-        "SELECT respondent_id, email, name, role FROM respondents "
-        "WHERE role = 'admin' ORDER BY respondent_id LIMIT 1"
-    )
+    # Resolve caller from JWT; fallback to seeded admin while unauthenticated.
+    caller = _caller_from_request(request)
+    if caller:
+        me_row = rows(
+            "SELECT respondent_id, email, name, role FROM respondents WHERE respondent_id = %s",
+            (int(caller["sub"]),),
+        )
+    else:
+        me_row = rows(
+            "SELECT respondent_id, email, name, role FROM respondents "
+            "WHERE role = 'admin' ORDER BY respondent_id LIMIT 1"
+        )
 
     # 14-day sparkline series for top-of-screen metrics. One row per day,
     # zero-filled. DB-driven; no fabrication.
@@ -2285,6 +2294,41 @@ def _hash_password(plain: str) -> str:
     return _bcrypt.hashpw(plain.encode(), _bcrypt.gensalt(rounds=12)).decode()
 
 
+# ---------------------------------------------------------------------------
+# JWT session tokens (M5)
+# ---------------------------------------------------------------------------
+
+_JWT_SECRET = os.getenv("DECIPHER_JWT_SECRET", "decipher-dev-secret-change-in-prod")
+_JWT_ALGO   = "HS256"
+_JWT_TTL_DAYS = 7
+
+
+def _issue_jwt(respondent_id: int, role: str) -> str:
+    now = datetime.now(timezone.utc)
+    return _jwt.encode(
+        {"sub": str(respondent_id), "role": role,
+         "iat": now, "exp": now + timedelta(days=_JWT_TTL_DAYS)},
+        _JWT_SECRET, algorithm=_JWT_ALGO,
+    )
+
+
+def _decode_jwt(token: str) -> dict:
+    try:
+        return _jwt.decode(token, _JWT_SECRET, algorithms=[_JWT_ALGO])
+    except _jwt.ExpiredSignatureError:
+        raise HTTPException(401, "session expired")
+    except _jwt.InvalidTokenError:
+        raise HTTPException(401, "invalid token")
+
+
+def _caller_from_request(request: Request) -> dict | None:
+    """Return decoded JWT payload from Authorization: Bearer header, or None."""
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Bearer "):
+        return None
+    return _decode_jwt(auth[7:].strip())
+
+
 class LoginIn(BaseModel):
     email:    str
     password: str
@@ -2319,17 +2363,15 @@ def auth_login(body: LoginIn) -> dict[str, Any]:
             (str(rec["respondent_id"]),
              json.dumps({"email": rec["email"], "role": rec["role"]})),
         )
-    return {
-        "ok": True,
-        "me": {
-            "respondent_id": rec["respondent_id"],
-            "email":         rec["email"],
-            "name":          rec["name"],
-            "first_name":    rec["first_name"],
-            "last_name":     rec["last_name"],
-            "role":          rec["role"],
-        },
+    me_out = {
+        "respondent_id": rec["respondent_id"],
+        "email":         rec["email"],
+        "name":          rec["name"],
+        "first_name":    rec["first_name"],
+        "last_name":     rec["last_name"],
+        "role":          rec["role"],
     }
+    return {"ok": True, "token": _issue_jwt(rec["respondent_id"], rec["role"]), "me": me_out}
 
 
 @app.get("/api/auth/demo-credentials")
@@ -2349,6 +2391,128 @@ def auth_demo_credentials() -> dict[str, Any]:
         {"role": "VP Sales (Tara Holm, Northwind Pharma)",
          "email": "tara.exec@demo.decipher.local", "password": "Tara2026!"},
     ]}
+
+
+# ---------------------------------------------------------------------------
+# Magic-link auth (M5)
+# ---------------------------------------------------------------------------
+
+def _send_magic_link_email(to_email: str, first_name: str | None, link: str) -> None:
+    """Drop a magic-link sign-in email into Mailpit (rule 17)."""
+    host = os.environ.get("DECIPHER_MAIL_HOST", "127.0.0.1")
+    port = int(os.environ.get("DECIPHER_MAIL_PORT", "1025"))
+    msg = EmailMessage()
+    msg["From"] = "noreply@decipher.com.au"
+    msg["To"]   = to_email
+    msg["Subject"] = "Your Decipher sign-in link"
+    name = first_name or "there"
+    msg.set_content(
+        f"Hi {name},\n\nClick the link below to sign in to Decipher.\n\n"
+        f"{link}\n\nThis link expires in 15 minutes and can only be used once.\n\n"
+        f"If you did not request this, you can ignore this email."
+    )
+    msg.add_alternative(
+        f"""<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>
+<p>Hi {name},</p>
+<p>Click below to sign in to <strong>Decipher</strong>.</p>
+<p><a href='{link}' style='background:#1A57C7;color:#fff;padding:12px 18px;
+text-decoration:none;border-radius:6px;font-weight:600;display:inline-block;'>Sign in to Decipher</a></p>
+<p style='color:#636366;font-size:12px;'>This link expires in 15 minutes and can only be used once.
+If you did not request this, you can ignore this email.</p>
+</body></html>""",
+        subtype="html",
+    )
+    with smtplib.SMTP(host, port, timeout=5) as s:
+        s.send_message(msg)
+
+
+class MagicLinkRequestIn(BaseModel):
+    email: str
+
+
+@app.post("/api/auth/magic-link/request")
+def magic_link_request(body: MagicLinkRequestIn) -> dict[str, Any]:
+    """Generate a one-time sign-in token and deliver it via Mailpit."""
+    r = rows(
+        "SELECT respondent_id, email, name, first_name FROM respondents WHERE email = %s",
+        (body.email.lower().strip(),),
+    )
+    if not r:
+        # Don't reveal whether email exists.
+        return {"ok": True}
+    rec = r[0]
+
+    raw_token = secrets.token_urlsafe(32)
+    token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
+
+    with conn() as c, c.cursor() as cur:
+        cur.execute(
+            """INSERT INTO magic_link_tokens (token_hash, respondent_id, expires_at)
+               VALUES (%s, %s, now() + interval '15 minutes')""",
+            (token_hash, rec["respondent_id"]),
+        )
+
+    web_port = os.environ.get("DECIPHER_WEB_PORT", "5173")
+    link = f"http://127.0.0.1:{web_port}/auth/magic-link?token={raw_token}"
+    try:
+        _send_magic_link_email(
+            rec["email"],
+            rec.get("first_name") or (rec.get("name") or "").split()[0] or None,
+            link,
+        )
+    except Exception as exc:
+        event("auth.magic_link_mail_failed", severity="error",
+              subject_id=str(rec["respondent_id"]), payload={"error": str(exc)})
+    event("auth.magic_link_requested", actor="api",
+          subject_id=str(rec["respondent_id"]), payload={"email": rec["email"]})
+    return {"ok": True}
+
+
+@app.get("/api/auth/magic-link/consume")
+def magic_link_consume(token: str) -> dict[str, Any]:
+    """Verify a one-time token, mark it consumed, return a JWT session token."""
+    token_hash = hashlib.sha256(token.encode()).hexdigest()
+    r = rows(
+        """SELECT mlt.token_hash, mlt.respondent_id, mlt.expires_at, mlt.consumed_at,
+                  res.email, res.name, res.first_name, res.last_name, res.role
+             FROM magic_link_tokens mlt
+             JOIN respondents res ON res.respondent_id = mlt.respondent_id
+            WHERE mlt.token_hash = %s""",
+        (token_hash,),
+    )
+    if not r:
+        raise HTTPException(401, "invalid or expired sign-in link")
+    rec = r[0]
+    if rec["consumed_at"] is not None:
+        raise HTTPException(401, "sign-in link already used")
+    exp = rec["expires_at"]
+    if exp.tzinfo is None:
+        exp = exp.replace(tzinfo=timezone.utc)
+    if datetime.now(timezone.utc) > exp:
+        raise HTTPException(401, "sign-in link expired")
+
+    with conn() as c, c.cursor() as cur:
+        cur.execute(
+            "UPDATE magic_link_tokens SET consumed_at = now() WHERE token_hash = %s",
+            (token_hash,),
+        )
+
+    event("auth.magic_link_consumed", actor="api",
+          subject_id=str(rec["respondent_id"]),
+          payload={"email": rec["email"], "role": rec["role"]})
+
+    return {
+        "ok":    True,
+        "token": _issue_jwt(rec["respondent_id"], rec["role"]),
+        "me": {
+            "respondent_id": rec["respondent_id"],
+            "email":         rec["email"],
+            "name":          rec["name"],
+            "first_name":    rec["first_name"],
+            "last_name":     rec["last_name"],
+            "role":          rec["role"],
+        },
+    }
 
 
 @app.get("/api/users")
