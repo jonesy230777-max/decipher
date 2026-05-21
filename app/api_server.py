@@ -12,7 +12,7 @@ import zipfile
 from datetime import datetime
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -1625,70 +1625,17 @@ def _send_invite_email(to_email: str, first_name: str | None, link: str) -> None
         s.send_message(msg)
 
 
-def _send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
-    """Deliver the rendered DNA report to the respondent via Mailpit.
-
-    Sets reports.delivered_at on success. Raises on failure so the caller
-    can record delivery_warning without aborting /complete.
-    """
-    rec = rows(
-        """SELECT r.email, r.first_name, r.name, ar.name AS archetype_name
-             FROM audits a
-             JOIN respondents r ON r.respondent_id = a.respondent_id
-        LEFT JOIN archetype_assignments aa ON aa.audit_id = a.audit_id
-        LEFT JOIN archetypes ar ON ar.archetype_id = aa.archetype_id
-            WHERE a.audit_id = %s""",
-        (audit_id,),
-    )
-    if not rec or not rec[0].get("email"):
-        raise RuntimeError("recipient_missing")
-    r = rec[0]
-    first = r.get("first_name") or (r.get("name") or "there").split()[0]
-
-    host = os.environ.get("DECIPHER_MAIL_HOST", "127.0.0.1")
-    port = int(os.environ.get("DECIPHER_MAIL_PORT", "1025"))
-
-    msg = EmailMessage()
-    msg["From"] = "noreply@decipher.com.au"
-    msg["To"]   = r["email"]
-    msg["Subject"] = f"Your Decipher DNA report · {r.get('archetype_name') or 'result'}"
-    body_plain = (
-        f"Hi {first},\n\n"
-        f"Your Decipher DNA report is attached. Headline archetype: "
-        f"{r.get('archetype_name') or 'see report'}.\n\n"
-        f"Full breakdown across Cognitive Empathy, Emotional Intelligence, "
-        f"Pressure Composure and Narrative Persuasion is on page 1.\n\n"
-        f"decipher.com.au"
-    )
-    msg.set_content(body_plain)
-    msg.add_alternative(
-        f"""<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>
-        <p>Hi {first},</p>
-        <p>Your <strong>Decipher DNA report</strong> is attached.</p>
-        <p>Headline archetype: <strong>{r.get('archetype_name') or 'see report'}</strong>.
-        Full breakdown across the four traits is on page 1; per-trait coaching
-        actions are on pages 2 and 3.</p>
-        <p style='color:#636366;font-size:12px;'>decipher.com.au</p>
-        </body></html>""",
-        subtype="html",
-    )
-
-    try:
-        with open(pdf_path, "rb") as fh:
-            pdf_bytes = fh.read()
-    except FileNotFoundError:
-        raise RuntimeError(f"pdf_missing:{pdf_path}")
-    msg.add_attachment(pdf_bytes, maintype="application", subtype="pdf",
-                       filename=os.path.basename(pdf_path))
-
-    with smtplib.SMTP(host, port, timeout=5) as s:
-        s.send_message(msg)
-
-    with conn() as cdb, cdb.cursor() as cur:
+def _enqueue_email_job(audit_id: int, report_id: int, pdf_path: str) -> int:
+    """Insert an email job into audit_jobs. Returns the new job_id."""
+    import json as _json
+    with conn() as c, c.cursor() as cur:
         cur.execute(
-            "UPDATE reports SET delivered_at = now(), recipient_email = %s WHERE report_id = %s",
-            (r["email"], report_id),
+            """INSERT INTO audit_jobs (audit_id, job_type, payload)
+               VALUES (%s, 'email', %s::jsonb)
+               RETURNING job_id""",
+            (audit_id, _json.dumps({"report_id": report_id, "pdf_path": pdf_path})),
         )
+        return cur.fetchone()[0]
 
 
 @app.post("/api/audit/invite")
@@ -2805,8 +2752,25 @@ def audit_answer(audit_id: int, body: AuditAnswerIn) -> dict[str, Any]:
     return {"ok": True}
 
 
+def _score_and_report(audit_id: int) -> None:
+    """Background task: score, generate PDF, enqueue email job.
+
+    Runs in a thread after the /complete response is sent. Errors are logged
+    to events_log rather than raised (no HTTP context available here).
+    """
+    try:
+        from app.dna_scoring import score_audit
+        from app.dna_report  import generate_report
+        score_audit(audit_id)
+        report = generate_report(audit_id)
+        _enqueue_email_job(audit_id, report["report_id"], report["pdf_path"])
+    except Exception as exc:
+        event("audit.score_error", severity="error", subject_id=str(audit_id),
+              payload={"error": str(exc)})
+
+
 @app.post("/api/audit/{audit_id}/complete")
-def audit_complete(audit_id: int) -> dict[str, Any]:
+def audit_complete(audit_id: int, background_tasks: BackgroundTasks) -> dict[str, Any]:
     a = rows("SELECT audit_id, audit_version_id, status FROM audits WHERE audit_id = %s", (audit_id,))
     if not a:
         raise HTTPException(404, "audit not found")
@@ -2845,33 +2809,14 @@ def audit_complete(audit_id: int) -> dict[str, Any]:
             (str(audit_id),),
         )
 
-    # Score + generate report (only for media_sales_v1; older versions skip)
+    # Enqueue scoring + report generation as a background task.
+    # The client receives the response immediately; status transitions to
+    # 'scored' -> 'reported' in the background thread.
     audit_version_id = a[0]["audit_version_id"]
-    summary: dict[str, Any] = {"ok": True, "audit_id": audit_id}
     if audit_version_id == 2:
-        try:
-            from app.dna_scoring import score_audit
-            from app.dna_report  import generate_report
-            score = score_audit(audit_id)
-            report = generate_report(audit_id)
-            summary["score"]  = {
-                "archetype":             score["archetype"],
-                "archetype_description": score.get("archetype_description"),
-                "eq_identity":           score["eq_identity"],
-                "scores_100":            {k: round(v, 1) for k, v in score["scores_100"].items()},
-                "bands":                 score["bands"],
-                "confidence":            round(score["confidence"], 3),
-            }
-            summary["report"] = report
-            # Try Mailpit delivery; do not block /complete on SMTP errors.
-            try:
-                _send_report_email(audit_id, report["report_id"], report["pdf_path"])
-            except Exception as smtp_exc:
-                summary["delivery_warning"] = f"smtp_failed: {smtp_exc}"
-        except Exception as exc:  # surface, do not swallow
-            summary["score_error"] = str(exc)
-            raise HTTPException(500, f"scoring failed: {exc}")
-    return summary
+        background_tasks.add_task(_score_and_report, audit_id)
+        return {"ok": True, "audit_id": audit_id, "status": "processing"}
+    return {"ok": True, "audit_id": audit_id, "status": "completed"}
 
 
 @app.post("/api/audit/{audit_id}/score")
@@ -2886,14 +2831,10 @@ def audit_score(audit_id: int) -> dict[str, Any]:
     from app.dna_report  import generate_report
     score  = score_audit(audit_id)
     report = generate_report(audit_id)
-    delivery_warning = None
-    try:
-        _send_report_email(audit_id, report["report_id"], report["pdf_path"])
-    except Exception as smtp_exc:
-        delivery_warning = f"smtp_failed: {smtp_exc}"
+    email_job_id = _enqueue_email_job(audit_id, report["report_id"], report["pdf_path"])
     return {
-        "ok":     True,
-        "audit_id": audit_id,
+        "ok":          True,
+        "audit_id":    audit_id,
         "archetype":             score["archetype"],
         "archetype_description": score.get("archetype_description"),
         "eq_identity":           score["eq_identity"],
@@ -2901,7 +2842,7 @@ def audit_score(audit_id: int) -> dict[str, Any]:
         "bands":                 score["bands"],
         "confidence":            round(score["confidence"], 3),
         "report":                report,
-        "delivery_warning":      delivery_warning,
+        "email_job_id":          email_job_id,
     }
 
 
