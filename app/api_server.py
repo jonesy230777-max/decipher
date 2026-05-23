@@ -8,18 +8,35 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import logging
 import os
 import zipfile
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import jwt as _jwt
+from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from .db import conn, event, rows, scalar
+
+log = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def _lifespan(app: FastAPI):
+    from app.cohort_jobs import run_snapshot, run_pattern_hunt
+    scheduler = BackgroundScheduler(timezone="Australia/Sydney")
+    scheduler.add_job(run_snapshot,     "cron", hour=2,  minute=0,  id="cohort_snapshot")
+    scheduler.add_job(run_pattern_hunt, "cron", hour=3,  minute=0,  day_of_week="mon", id="pattern_hunt")
+    scheduler.start()
+    log.info("APScheduler started (cohort snapshot 02:00, pattern hunt Mon 03:00 AEST)")
+    yield
+    scheduler.shutdown(wait=False)
 
 
 def _active_taxonomy_id() -> int:
@@ -31,7 +48,7 @@ def _active_taxonomy_id() -> int:
         _active_taxonomy_id._cache = int(row) if row else 1  # type: ignore[attr-defined]
     return _active_taxonomy_id._cache  # type: ignore[attr-defined]
 
-app = FastAPI(title="Decipher", version="0.3.0")
+app = FastAPI(title="Decipher", version="0.3.0", lifespan=_lifespan)
 
 _CORS_ORIGINS = [
     o.strip()
@@ -1072,14 +1089,32 @@ def people_list(company_id: int | None = None,
 
 
 @app.get("/api/cohort/patterns")
-def cohort_patterns() -> dict[str, Any]:
+def cohort_patterns(doubt_only: bool = False) -> dict[str, Any]:
+    where = "WHERE doubt_passed = TRUE" if doubt_only else ""
     data = rows(
-        """SELECT pattern_id, name, conditions_json, hit_rate, n_observations,
-                  bh_p_value, oos_hit_rate, robust, doubt_passed, discovered_at
-             FROM pattern_library
+        f"""SELECT pattern_id, name, conditions_json, evidence_json,
+                   hit_rate, n_observations, bh_p_value, oos_hit_rate,
+                   robust, doubt_passed, discovered_at
+              FROM pattern_library
+              {where}
              ORDER BY doubt_passed DESC, hit_rate DESC NULLS LAST"""
     )
     return {"patterns": data, "count": len(data)}
+
+
+@app.post("/api/admin/cohort/snapshot")
+def admin_run_snapshot() -> dict[str, Any]:
+    """Manually trigger a cohort snapshot (admin only)."""
+    from app.cohort_jobs import run_snapshot
+    return run_snapshot()
+
+
+@app.post("/api/admin/cohort/pattern-hunt")
+def admin_run_pattern_hunt(background_tasks: BackgroundTasks) -> dict[str, Any]:
+    """Manually trigger the pattern hunter in the background (admin only)."""
+    from app.cohort_jobs import run_pattern_hunt
+    background_tasks.add_task(run_pattern_hunt)
+    return {"ok": True, "message": "Pattern hunt started in background. Check events log for results."}
 
 
 # ---------------------------------------------------------------------------
