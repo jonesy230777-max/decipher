@@ -46,6 +46,7 @@ type Detail = {
   };
   team_name: string | null;
   company_name: string | null;
+  company_id: number | null;
   audits: Audit[];
   bands_by_dim: Record<string, { dimension: string; band: string; score: number }>;
   identity_visible: boolean;

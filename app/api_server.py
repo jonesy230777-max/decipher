@@ -19,7 +19,7 @@ import jwt as _jwt
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse
 from pydantic import BaseModel
 
 from .db import conn, event, rows, scalar
@@ -2223,37 +2223,26 @@ def audit_invite_bulk(body: BulkInviteIn) -> dict[str, Any]:
 
 @app.post("/api/squarespace/generate")
 def squarespace_generate() -> dict[str, Any]:
-    """Generate a new Squarespace export bundle, store the row, and
-    return the new export id. Bundle assembly itself stays the
-    placeholder zip from /download until M10 ships the real assembly."""
-    now = datetime.utcnow()
-    summary = (f"Generated export {now.strftime('%Y-%m-%d %H:%M')}: pages + seo + "
-               f"design + audit_app + pdf_report + voice")
-    file_count = 47
-    size_bytes = 1_250_000
-    cost = round(0.18 + (now.microsecond % 14) / 100, 4)
-    with conn() as c:
-        cur = c.cursor()
+    """S060: Generate a new Squarespace export bundle via Claude Haiku.
+    Inserts a stub row first, then calls exports.generate_bundle() which
+    populates all files, writes the zip to disk, and updates the row."""
+    from app.exports import generate_bundle
+    now = datetime.now(timezone.utc)
+    placeholder_summary = f"Generating export {now.strftime('%Y-%m-%d %H:%M')}..."
+    with conn() as c, c.cursor() as cur:
         cur.execute(
             """INSERT INTO squarespace_exports
                    (generated_at, bundle_path, file_count, size_bytes,
                     summary, cost_usd)
                VALUES (%s,%s,%s,%s,%s,%s)
-               RETURNING export_id, generated_at""",
-            (now, f"/data/exports/squarespace_export_{now.strftime('%Y-%m-%d_%H%M%S')}.zip",
-             file_count, size_bytes, summary, cost),
+               RETURNING export_id""",
+            (now, "", 0, 0, placeholder_summary, 0.0),
         )
-        eid, gen_at = cur.fetchone()
-        cur.execute(
-            """INSERT INTO events_log (actor, action, severity, subject_id, payload)
-               VALUES ('admin', 'squarespace.exported', 'info', %s, %s::jsonb)""",
-            (str(eid), json.dumps({"file_count": file_count,
-                                   "size_bytes": size_bytes,
-                                   "cost_usd": cost,
-                                   "summary": summary})),
-        )
-    return {"ok": True, "export_id": eid, "generated_at": str(gen_at),
-            "summary": summary, "file_count": file_count}
+        eid = cur.fetchone()[0]
+    result = generate_bundle(eid)
+    return {"ok": True, "export_id": eid, "generated_at": str(now),
+            "summary": result["summary"], "file_count": result["file_count"],
+            "size_bytes": result["size_bytes"], "cost_usd": result["cost_usd"]}
 
 
 @app.get("/api/respondents/{respondent_id}")
@@ -3710,28 +3699,56 @@ def squarespace_export_download(export_id: int) -> StreamingResponse:
     if not r:
         raise HTTPException(404, "export not found")
     export = r[0]
+    bundle_path = export.get("bundle_path", "")
 
-    # M10 will serve the actual on-disk bundle. Today, build a placeholder zip
-    # in-memory so the Download Bundle button delivers a real file end-to-end.
+    # Serve real on-disk bundle if it exists
+    if bundle_path and os.path.isfile(bundle_path):
+        fname = os.path.basename(bundle_path)
+        def _stream():
+            with open(bundle_path, "rb") as f:
+                while chunk := f.read(65536):
+                    yield chunk
+        return StreamingResponse(
+            _stream(),
+            media_type="application/zip",
+            headers={"Content-Disposition": f'attachment; filename="{fname}"'},
+        )
+
+    # Fallback: build placeholder zip for legacy stub rows
     voice = scalar("SELECT voice_md FROM brand_voice WHERE id = 1") or ""
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("README.md",
-                    f"# Decipher Squarespace Bundle (DUMMY)\n\n"
+                    f"# Decipher Squarespace Bundle\n\n"
                     f"Export id: {export_id}\n"
                     f"Generated: {export['generated_at']}\n"
-                    f"Summary: {export['summary']}\n\n"
-                    f"Real bundle assembly lands in M10.")
+                    f"Note: regenerate this export to get real Claude-generated content.")
         zf.writestr("voice/brand_voice.md", voice)
         for path in _SQUARESPACE_FILE_TREE:
             if path in ("README.md", "voice/brand_voice.md"):
                 continue
-            zf.writestr(path, f"# DUMMY placeholder for {path}\n")
-        zf.writestr("design/tokens.json", json.dumps({"dummy": True}, indent=2))
+            zf.writestr(path, f"# Placeholder for {path} -- regenerate export for real content\n")
     buf.seek(0)
-    fname = os.path.basename(export["bundle_path"]) or f"squarespace_export_{export_id}.zip"
+    fname = f"squarespace_export_{export_id}.zip"
     return StreamingResponse(
         buf,
         media_type="application/zip",
         headers={"Content-Disposition": f'attachment; filename="{fname}"'},
     )
+
+
+@app.get("/api/squarespace/exports/{export_id}/files/{file_path:path}")
+def squarespace_export_file(export_id: int, file_path: str) -> PlainTextResponse:
+    """S061: Return the text content of a single file from the export zip for preview."""
+    r = rows("SELECT bundle_path FROM squarespace_exports WHERE export_id = %s", (export_id,))
+    if not r:
+        raise HTTPException(404, "export not found")
+    bundle_path = r[0].get("bundle_path", "")
+    if not bundle_path or not os.path.isfile(bundle_path):
+        raise HTTPException(404, "bundle not on disk -- regenerate this export")
+    with zipfile.ZipFile(bundle_path, "r") as zf:
+        try:
+            content = zf.read(file_path).decode("utf-8")
+        except KeyError:
+            raise HTTPException(404, f"file not found in bundle: {file_path}")
+    return PlainTextResponse(content)

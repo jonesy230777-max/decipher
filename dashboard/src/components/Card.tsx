@@ -58,10 +58,10 @@ export function SectionEyebrow({ children }: { children: ReactNode }) {
  *   - destructive (accent-red filled)
  * Min tap target 44pt (HIG iOS) / ~28pt control height (macOS push button) — we use 36 minimum here for desktop while keeping 44 for top-level CTAs.
  */
-type ButtonVariant = "filled" | "tinted" | "plain" | "destructive";
+type ButtonVariant = "filled" | "tinted" | "plain" | "ghost" | "destructive";
 
 export function Button({
-  children, onClick, href, variant = "filled", download, size = "md",
+  children, onClick, href, variant = "filled", download, size = "md", disabled = false,
 }: {
   children: ReactNode;
   onClick?: () => void;
@@ -69,6 +69,7 @@ export function Button({
   variant?: ButtonVariant;
   download?: boolean | string;
   size?: "sm" | "md" | "lg";
+  disabled?: boolean;
 }) {
   const heights = { sm: 28, md: 36, lg: 44 };
   const pad = { sm: "var(--space-2) var(--space-3)",
@@ -86,16 +87,18 @@ export function Button({
     fontWeight: 600,
     borderRadius: "var(--radius-sm)",
     border: "1px solid transparent",
-    cursor: "pointer",
+    cursor: disabled ? "not-allowed" : "pointer",
     textDecoration: "none",
+    opacity: disabled ? 0.45 : 1,
     transition: "background var(--duration-fast) var(--easing), opacity var(--duration-fast) var(--easing)",
   } as const;
 
   const variants: Record<ButtonVariant, React.CSSProperties> = {
-    filled: { ...base, background: "var(--colour-accent)", color: "#FFFFFF" },
-    tinted: { ...base, background: "var(--colour-accent-tint-bg)", color: "var(--colour-accent)" },
-    plain:  { ...base, background: "transparent", color: "var(--colour-label)",
-              border: "1px solid var(--colour-separator-opaque)" },
+    filled:      { ...base, background: "var(--colour-accent)", color: "#FFFFFF" },
+    tinted:      { ...base, background: "var(--colour-accent-tint-bg)", color: "var(--colour-accent)" },
+    plain:       { ...base, background: "transparent", color: "var(--colour-label)",
+                   border: "1px solid var(--colour-separator-opaque)" },
+    ghost:       { ...base, background: "transparent", color: "var(--colour-accent)" },
     destructive: { ...base, background: "var(--colour-system-red)", color: "#FFFFFF" },
   };
   const style = variants[variant];
@@ -108,7 +111,7 @@ export function Button({
     );
   }
   return (
-    <button onClick={onClick} style={style}>
+    <button onClick={disabled ? undefined : onClick} disabled={disabled} style={style}>
       {children}
     </button>
   );
