@@ -1,0 +1,42 @@
+[
+  {
+    "top1": "Cognitive Empathy",
+    "top2": "EQ",
+    "archetype": "The Trust Architect"
+  },
+  {
+    "top1": "Cognitive Empathy",
+    "top2": "Narrative Persuasion",
+    "archetype": "The Story Listener"
+  },
+  {
+    "top1": "Cognitive Empathy",
+    "top2": "Pressure Composure",
+    "archetype": "The Calm Diagnostician"
+  },
+  {
+    "top1": "EQ",
+    "top2": "Narrative Persuasion",
+    "archetype": "The Strategic Empath"
+  },
+  {
+    "top1": "EQ",
+    "top2": "Pressure Composure",
+    "archetype": "The Composed Reader"
+  },
+  {
+    "top1": "Pressure Composure",
+    "top2": "Narrative Persuasion",
+    "archetype": "The Confident Storyteller"
+  },
+  {
+    "top1": "All four high (85+)",
+    "top2": "\u2014",
+    "archetype": "The Elite Operator"
+  },
+  {
+    "top1": "All four low (<40)",
+    "top2": "\u2014",
+    "archetype": "The Raw Material"
+  }
+]

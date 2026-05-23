@@ -1,0 +1,74 @@
+{
+  "cognitive_empathy": {
+    "developing": {
+      "strength": "Your instinct in most sales conversations is to fill gaps with information or energy. When a buyer goes quiet, you move to solve \u2014 which is a natural expression of your expertise and care. The challenge is that this impulse, however well-intentioned, can prevent the buyer from revealing what they actually need. The most valuable moments in a sales conversation often live inside the pauses you're currently shortcutting.",
+      "action": "Start practising reflective listening: repeat the last 1\u20133 words of what a buyer says as a gentle question. Do this once per call this week. Notice what they say next. The information that emerges will be more useful than anything you could have volunteered."
+    },
+    "practising": {
+      "strength": "You understand the value of listening and have started to apply techniques like reflective listening and emotion naming in your conversations. The gap right now is consistency \u2014 you use these tools when the conversation is comfortable, but revert to instinctive responses under pressure. The real test of Cognitive Empathy is whether it holds when a buyer pushes back, goes cold, or gives you an objection you weren't expecting.",
+      "action": "Choose one upcoming call where you expect resistance. Before you dial, write down one emotion you'll name if the buyer hesitates. Commit to using it regardless of how uncomfortable the silence feels afterwards. Reviewing that moment after the call will accelerate your development faster than any further instruction."
+    },
+    "performing": {
+      "strength": "Cognitive Empathy is a reliable part of your sales toolkit. You reflect naturally, your emotional reads land with precision, and you've learned to hold silence without filling it reflexively. Buyers in your conversations report feeling genuinely heard \u2014 and this translates directly into faster trust-building and shorter sales cycles. The next level is diagnostic precision: not just naming the emotion, but identifying whether it stems from external pressure, internal politics, or personal career risk.",
+      "action": "Begin mapping the source of the emotion, not just the emotion itself. When a buyer expresses hesitation, ask yourself: is this fear of the CMO, fear for their own reputation, or fear of the unknown? The label you use changes depending on the answer \u2014 and the accuracy of your label is what separates performing from elite."
+    },
+    "elite": {
+      "strength": "Cognitive Empathy is your most powerful competitive advantage. You don't deploy it as a technique \u2014 it's how you naturally operate. Buyers leave your conversations feeling genuinely understood, and this creates a level of trust that competitors with superior products and lower prices cannot replicate. Your emotional reads are precise, your silences are strategic, and your calibrated questions move buyers from emotional reactivity into collaborative problem-solving.",
+      "action": "The opportunity at this level is to become a deliberate teacher of this skill \u2014 to model it visibly in joint meetings, debrief it with junior colleagues, and codify what you do intuitively so others can learn from it. Your instinct is the product."
+    }
+  },
+  "eq": {
+    "developing": {
+      "strength": "Your emotional awareness in client interactions is largely intuitive \u2014 you respond to what's in front of you rather than reading what's beneath the surface. The risk is that you're having the conversation the client is showing you, not the one they're actually having internally. Understanding that buyers make decisions emotionally and justify them logically is the foundation that unlocks everything else in your development.",
+      "action": "This week, after every client interaction, ask yourself one question: what was this person feeling at the start of that call versus the end? You don't need to act on the answer yet \u2014 just practise noticing. Emotional awareness always precedes emotional intelligence."
+    },
+    "practising": {
+      "strength": "You recognise emotional dynamics in client conversations and make some adjustments based on what you read. You're developing the habit of asking 'what is this person feeling?' \u2014 but you don't yet do it consistently or act on the answer with precision. The gap between noticing an emotion and naming it productively is where your growth lives right now.",
+      "action": "Identify your EQ Identity type (shown on your profile page) and read its description carefully. Then, in your next three client calls, consciously apply one behaviour from your identity's strength profile. Track whether naming or acknowledging the emotion changed the direction of the conversation."
+    },
+    "performing": {
+      "strength": "Emotional intelligence is a genuine differentiator in how you sell. You read buyers accurately, adapt your approach to the individual rather than the script, and understand that the stated objection is rarely the real one. Your EQ Identity \u2014 whichever type you are \u2014 operates reliably in most situations. The gap that remains is performing at this level under real pressure: rapid-fire objections, hostile stakeholders, or high-stakes renewal conversations.",
+      "action": "Seek out your most emotionally complex client relationship and use it as a development lab. In the next meeting, set yourself a specific EQ challenge \u2014 name one emotion you've been avoiding surfacing, or ask one question about the internal political pressure they're under. Document what happened as a result."
+    },
+    "elite": {
+      "strength": "Your emotional intelligence operates as a strategic instrument. You don't just read the room \u2014 you shape it. You understand the difference between what a buyer says and what they mean, between their external problem and the personal career risk driving their decision. Your EQ Identity is fully internalised, and you deploy it instinctively across different buyer types and high-pressure situations.",
+      "action": "The highest use of your EQ at this level is in developing the people around you. Consider running a short internal debrief after the next team pitch: what emotional signals did the room send? Who read them? What would have changed if the team had named the tension earlier? Your ability to articulate what you do intuitively is what creates a culture of emotional intelligence in your team."
+    }
+  },
+  "pressure_composure": {
+    "developing": {
+      "strength": "Under pressure \u2014 a rate challenge, a direct comparison to a competitor, a budget objection \u2014 your default is to defend, discount, or deflect. This is the most common instinct in sales, and it is also the most costly. Every time you drop your price before you've understood the real objection, you train the buyer to apply pressure again. Every time you defend your product before you've asked a question, you signal that you're in a features battle, not a needs conversation.",
+      "action": "The most important habit to build right now is this: before you respond to any objection, count to three silently. Then ask one question. Not a defence \u2014 a question. 'Help me understand what success looks like for you in this decision.' That pause and that question will change more outcomes than any training drill."
+    },
+    "practising": {
+      "strength": "You're developing composure under pressure and have started to replace defensive reflexes with genuine inquiry. You ask more questions than you used to, and you're learning that holding the tension \u2014 not rushing to resolve it \u2014 is where trust is built. The challenge is that this discipline still requires conscious effort. In a high-stakes moment, the old reflexes return.",
+      "action": "Design a personal mantra for your next difficult meeting. Something short and internal: 'One question before one answer.' Write it on a Post-it next to your screen. The goal is to make the pause automatic enough that your first instinct is curiosity rather than defence."
+    },
+    "performing": {
+      "strength": "You handle objections with genuine confidence. You don't rush to concede, you don't fill silence with justification, and you've internalised that an objection is an invitation to understand \u2014 not an attack to deflect. Your buyers experience you as steady and trustworthy in difficult conversations, and this directly increases their willingness to share the real reasons behind their hesitations.",
+      "action": "The refinement at this level is in the quality of your reframe. You're good at asking questions under pressure \u2014 now focus on the specificity of your calibrated questions. Move from 'What would success look like?' (broad) to 'When your CMO reviews this decision in six months, what would need to have happened for this to be considered a success?' The more precise the question, the richer the insight."
+    },
+    "elite": {
+      "strength": "Pressure doesn't destabilise you \u2014 it focuses you. You understand that the buyer's resistance is information, not a threat, and you use it with diagnostic precision. Where other reps defend rates, you ask about outcomes. Where others apologise for silence, you hold it. You've learned that the buyer who pushes hardest is often the most committed \u2014 they just need to feel safe enough to say yes.",
+      "action": "At this level, the development opportunity is in helping your organisation build the same composure culture. Your ability to stay calm when a procurement officer threatens to walk has a multiplier effect if you can debrief it with colleagues. Consider documenting one high-pressure conversation this quarter \u2014 what you heard, what you resisted saying, what you asked instead, and what happened as a result."
+    }
+  },
+  "narrative_persuasion": {
+    "developing": {
+      "strength": "Your current default in presentations and pitches is to lead with data \u2014 reach, CPM, audience composition, campaign results. This is the language of media, and it's accurate, but it's also forgettable. When your agency contact takes your deck into a boardroom of sceptical executives, they won't remember the numbers. They'll remember how Sarah made them feel \u2014 and right now, your deck doesn't give Sarah a feeling to take with her.",
+      "action": "Find one case study you use regularly. Rewrite it using the L.E.A.D. framework: pick a specific location, name the client's emotion at the time, describe the action you took as movement rather than specs, and add one direct quote from the client. Use this version in your next pitch and notice the difference in engagement."
+    },
+    "practising": {
+      "strength": "You understand the power of storytelling in sales and have begun to move beyond purely data-led pitches. You occasionally use client stories, and you've noticed they land better than slides full of metrics. The challenge is structure \u2014 your stories are real but they drift, they lose emotional focus, and the 'killer line' often gets buried or omitted entirely.",
+      "action": "Before your next pitch, use the L.E.A.D. template to prepare your story in writing. Specifically: write the client quote (the D in L.E.A.D.) first. Work backwards from that line to build the rest of the story around it. The quote is the destination \u2014 every other element of the story is the road that gets your listener there."
+    },
+    "performing": {
+      "strength": "Story is a reliable weapon in your sales arsenal. You use L.E.A.D. with confidence, your client quotes are vivid and memorable, and you understand intuitively that the client is always the hero of the story \u2014 not you, not your product. Buyers leave your presentations remembering something specific: a line, a moment, an image. That is a significant commercial advantage in a category where most pitches blur into each other.",
+      "action": "The refinement at this level is in your S.T.A.R. moments \u2014 the specific, shocking, or dramatised elements that make a number visceral rather than abstract. Audit your top three stories. For each one: can you turn the statistic into a stadium analogy? Can you add a physical gesture or a shift in vocal tone when you deliver the killer line? One well-executed S.T.A.R. moment per pitch is the difference between a memorable presentation and a great one."
+    },
+    "elite": {
+      "strength": "You are an elite sales storyteller. Your pitches are immersive \u2014 buyers are transported into the client's situation before they've had a chance to become sceptical. You use tonality deliberately, shifting between the FM DJ voice for emotional weight and the collaborative voice for discovery. Your S.T.A.R. moments are crafted and rehearsed, your killer lines are the ones that get repeated in boardrooms after you've left the room.",
+      "action": "The highest-leverage use of this skill is in creating stories your entire team can tell. Work with your manager or L&D lead to document two or three of your best stories in L.E.A.D. format. Make them available as a shared resource. Stories that survive retelling \u2014 that your colleagues can tell convincingly without you in the room \u2014 are the ultimate proof that a narrative has been built to last."
+    }
+  }
+}

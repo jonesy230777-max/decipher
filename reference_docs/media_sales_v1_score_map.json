@@ -1,0 +1,909 @@
+{
+  "score_map": {
+    "Q1": [
+      {
+        "letter": "A",
+        "text": "Ask another question immediately to keep momentum",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Offer more context about your product to fill the gap",
+        "score": 1
+      },
+      {
+        "letter": "C",
+        "text": "Acknowledge what they said and bridge to your next point",
+        "score": 3
+      },
+      {
+        "letter": "D",
+        "text": "Reflect their last word or phrase back as a question",
+        "score": 4
+      },
+      {
+        "letter": "E",
+        "text": "Name the emotion behind their short answer and hold silence",
+        "score": 5
+      }
+    ],
+    "Q2": [
+      {
+        "letter": "A",
+        "text": "Immediately explain why this time will be different",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Apologise and offer a discount to rebuild goodwill",
+        "score": 1
+      },
+      {
+        "letter": "C",
+        "text": "Ask them to tell you more about what happened",
+        "score": 3
+      },
+      {
+        "letter": "D",
+        "text": "Reflect back: 'Didn't work?' and wait",
+        "score": 4
+      },
+      {
+        "letter": "E",
+        "text": "Name the feeling: 'It sounds like that experience left you cautious about committing again.'",
+        "score": 5
+      }
+    ],
+    "Q3": [
+      {
+        "letter": "A",
+        "text": "Fill the silence with a clarifying follow-up question",
+        "score": 2
+      },
+      {
+        "letter": "B",
+        "text": "Rephrase the question in case they didn't understand",
+        "score": 1
+      },
+      {
+        "letter": "C",
+        "text": "Wait up to 5 seconds then gently prompt",
+        "score": 3
+      },
+      {
+        "letter": "D",
+        "text": "Hold the silence \u2014 they are processing and will speak",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Summarise what you've heard so far to give them something to react to",
+        "score": 3
+      }
+    ],
+    "Q4": [
+      {
+        "letter": "A",
+        "text": "Apologise and move on quickly",
+        "score": 2
+      },
+      {
+        "letter": "B",
+        "text": "Defend your original read \u2014 they seem worried to you",
+        "score": 1
+      },
+      {
+        "letter": "C",
+        "text": "Acknowledge the correction and ask them to tell you more",
+        "score": 4
+      },
+      {
+        "letter": "D",
+        "text": "Name the emotion more precisely: 'It sounds like I missed that \u2014 it's more frustration than worry.'",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Pivot straight to a solution for frustration",
+        "score": 2
+      }
+    ],
+    "Q5": [
+      {
+        "letter": "A",
+        "text": "Pushing through your agenda \u2014 they're just busy",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Asking a direct question: 'Is everything okay?'",
+        "score": 2
+      },
+      {
+        "letter": "C",
+        "text": "Slowing your pace and asking an open calibrated question",
+        "score": 4
+      },
+      {
+        "letter": "D",
+        "text": "Naming what you observe: 'It seems like there's a lot on your plate today.'",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Acknowledging the tension and offering to reschedule",
+        "score": 3
+      }
+    ],
+    "Q6": [
+      {
+        "letter": "A",
+        "text": "Send a 'just checking in' follow-up email",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Call them and walk through your proposal again",
+        "score": 1
+      },
+      {
+        "letter": "C",
+        "text": "Send a short email asking if priorities have shifted",
+        "score": 3
+      },
+      {
+        "letter": "D",
+        "text": "Name what you sense: 'It feels like your focus may have moved elsewhere \u2014 happy to pause if that helps.'",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Wait two weeks before reaching out again",
+        "score": 2
+      }
+    ],
+    "Q7": [
+      {
+        "letter": "A",
+        "text": "Listen politely then redirect to your agenda",
+        "score": 2
+      },
+      {
+        "letter": "B",
+        "text": "Offer sympathy: 'I'm sorry to hear that'",
+        "score": 2
+      },
+      {
+        "letter": "C",
+        "text": "Ask a question that connects their situation to your solution",
+        "score": 3
+      },
+      {
+        "letter": "D",
+        "text": "Fully listen, then reflect back what you heard before moving on",
+        "score": 4
+      },
+      {
+        "letter": "E",
+        "text": "Name what they're feeling and invite them to say more before pivoting",
+        "score": 5
+      }
+    ],
+    "Q8": [
+      {
+        "letter": "A",
+        "text": "Present more compelling data to re-engage them",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Ask directly: 'Are you interested in moving forward?'",
+        "score": 2
+      },
+      {
+        "letter": "C",
+        "text": "Ask an open question about their current priorities",
+        "score": 3
+      },
+      {
+        "letter": "D",
+        "text": "Name what you notice: 'It seems like something hasn't quite landed yet.'",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Give them space \u2014 push less, let them come to you",
+        "score": 3
+      }
+    ],
+    "Q9": [
+      {
+        "letter": "A",
+        "text": "Review what data you could have presented differently",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Analyse the relationship dynamics \u2014 who had influence you didn't map?",
+        "score": 4
+      },
+      {
+        "letter": "C",
+        "text": "Follow up with the buyer to understand what changed",
+        "score": 4
+      },
+      {
+        "letter": "D",
+        "text": "Accept it as part of the game and move to the next deal",
+        "score": 2
+      },
+      {
+        "letter": "E",
+        "text": "Ask the buyer directly what the real reason was",
+        "score": 3
+      }
+    ],
+    "Q10": [
+      {
+        "letter": "A",
+        "text": "They're genuinely interested but busy",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "They were being polite \u2014 the deal is probably dead",
+        "score": 2
+      },
+      {
+        "letter": "C",
+        "text": "There's an internal obstacle they haven't told you about",
+        "score": 4
+      },
+      {
+        "letter": "D",
+        "text": "A signal to send more proof points and case studies",
+        "score": 1
+      },
+      {
+        "letter": "E",
+        "text": "An invitation to name the gap: 'It feels like something has shifted since we last spoke.'",
+        "score": 5
+      }
+    ],
+    "Q11": [
+      {
+        "letter": "A",
+        "text": "Address the loud objector head-on to neutralise the resistance",
+        "score": 2
+      },
+      {
+        "letter": "B",
+        "text": "Pause and ask the quiet stakeholders for their perspective",
+        "score": 4
+      },
+      {
+        "letter": "C",
+        "text": "Continue your pitch and handle objections at the end",
+        "score": 1
+      },
+      {
+        "letter": "D",
+        "text": "Acknowledge the objector's concern then open to the room",
+        "score": 4
+      },
+      {
+        "letter": "E",
+        "text": "Name the dynamic: 'It sounds like there are a few different perspectives in the room \u2014 let's surface them.'",
+        "score": 5
+      }
+    ],
+    "Q12": [
+      {
+        "letter": "A",
+        "text": "Send a revised proposal with better pricing",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Request a meeting to present new campaign options",
+        "score": 2
+      },
+      {
+        "letter": "C",
+        "text": "Call and ask if something has changed on their end",
+        "score": 3
+      },
+      {
+        "letter": "D",
+        "text": "Name what you sense: 'It seems like something has shifted \u2014 I'd rather understand it than guess.'",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Speak to your manager before contacting the client",
+        "score": 1
+      }
+    ],
+    "Q13": [
+      {
+        "letter": "A",
+        "text": "Match the rate to protect the relationship",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Defend your rate card with audience and reach data",
+        "score": 2
+      },
+      {
+        "letter": "C",
+        "text": "Acknowledge the pressure and ask what outcome they're optimising for",
+        "score": 4
+      },
+      {
+        "letter": "D",
+        "text": "Name the pressure: 'It sounds like you're under internal pressure to reduce spend \u2014 what would success look like for you in this decision?'",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Ask for time to consult your manager before responding",
+        "score": 2
+      }
+    ],
+    "Q14": [
+      {
+        "letter": "A",
+        "text": "Immediately offer a lower-cost option",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Ask when their budget cycle resets",
+        "score": 2
+      },
+      {
+        "letter": "C",
+        "text": "Reflect back: 'Don't have budget?' and hold silence",
+        "score": 5
+      },
+      {
+        "letter": "D",
+        "text": "Ask what the budget situation looked like before this conversation",
+        "score": 3
+      },
+      {
+        "letter": "E",
+        "text": "Summarise the ROI case to justify the spend",
+        "score": 1
+      }
+    ],
+    "Q15": [
+      {
+        "letter": "A",
+        "text": "Fast-forward to your most compelling slide",
+        "score": 2
+      },
+      {
+        "letter": "B",
+        "text": "Acknowledge it: 'Fair \u2014 what would make this conversation worth your time?'",
+        "score": 5
+      },
+      {
+        "letter": "C",
+        "text": "Defend your approach as different from competitors",
+        "score": 1
+      },
+      {
+        "letter": "D",
+        "text": "Ask what they heard before that didn't land",
+        "score": 4
+      },
+      {
+        "letter": "E",
+        "text": "Wrap up quickly and follow up with a tailored proposal",
+        "score": 2
+      }
+    ],
+    "Q16": [
+      {
+        "letter": "A",
+        "text": "Commit to matching it \u2014 close the deal first, sort it out later",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Explain why CPC guarantees are often misleading metrics",
+        "score": 2
+      },
+      {
+        "letter": "C",
+        "text": "Acknowledge the ask: 'It sounds like attribution visibility is the real driver here \u2014 is that right?'",
+        "score": 5
+      },
+      {
+        "letter": "D",
+        "text": "Ask what they would do with the attribution data",
+        "score": 4
+      },
+      {
+        "letter": "E",
+        "text": "Offer a performance bonus structure as a compromise",
+        "score": 2
+      }
+    ],
+    "Q17": [
+      {
+        "letter": "A",
+        "text": "Don't notice \u2014 it's a natural empathy signal",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Notice but it's better than silence",
+        "score": 2
+      },
+      {
+        "letter": "C",
+        "text": "Recognise it's a filler \u2014 you need to ask a better question instead",
+        "score": 4
+      },
+      {
+        "letter": "D",
+        "text": "Stop using it and replace it with a calibrated question",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Use it once more, then pivot to closing",
+        "score": 1
+      }
+    ],
+    "Q18": [
+      {
+        "letter": "A",
+        "text": "Promise results to close the deal",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Ask what 'moving the needle' means to them specifically",
+        "score": 5
+      },
+      {
+        "letter": "C",
+        "text": "Present a new campaign structure with stronger targeting",
+        "score": 2
+      },
+      {
+        "letter": "D",
+        "text": "Acknowledge: 'It sounds like the previous investment left you needing more certainty before committing again.'",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Share a third-party case study showing comparable results",
+        "score": 2
+      }
+    ],
+    "Q19": [
+      {
+        "letter": "A",
+        "text": "Your company's reach and audience data",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Your product's unique features versus competitors",
+        "score": 1
+      },
+      {
+        "letter": "C",
+        "text": "A question about their biggest current challenge",
+        "score": 3
+      },
+      {
+        "letter": "D",
+        "text": "A brief story about a client in a similar situation",
+        "score": 4
+      },
+      {
+        "letter": "E",
+        "text": "A specific client story using location, emotion, and a direct quote",
+        "score": 5
+      }
+    ],
+    "Q20": [
+      {
+        "letter": "A",
+        "text": "A comparison of reach, CPM, and audience data",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "A list of your top three differentiators",
+        "score": 2
+      },
+      {
+        "letter": "C",
+        "text": "A client success story with a specific outcome",
+        "score": 4
+      },
+      {
+        "letter": "D",
+        "text": "A story using L.E.A.D. \u2014 location, emotion, action, dialogue \u2014 ending with a client quote",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "A question back: 'What would success look like for you in this space?'",
+        "score": 3
+      }
+    ],
+    "Q21": [
+      {
+        "letter": "A",
+        "text": "'We reached 450,000 people in the metro area'",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "'We filled ANZ Stadium five times over in a single breakfast shift'",
+        "score": 5
+      },
+      {
+        "letter": "C",
+        "text": "'Our campaign delivered a 28% lift in sales'",
+        "score": 2
+      },
+      {
+        "letter": "D",
+        "text": "'Our results exceeded industry benchmarks by 2.3x'",
+        "score": 1
+      },
+      {
+        "letter": "E",
+        "text": "A before-and-after story ending with a client quote about the impact",
+        "score": 5
+      }
+    ],
+    "Q22": [
+      {
+        "letter": "A",
+        "text": "Including all the data they'll need in the deck",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Briefing them on the top three product features",
+        "score": 2
+      },
+      {
+        "letter": "C",
+        "text": "Giving them a clear ROI argument to use",
+        "score": 3
+      },
+      {
+        "letter": "D",
+        "text": "Arming them with one short, vivid story they can retell confidently",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Following up with a summary email after the meeting",
+        "score": 1
+      }
+    ],
+    "Q23": [
+      {
+        "letter": "A",
+        "text": "Highlighting your accountability processes and reporting",
+        "score": 2
+      },
+      {
+        "letter": "B",
+        "text": "Offering a performance-based pricing model",
+        "score": 2
+      },
+      {
+        "letter": "C",
+        "text": "Sharing a testimonial from a satisfied client",
+        "score": 3
+      },
+      {
+        "letter": "D",
+        "text": "Telling a specific story of how you helped a client in a similar post-disappointment situation",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Acknowledging their concern and moving to your product strengths",
+        "score": 2
+      }
+    ],
+    "Q24": [
+      {
+        "letter": "A",
+        "text": "You emphasise how great your product performed",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "You focus on your team's strategic thinking and execution",
+        "score": 1
+      },
+      {
+        "letter": "C",
+        "text": "You centre the story on the client's problem and their relief when it was solved",
+        "score": 5
+      },
+      {
+        "letter": "D",
+        "text": "You split the credit equally between your company and the client",
+        "score": 2
+      },
+      {
+        "letter": "E",
+        "text": "You lead with the data that proves the outcome",
+        "score": 1
+      }
+    ],
+    "Q25": [
+      {
+        "letter": "A",
+        "text": "They're busy \u2014 keep following up",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Something changed internally \u2014 I need to find out what",
+        "score": 4
+      },
+      {
+        "letter": "C",
+        "text": "The deal is dead \u2014 move on",
+        "score": 2
+      },
+      {
+        "letter": "D",
+        "text": "Name what you sense: 'It feels like the timing may have shifted \u2014 I want to respect that.'",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Send a breakup email to re-engage",
+        "score": 3
+      }
+    ],
+    "Q26": [
+      {
+        "letter": "A",
+        "text": "Fill it immediately with reassurance",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Repeat your ask in a different way",
+        "score": 1
+      },
+      {
+        "letter": "C",
+        "text": "Hold the silence \u2014 they're processing",
+        "score": 5
+      },
+      {
+        "letter": "D",
+        "text": "Ask if they have any final questions",
+        "score": 3
+      },
+      {
+        "letter": "E",
+        "text": "Summarise your key points again",
+        "score": 2
+      }
+    ],
+    "Q27": [
+      {
+        "letter": "A",
+        "text": "Take their positivity at face value",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Ask about their decision-making timeline",
+        "score": 3
+      },
+      {
+        "letter": "C",
+        "text": "Name what you sense: 'It seems like something hasn't clicked yet \u2014 am I reading that right?'",
+        "score": 5
+      },
+      {
+        "letter": "D",
+        "text": "Send a more detailed proposal to address any unstated concerns",
+        "score": 2
+      },
+      {
+        "letter": "E",
+        "text": "Ask their assistant if there are any issues you should know about",
+        "score": 2
+      }
+    ],
+    "Q28": [
+      {
+        "letter": "A",
+        "text": "Price \u2014 buyers are budget-constrained",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Timing \u2014 the market isn't right",
+        "score": 1
+      },
+      {
+        "letter": "C",
+        "text": "Risk \u2014 they fear looking bad if the campaign underperforms",
+        "score": 5
+      },
+      {
+        "letter": "D",
+        "text": "Product \u2014 your offering doesn't fit their needs",
+        "score": 2
+      },
+      {
+        "letter": "E",
+        "text": "Competition \u2014 a competitor made a better offer",
+        "score": 1
+      }
+    ],
+    "Q29": [
+      {
+        "letter": "A",
+        "text": "To defend your position \u2014 you believe in what you're selling",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "To apologise and offer a concession",
+        "score": 1
+      },
+      {
+        "letter": "C",
+        "text": "To breathe, pause, and ask a question",
+        "score": 5
+      },
+      {
+        "letter": "D",
+        "text": "To ask what specifically isn't working for them",
+        "score": 4
+      },
+      {
+        "letter": "E",
+        "text": "To acknowledge the pushback and invite them to say more",
+        "score": 5
+      }
+    ],
+    "Q30": [
+      {
+        "letter": "A",
+        "text": "Their budget range",
+        "score": 2
+      },
+      {
+        "letter": "B",
+        "text": "Their preferred media channels",
+        "score": 1
+      },
+      {
+        "letter": "C",
+        "text": "Their KPIs and success metrics",
+        "score": 3
+      },
+      {
+        "letter": "D",
+        "text": "What they personally fear will happen if this campaign fails",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Their relationship with the previous agency",
+        "score": 3
+      }
+    ],
+    "Q31": [
+      {
+        "letter": "A",
+        "text": "Reach and frequency",
+        "score": 1
+      },
+      {
+        "letter": "B",
+        "text": "Cost efficiency",
+        "score": 1
+      },
+      {
+        "letter": "C",
+        "text": "Innovation and differentiation",
+        "score": 2
+      },
+      {
+        "letter": "D",
+        "text": "Certainty and relief \u2014 the confidence they won't be embarrassed by this decision",
+        "score": 5
+      },
+      {
+        "letter": "E",
+        "text": "Data-backed justification for their spend",
+        "score": 2
+      }
+    ]
+  },
+  "eq_identity": {
+    "EQ1": [
+      {
+        "letter": "EQ-A",
+        "text": "When a client is emotional, my strength is staying calm and not reacting",
+        "identity": "regulator"
+      },
+      {
+        "letter": "EQ-B",
+        "text": "My strength is using their emotion as information to guide my next move",
+        "identity": "edge_builder"
+      },
+      {
+        "letter": "EQ-C",
+        "text": "My strength is noticing the emotion before they've said anything",
+        "identity": "observer"
+      },
+      {
+        "letter": "EQ-D",
+        "text": "My strength is naming the emotion out loud \u2014 even when it's uncomfortable",
+        "identity": "namer"
+      }
+    ],
+    "EQ2": [
+      {
+        "letter": "EQ-A",
+        "text": "Under pressure I stay logical and don't let feelings cloud my judgement",
+        "identity": "regulator"
+      },
+      {
+        "letter": "EQ-B",
+        "text": "Under pressure I look for the emotional lever the other person hasn't used yet",
+        "identity": "edge_builder"
+      },
+      {
+        "letter": "EQ-C",
+        "text": "Under pressure I watch and wait \u2014 reading the room before I act",
+        "identity": "observer"
+      },
+      {
+        "letter": "EQ-D",
+        "text": "Under pressure I call out what's really happening \u2014 even if it's awkward",
+        "identity": "namer"
+      }
+    ],
+    "EQ3": [
+      {
+        "letter": "EQ-A",
+        "text": "After a difficult meeting I debrief by reviewing what logic/data I used",
+        "identity": "regulator"
+      },
+      {
+        "letter": "EQ-B",
+        "text": "After a difficult meeting I debrief by thinking about what emotional leverage I did or didn't use",
+        "identity": "edge_builder"
+      },
+      {
+        "letter": "EQ-C",
+        "text": "After a difficult meeting I replay what I noticed \u2014 body language, silence, energy",
+        "identity": "observer"
+      },
+      {
+        "letter": "EQ-D",
+        "text": "After a difficult meeting I think about whether I named the hard thing or avoided it",
+        "identity": "namer"
+      }
+    ]
+  }
+}

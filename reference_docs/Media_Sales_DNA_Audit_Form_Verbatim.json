@@ -1,0 +1,466 @@
+[
+  {
+    "i": 0,
+    "type": "short_answer",
+    "title": "Full Name",
+    "description": null
+  },
+  {
+    "i": 1,
+    "type": "short_answer",
+    "title": "Job Title",
+    "description": null
+  },
+  {
+    "i": 2,
+    "type": "page_break",
+    "title": "31 Questions that will identify your Sales DNA. Answer each question based on your instincts, there are no right or wrong answers",
+    "description": null
+  },
+  {
+    "i": 3,
+    "type": "multiple_choice",
+    "title": "Q1. A buyer gives you a one-word answer after your opening question. Your instinct is to:",
+    "description": null,
+    "options": [
+      "Ask another question immediately to keep momentum",
+      "Offer more context about your product to fill the gap",
+      "Acknowledge what they said and bridge to your next point",
+      "Mirror their last word or phrase back as a question",
+      "Label the feeling behind their short answer and hold silence"
+    ]
+  },
+  {
+    "i": 4,
+    "type": "multiple_choice",
+    "title": "Q2. Mid-meeting, a buyer says: 'We've tried this before and it didn't work.' You:",
+    "description": null,
+    "options": [
+      "Immediately explain why this time will be different",
+      "Apologise and offer a discount to rebuild goodwill",
+      "Ask them to tell you more about what happened",
+      "Reply: 'Didn't work?' and wait",
+      "Label: 'It sounds like that experience left you cautious about committing again.'"
+    ]
+  },
+  {
+    "i": 5,
+    "type": "multiple_choice",
+    "title": "Q3. There is a 7-second silence after you ask a key discovery question. You:",
+    "description": null,
+    "options": [
+      "Fill the silence with a clarifying follow-up question",
+      "Rephrase the question in case they didn't understand",
+      "Wait up to 5 seconds then gently prompt",
+      "Hold the silence, they are processing and will speak",
+      "Summarise what you've heard so far to give them something to react to"
+    ]
+  },
+  {
+    "i": 6,
+    "type": "multiple_choice",
+    "title": "Q4. You call out a buyer's emotion incorrectly. They say 'I'm not worried,  I'm frustrated.' You:",
+    "description": null,
+    "options": [
+      "Apologise and move on quickly",
+      "Defend your original read, they seem worried to you",
+      "Acknowledge the correction and ask them to tell you more",
+      "Use a follow-up statement: 'It sounds like I missed that, it's more frustration than worry.'",
+      "Pivot straight to a solution for frustration"
+    ]
+  },
+  {
+    "i": 7,
+    "type": "multiple_choice",
+    "title": "Q5. A buyer says very little but their body language is tense. You prioritise:",
+    "description": null,
+    "options": [
+      "Pushing through your agenda, they're just busy",
+      "Asking a direct question: 'Is everything okay?'",
+      "Slowing your pace and asking an open calibrated question",
+      "Narrating what you observe: 'It seems like there's a lot on your plate today.'",
+      "Acknowledging the tension and offering to reschedule"
+    ]
+  },
+  {
+    "i": 8,
+    "type": "multiple_choice",
+    "title": "Q6. After a strong discovery session, a buyer goes cold and stops responding. You:",
+    "description": null,
+    "options": [
+      "Send a 'just checking in' follow-up email",
+      "Call them and walk through your proposal again",
+      "Send a short email asking if priorities have shifted",
+      "Frame your response: 'It feels like your focus may have moved elsewhere, happy to pause if that helps.'",
+      "Wait two weeks before reaching out again",
+      ""
+    ]
+  },
+  {
+    "i": 9,
+    "type": "multiple_choice",
+    "title": "Q7. A client is venting about a difficult internal situation that has nothing to do with your proposal. You:",
+    "description": null,
+    "options": [
+      "Listen politely then redirect to your agenda",
+      "Offer sympathy: 'I'm sorry to hear that'",
+      "Ask a question that connects their situation to your solution",
+      "Fully listen, then reflect back what you heard before moving on",
+      "Name what they're feeling and invite them to say more before pivoting"
+    ]
+  },
+  {
+    "i": 10,
+    "type": "multiple_choice",
+    "title": "Q8. You sense a buyer is holding back, they're agreeable but not engaged. You:",
+    "description": null,
+    "options": [
+      "Present more compelling data to re-engage them",
+      "Ask directly: 'Are you interested in moving forward?'",
+      "Ask an open question about their current priorities",
+      "Name what you notice: 'It seems like something hasn't quite landed yet.'",
+      "Give them space, push less, let them come to you"
+    ]
+  },
+  {
+    "i": 11,
+    "type": "multiple_choice",
+    "title": "Q9. A major deal falls apart at the last minute due to internal politics you didn't see. Your immediate response is:",
+    "description": null,
+    "options": [
+      "Review what data you could have presented differently",
+      "Analyse the relationship dynamics, who had influence you didn't map?",
+      "Follow up with the buyer to understand what changed",
+      "Accept it as part of the game and move to the next deal",
+      "Ask the buyer directly what the real reason was"
+    ]
+  },
+  {
+    "i": 12,
+    "type": "multiple_choice",
+    "title": "Q10. A client gives you positive feedback to your face but doesn't return calls. You interpret this as:",
+    "description": null,
+    "options": [
+      "They're genuinely interested but busy",
+      "They were being polite, the deal is probably dead",
+      "There's an internal obstacle they haven't told you about",
+      "A signal to send more proof points and case studies",
+      "An invitation to name the gap: 'It feels like something has shifted since we last spoke.'"
+    ]
+  },
+  {
+    "i": 13,
+    "type": "multiple_choice",
+    "title": "Q11. In a group pitch, one stakeholder keeps interrupting with objections while others stay silent. You:",
+    "description": null,
+    "options": [
+      "Address the loud objector head-on to neutralise the resistance",
+      "Pause and ask the quiet stakeholders for their perspective",
+      "Continue your pitch and handle objections at the end",
+      "Acknowledge the objector's concern then open to the room",
+      "Label the dynamic: 'It sounds like there are a few different perspectives in the room, let's surface them.'"
+    ]
+  },
+  {
+    "i": 14,
+    "type": "multiple_choice",
+    "title": "Q12. A long-term client suddenly reduces their spend with no explanation. Your first move is:",
+    "description": null,
+    "options": [
+      "Send a revised proposal with better pricing",
+      "Request a meeting to present new campaign options",
+      "Call and ask if something has changed on their end",
+      "Frame the situation: 'It seems like something has shifted, I'd rather understand it than guess.'",
+      "Speak to your manager before contacting the client"
+    ]
+  },
+  {
+    "i": 15,
+    "type": "multiple_choice",
+    "title": "Q13. A Media Director says: 'Match this rate or the budget moves to your competitor.' You:",
+    "description": null,
+    "options": [
+      "Match the rate to protect the relationship",
+      "Defend your rate card with audience and reach data",
+      "Acknowledge the pressure and ask what outcome they're optimising for",
+      "Label the pressure: 'It sounds like you're under internal pressure to reduce spend, what would success look like for you in this decision?'",
+      "Ask for time to consult your manager before responding"
+    ]
+  },
+  {
+    "i": 16,
+    "type": "multiple_choice",
+    "title": "Q14. A buyer says 'We don't have budget' and then goes silent. You:",
+    "description": null,
+    "options": [
+      "Immediately offer a lower-cost option",
+      "Ask when their budget cycle resets",
+      "Mirror: 'Don't have budget?' and hold silence",
+      "Ask what the budget situation looked like before this conversation",
+      "Summarise the ROI case to justify the spend"
+    ]
+  },
+  {
+    "i": 17,
+    "type": "multiple_choice",
+    "title": "Q15. Mid-pitch, a senior stakeholder says 'I've heard all this before.' You:",
+    "description": null,
+    "options": [
+      "Fast-forward to your most compelling slide",
+      "Acknowledge it: 'Fair, what would make this conversation worth your time?'",
+      "Defend your approach as different from competitors",
+      "Ask what they heard before that didn't land",
+      "Wrap up quickly and follow up with a tailored proposal"
+    ]
+  },
+  {
+    "i": 18,
+    "type": "multiple_choice",
+    "title": "Q16. An agency contact says: 'Your competitor is offering CPC guarantees and post-click attribution. Can you match it?' You:",
+    "description": null,
+    "options": [
+      "Commit to matching it, close the deal first, sort it out later",
+      "Explain why CPC guarantees are often misleading metrics",
+      "Acknowledge the ask: 'It sounds like attribution visibility is the real driver here, is that right?'",
+      "Ask what they would do with the attribution data",
+      "Offer a performance bonus structure as a compromise"
+    ]
+  },
+  {
+    "i": 19,
+    "type": "multiple_choice",
+    "title": "Q17. You've used the phrase 'I completely understand' three times in a difficult meeting. You:",
+    "description": null,
+    "options": [
+      "Don't notice, it's a natural empathy signal",
+      "Notice but it's better than silence",
+      "Recognise it's a filler, you need to ask a better question instead",
+      "Stop using it and replace it with a calibrated question",
+      "Use it once more, then pivot to closing"
+    ]
+  },
+  {
+    "i": 20,
+    "type": "multiple_choice",
+    "title": "Q18. A client says 'The last campaign didn't move the needle, we need guarantees to proceed.' You:",
+    "description": null,
+    "options": [
+      "Promise results to close the deal",
+      "Ask what 'moving the needle' means to them specifically",
+      "Present a new campaign structure with stronger targeting",
+      "Acknowledge: 'It sounds like the previous investment left you needing more certainty before committing again.'",
+      "Share a third-party case study showing comparable results"
+    ]
+  },
+  {
+    "i": 21,
+    "type": "multiple_choice",
+    "title": "Q19. You have 2 minutes to introduce your solution in a first meeting. You start with:",
+    "description": null,
+    "options": [
+      "Your company's reach and audience data",
+      "Your product's unique features versus competitors",
+      "A question about their biggest current challenge",
+      "A brief story about a client in a similar situation, time is of the essence",
+      "A specific client story using location, emotion, and a direct quote"
+    ]
+  },
+  {
+    "i": 22,
+    "type": "multiple_choice",
+    "title": "Q20. A sceptical CMO asks 'Why should I choose you over your competitor?' You respond with:",
+    "description": null,
+    "options": [
+      "A comparison of reach, CPM, and audience data",
+      "Your product's unique features versus competitors",
+      "A client success story with a specific outcome",
+      "You paint a picture: the client's situation before, what shifted, and you finish with their exact words",
+      "A question back: 'What would success look like for you in this space?'"
+    ]
+  },
+  {
+    "i": 23,
+    "type": "multiple_choice",
+    "title": "Q21. You want to make a campaign result memorable in a presentation. You present it as:",
+    "description": null,
+    "options": [
+      "'We reached 450,000 people in the metro area'",
+      "'We filled ANZ Stadium five times over in a single breakfast shift'",
+      "'Our campaign delivered a 28% lift in sales'",
+      "'Our results exceeded industry benchmarks by 2.3x'",
+      "A before-and-after story ending with a client quote about the impact"
+    ]
+  },
+  {
+    "i": 24,
+    "type": "multiple_choice",
+    "title": "Q22. Your media agency contact is taking your proposal into a boardroom without you. You ensure they can advocate for you by:",
+    "description": null,
+    "options": [
+      "Including all the data they'll need in the deck",
+      "Briefing them on the top three product features",
+      "Giving them a clear ROI argument to use",
+      "Arming them with one short, vivid story they can retell confidently",
+      "Following up with a summary email after the meeting"
+    ]
+  },
+  {
+    "i": 25,
+    "type": "multiple_choice",
+    "title": "Q23. A client is hesitating because the previous media partner 'let them down.' You address this by:",
+    "description": null,
+    "options": [
+      "Highlighting your accountability processes and reporting",
+      "Offering a performance-based pricing model",
+      "Sharing a testimonial from a satisfied client",
+      "Telling a specific story of how you helped a client in a similar post-disappointment situation",
+      "Acknowledging their concern and moving to your product strengths"
+    ]
+  },
+  {
+    "i": 26,
+    "type": "multiple_choice",
+    "title": "Q24. In your story, the client is the hero. This means:",
+    "description": null,
+    "options": [
+      "You open with the campaign results and what your solution delivered",
+      "You focus on your team's strategic thinking and execution",
+      "You position the client's tension and relief as the emotional arc",
+      "You balance the narrative between the client's challenge and your company's response",
+      "You lead with the data and let the numbers speak for the work"
+    ]
+  },
+  {
+    "i": 27,
+    "type": "multiple_choice",
+    "title": "Q25. When a client stops responding to your outreach, your gut says:",
+    "description": null,
+    "options": [
+      "They're busy, keep following up",
+      "Something changed internally, I need to find out what",
+      "The deal is dead, move on",
+      "Acknowledge the silence directly without pressure, name what might be happening for them",
+      "Send one final message that creates a clear close or open. Force a response either way"
+    ]
+  },
+  {
+    "i": 28,
+    "type": "multiple_choice",
+    "title": "Q26. You notice a five-second silence on a video call right after you've asked for the business. You:",
+    "description": null,
+    "options": [
+      "Fill it immediately with reassurance",
+      "Repeat your ask in a different way",
+      "Hold the silence, you think they're processing",
+      "Ask if they have any final questions",
+      "Summarise your key points again"
+    ]
+  },
+  {
+    "i": 29,
+    "type": "multiple_choice",
+    "title": "Q27. A client is calm and agreeable but you sense the deal isn't moving. You:",
+    "description": null,
+    "options": [
+      "Take their positivity at face value",
+      "Ask about their decision-making timeline",
+      "Call out what you sense: 'It seems like something hasn't clicked yet, am I reading that right?'",
+      "Send a more detailed proposal to address any unstated concerns",
+      "Ask their media coordinator if there are any issues you should know about"
+    ]
+  },
+  {
+    "i": 30,
+    "type": "multiple_choice",
+    "title": "\nQ28. The real reason a buyer says no is almost always:",
+    "description": null,
+    "options": [
+      "Price — buyers are budget-constrained",
+      "Timing — the market isn't right",
+      "Risk — they fear looking bad if the campaign underperforms",
+      "Product — your offering doesn't fit their needs",
+      "Competition — a competitor made a better offer"
+    ]
+  },
+  {
+    "i": 31,
+    "type": "multiple_choice",
+    "title": "Q29. When a buyer pushes back hard on your proposal, your first physical instinct is:",
+    "description": null,
+    "options": [
+      "To defend your position, you believe in what you're selling",
+      "To apologise and offer a concession",
+      "To breathe, pause, and ask a question",
+      "To ask what specifically isn't working for them",
+      "To acknowledge the pushback and invite them to say more"
+    ]
+  },
+  {
+    "i": 32,
+    "type": "multiple_choice",
+    "title": "Q30. The most important thing to understand about a buyer before you pitch is:",
+    "description": null,
+    "options": [
+      "Their budget range",
+      "Their preferred media channels",
+      "Their KPIs and success metrics",
+      "What they personally fear will happen if this campaign fails",
+      "Their relationship with the previous media partner"
+    ]
+  },
+  {
+    "i": 33,
+    "type": "multiple_choice",
+    "title": "Q31. Clients don't buy media plans. They buy:",
+    "description": null,
+    "options": [
+      "Reach and frequency",
+      "Cost efficiency",
+      "Innovation and differentiation",
+      "Certainty that the campaign will deliver",
+      "Data-backed justification for their spend"
+    ]
+  },
+  {
+    "i": 34,
+    "type": "page_break",
+    "title": "EQ Identity",
+    "description": null
+  },
+  {
+    "i": 35,
+    "type": "multiple_choice",
+    "title": "When a client is emotional my strength is.....",
+    "description": null,
+    "options": [
+      "staying calm and not reacting",
+      "using their emotion as information to guide my next move",
+      "noticing the emotion before they've said anything",
+      "naming the emotion out loud, even when it's uncomfortable"
+    ]
+  },
+  {
+    "i": 36,
+    "type": "multiple_choice",
+    "title": "Under pressure I........",
+    "description": null,
+    "options": [
+      "stay logical and don't let feelings cloud my judgement",
+      "look for the emotional lever the other person hasn't used yet",
+      "watch and wait, reading the room before I act",
+      "call out what's really happening, even if it's awkward"
+    ]
+  },
+  {
+    "i": 37,
+    "type": "multiple_choice",
+    "title": "After a difficult meeting I debrief by........",
+    "description": null,
+    "options": [
+      "reviewing what logic/data I used",
+      "thinking about what emotional leverage I did or didn't use",
+      "replaying what I noticed, body language, silence, energy",
+      "thinking about whether I named the hard thing or avoided it"
+    ]
+  }
+]
