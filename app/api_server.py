@@ -66,17 +66,22 @@ def _active_taxonomy_id() -> int:
 
 app = FastAPI(title="Decipher", version="0.3.0", lifespan=_lifespan)
 
+# CORS: defaults to localhost dev origins; set DECIPHER_WEB_ORIGIN (comma-separated)
+# in production to restrict to the actual site domain.
 _CORS_ORIGINS = [
     o.strip()
-    for o in os.getenv("DECIPHER_WEB_ORIGIN", "http://127.0.0.1:5173").split(",")
+    for o in os.getenv(
+        "DECIPHER_WEB_ORIGIN",
+        "http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:55173,http://localhost:55173",
+    ).split(",")
     if o.strip()
 ]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_CORS_ORIGINS,
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 
@@ -96,7 +101,17 @@ def health() -> dict[str, Any]:
         return {"status": "degraded", "db": False, "error": str(exc)}
     return {
         "status": "ok", "db": db_ok, "service": "decipher-api",
-        "version": app.version, "now": datetime.utcnow().isoformat() + "Z",
+        "version": app.version, "now": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@app.get("/api/version")
+def api_version() -> dict[str, Any]:
+    """Build / deployment metadata."""
+    return {
+        "version":    app.version,
+        "build_date": os.getenv("BUILD_DATE", "dev"),
+        "git_sha":    os.getenv("GIT_SHA", "dev"),
     }
 
 
@@ -3099,15 +3114,29 @@ class MagicLinkRequestIn(BaseModel):
 
 @app.post("/api/auth/magic-link/request")
 def magic_link_request(body: MagicLinkRequestIn) -> dict[str, Any]:
-    """Generate a one-time sign-in token and deliver it via Mailpit."""
+    """Generate a one-time sign-in token and deliver it via Mailpit.
+    Rate-limited to 10 requests per email per hour (spec §architecture).
+    """
+    email = body.email.lower().strip()
     r = rows(
         "SELECT respondent_id, email, name, first_name FROM respondents WHERE email = %s",
-        (body.email.lower().strip(),),
+        (email,),
     )
     if not r:
         # Don't reveal whether email exists.
         return {"ok": True}
     rec = r[0]
+
+    # Rate limit: max 10 magic-link requests per email per hour
+    recent = scalar(
+        """SELECT count(*) FROM magic_link_tokens mlt
+             JOIN respondents res ON res.respondent_id = mlt.respondent_id
+            WHERE res.email = %s
+              AND mlt.expires_at > now() - interval '1 hour'""",
+        (email,),
+    ) or 0
+    if int(recent) >= 10:
+        raise HTTPException(429, "Too many magic-link requests. Try again in an hour.")
 
     raw_token = secrets.token_urlsafe(32)
     token_hash = hashlib.sha256(raw_token.encode()).hexdigest()

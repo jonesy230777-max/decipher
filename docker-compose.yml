@@ -29,5 +29,48 @@ services:
     environment:
       MP_MAX_MESSAGES: 5000
 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: decipher-app
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${DECIPHER_WEB_PORT}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Database: connect via Docker service name, not localhost
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DECIPHER_DB_HOST: db
+      DECIPHER_DB_PORT: 5432   # inside Docker network; always 5432
+      # API keys
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      AUDIT_PRICE_AUD: ${AUDIT_PRICE_AUD:-497}
+      STRIPE_SUCCESS_URL: ${STRIPE_SUCCESS_URL:-}
+      STRIPE_CANCEL_URL: ${STRIPE_CANCEL_URL:-}
+      # Mail
+      MAIL_FROM: ${MAIL_FROM:-audit@decipher.local}
+      # CORS: set to your public domain in production
+      DECIPHER_WEB_ORIGIN: ${DECIPHER_WEB_ORIGIN:-http://localhost:${DECIPHER_WEB_PORT}}
+    volumes:
+      - decipher_exports:/app/_squarespace_exports
+      - decipher_backups:/app/var/backups
+    networks:
+      - default
+    # Override the db host: inside the Docker network use the service name
+    # The app connects via: postgresql://user:pass@db:5432/decipher
+    # api_server.py uses DECIPHER_DB_PORT to construct the DSN. Set to 5432 above.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 volumes:
   decipher_pgdata:
+  decipher_exports:
+  decipher_backups:

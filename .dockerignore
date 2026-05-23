@@ -1,0 +1,38 @@
+# Secrets -- never bake into image
+.env
+.env.*
+!.env.example
+
+# Dev artefacts
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+
+# Dashboard dev
+dashboard/node_modules/
+dashboard/.vite/
+dashboard/tsconfig.tsbuildinfo
+
+# Data and generated files
+var/
+_squarespace_exports/
+compliance/screenshots/
+compliance/hig_audit_*.md
+compliance/hig_mirror/
+
+# Version control and docs
+.git/
+.gitignore
+docs/
+reference_docs/
+_bmad/
+_bmad-output/
+demo/
+
+# Misc
+*.log
+*.jpg
+*.docx

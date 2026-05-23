@@ -5,7 +5,33 @@ Single-operator runbook for Steve Jones. All commands assume the repo is at
 
 ---
 
-## Cold start
+## Production (Docker) start
+
+Run the full stack as Docker containers -- the recommended way for day-to-day use.
+
+```bash
+cd ~/Decipher
+cp .env.example .env   # first time only; fill in secrets
+
+# Build the app image (skip --build if code has not changed)
+docker compose up -d --build
+
+# Check everything is healthy
+docker compose ps
+docker compose logs app --tail 30
+curl http://localhost:${DECIPHER_WEB_PORT}/api/health
+```
+
+The dashboard is at `http://localhost:${DECIPHER_WEB_PORT}`.
+
+To rebuild after code changes:
+```bash
+docker compose build app && docker compose up -d app
+```
+
+---
+
+## Cold start (dev mode, no app container)
 
 Start everything from scratch after a reboot or fresh clone.
 
