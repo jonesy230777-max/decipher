@@ -2510,6 +2510,229 @@ def promo_codes_list() -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
+# Promo validation (S073/S074)
+# ---------------------------------------------------------------------------
+
+def _validate_promo(code: str) -> dict[str, Any]:
+    """Validate a promo code. Returns dict with valid, discount_pct, code_type, error."""
+    pc = rows(
+        """SELECT code, code_type, discount_pct, uses_remaining, valid_until
+             FROM promo_codes
+            WHERE upper(code) = upper(%s)""",
+        (code,),
+    )
+    if not pc:
+        return {"valid": False, "error": "Promo code not found."}
+    p = pc[0]
+    if p["uses_remaining"] is not None and p["uses_remaining"] <= 0:
+        return {"valid": False, "error": "This promo code has no uses remaining."}
+    if p["valid_until"] and p["valid_until"] < datetime.now(timezone.utc):
+        return {"valid": False, "error": "This promo code has expired."}
+    return {
+        "valid": True,
+        "code": p["code"],
+        "code_type": p["code_type"],
+        "discount_pct": float(p["discount_pct"] or 0),
+        "is_free": (p["code_type"] == "free" or float(p["discount_pct"] or 0) >= 100),
+    }
+
+
+def _decrement_promo(code: str) -> None:
+    with conn() as c, c.cursor() as cur:
+        cur.execute(
+            """UPDATE promo_codes
+                  SET uses_remaining = uses_remaining - 1
+                WHERE upper(code) = upper(%s) AND uses_remaining > 0""",
+            (code,),
+        )
+
+
+@app.get("/api/promo/validate")
+def promo_validate(code: str) -> dict[str, Any]:
+    """S073: Validate a promo code without consuming a use."""
+    return _validate_promo(code)
+
+
+# ---------------------------------------------------------------------------
+# Stripe checkout (S070/S071)
+# ---------------------------------------------------------------------------
+
+_AUDIT_PRICE_CENTS = int(float(os.environ.get("AUDIT_PRICE_AUD", "497")) * 100)
+_STRIPE_SUCCESS_URL = os.environ.get(
+    "STRIPE_SUCCESS_URL", "http://localhost:55173/audit/start?session_id={CHECKOUT_SESSION_ID}"
+)
+_STRIPE_CANCEL_URL = os.environ.get("STRIPE_CANCEL_URL", "http://localhost:55173/audit")
+
+
+def _stripe_client():
+    import stripe as _stripe
+    key = os.environ.get("STRIPE_SECRET_KEY", "")
+    if not key:
+        raise HTTPException(503, "Stripe is not configured. Add STRIPE_SECRET_KEY to .env.")
+    _stripe.api_key = key
+    return _stripe
+
+
+class CheckoutIn(BaseModel):
+    email:        str
+    name:         str | None = None
+    first_name:   str | None = None
+    last_name:    str | None = None
+    job_title:    str | None = None
+    promo_code:   str | None = None
+    version_code: str | None = None
+    industry_code: str | None = None
+
+
+@app.post("/api/checkout/session")
+def checkout_session(body: CheckoutIn) -> dict[str, Any]:
+    """S070: Create a Stripe Checkout session (or bypass for 100% promo codes).
+
+    Returns one of:
+      { "free": true, "audit_id": N }          -- 100% promo, audit created immediately
+      { "checkout_url": "https://stripe..." }   -- redirect the browser here
+    """
+    promo_result: dict[str, Any] | None = None
+    if body.promo_code:
+        promo_result = _validate_promo(body.promo_code)
+        if not promo_result["valid"]:
+            raise HTTPException(400, promo_result["error"])
+
+    # S074: 100% discount → skip Stripe, create audit directly
+    if promo_result and promo_result.get("is_free"):
+        _decrement_promo(body.promo_code)  # type: ignore[arg-type]
+        version_id = _resolve_audit_version(body.version_code, body.industry_code)
+        first_default, last_default = _split_name(body.name)
+        first = body.first_name or first_default
+        last  = body.last_name  or last_default
+        existing = rows("SELECT respondent_id FROM respondents WHERE email = %s", (body.email,))
+        if existing:
+            rid = existing[0]["respondent_id"]
+        else:
+            with conn() as c:
+                cur = c.cursor()
+                cur.execute(
+                    """INSERT INTO respondents (email, name, first_name, last_name, job_title, role, source)
+                       VALUES (%s,%s,%s,%s,%s,'sales_person','stripe_checkout')
+                       RETURNING respondent_id""",
+                    (body.email, body.name, first, last, body.job_title),
+                )
+                rid = cur.fetchone()[0]
+        with conn() as c:
+            cur = c.cursor()
+            cur.execute(
+                "INSERT INTO audits (respondent_id, audit_version_id, status) VALUES (%s,%s,'in_progress') RETURNING audit_id",
+                (rid, version_id),
+            )
+            audit_id = cur.fetchone()[0]
+        event("checkout.free", payload={"email": body.email, "promo": body.promo_code, "audit_id": audit_id})
+        return {"free": True, "audit_id": audit_id}
+
+    # Paid path -- create Stripe session
+    stripe = _stripe_client()
+    discount_pct = promo_result["discount_pct"] if promo_result else 0.0
+    amount_cents = max(50, int(_AUDIT_PRICE_CENTS * (1 - discount_pct / 100)))
+
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=[{
+            "price_data": {
+                "currency": "aud",
+                "unit_amount": amount_cents,
+                "product_data": {
+                    "name": "Decipher DNA Audit",
+                    "description": "Individual sales intelligence report. Delivered within 90 seconds of completion.",
+                },
+            },
+            "quantity": 1,
+        }],
+        mode="payment",
+        customer_email=body.email,
+        success_url=_STRIPE_SUCCESS_URL,
+        cancel_url=_STRIPE_CANCEL_URL,
+        metadata={
+            "email":         body.email,
+            "name":          body.name or "",
+            "first_name":    body.first_name or "",
+            "last_name":     body.last_name or "",
+            "job_title":     body.job_title or "",
+            "promo_code":    body.promo_code or "",
+            "version_code":  body.version_code or "",
+            "industry_code": body.industry_code or "",
+        },
+    )
+    if body.promo_code:
+        _decrement_promo(body.promo_code)
+    event("checkout.created", payload={"email": body.email, "amount_cents": amount_cents, "session_id": session.id})
+    return {"checkout_url": session.url}
+
+
+@app.post("/api/stripe/webhook")
+async def stripe_webhook(request: Request) -> dict[str, Any]:
+    """S071: Handle Stripe events. Creates respondent + audit on checkout.session.completed."""
+    stripe = _stripe_client()
+    payload = await request.body()
+    sig = request.headers.get("stripe-signature", "")
+    webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+
+    try:
+        webhook_event = stripe.Webhook.construct_event(payload, sig, webhook_secret)
+    except Exception as exc:
+        event("stripe.webhook.error", severity="error", payload={"error": str(exc)})
+        raise HTTPException(400, f"Webhook signature verification failed: {exc}")
+
+    if webhook_event["type"] == "checkout.session.completed":
+        session = webhook_event["data"]["object"]
+        meta = session.get("metadata", {})
+        email = meta.get("email") or session.get("customer_email") or ""
+        if not email:
+            return {"ok": True}
+
+        name       = meta.get("name") or None
+        first_name = meta.get("first_name") or None
+        last_name  = meta.get("last_name") or None
+        job_title  = meta.get("job_title") or None
+        version_code  = meta.get("version_code") or None
+        industry_code = meta.get("industry_code") or None
+
+        version_id = _resolve_audit_version(version_code, industry_code)
+        first_default, last_default = _split_name(name)
+        first = first_name or first_default
+        last  = last_name  or last_default
+
+        existing = rows("SELECT respondent_id FROM respondents WHERE email = %s", (email,))
+        if existing:
+            rid = existing[0]["respondent_id"]
+        else:
+            with conn() as c:
+                cur = c.cursor()
+                cur.execute(
+                    """INSERT INTO respondents (email, name, first_name, last_name, job_title, role, source)
+                       VALUES (%s,%s,%s,%s,%s,'sales_person','stripe_checkout')
+                       RETURNING respondent_id""",
+                    (email, name, first, last, job_title),
+                )
+                rid = cur.fetchone()[0]
+
+        with conn() as c:
+            cur = c.cursor()
+            cur.execute(
+                "INSERT INTO audits (respondent_id, audit_version_id, status) VALUES (%s,%s,'in_progress') RETURNING audit_id",
+                (rid, version_id),
+            )
+            audit_id = cur.fetchone()[0]
+
+        event("stripe.checkout.completed", payload={
+            "email": email,
+            "audit_id": audit_id,
+            "session_id": session["id"],
+            "amount_total": session.get("amount_total"),
+        })
+
+    return {"ok": True}
+
+
+# ---------------------------------------------------------------------------
 # Squarespace export
 # ---------------------------------------------------------------------------
 
