@@ -11,6 +11,7 @@ import json
 import logging
 import os
 import zipfile
+from pathlib import Path
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -28,13 +29,28 @@ log = logging.getLogger(__name__)
 
 
 @asynccontextmanager
+def _run_backup() -> None:
+    """S092: Run pg_backup.sh shell script from the scheduler."""
+    import subprocess
+    script = Path(__file__).parent.parent / "scripts" / "pg_backup.sh"
+    result = subprocess.run([str(script)], capture_output=True, text=True, timeout=120)
+    if result.returncode == 0:
+        log.info("pg_backup: %s", result.stdout.strip().splitlines()[-1] if result.stdout else "done")
+        event("db.backup_complete", actor="system", payload={"stdout": result.stdout[-500:]})
+    else:
+        log.error("pg_backup failed: %s", result.stderr[:500])
+        event("db.backup_failed", severity="error", actor="system",
+              payload={"stderr": result.stderr[:500]})
+
+
 async def _lifespan(app: FastAPI):
     from app.cohort_jobs import run_snapshot, run_pattern_hunt
     scheduler = BackgroundScheduler(timezone="Australia/Sydney")
     scheduler.add_job(run_snapshot,     "cron", hour=2,  minute=0,  id="cohort_snapshot")
     scheduler.add_job(run_pattern_hunt, "cron", hour=3,  minute=0,  day_of_week="mon", id="pattern_hunt")
+    scheduler.add_job(_run_backup,      "cron", hour=2,  minute=30, id="pg_backup")
     scheduler.start()
-    log.info("APScheduler started (cohort snapshot 02:00, pattern hunt Mon 03:00 AEST)")
+    log.info("APScheduler started (snapshot 02:00, backup 02:30, pattern Mon 03:00 AEST)")
     yield
     scheduler.shutdown(wait=False)
 
@@ -1117,6 +1133,13 @@ def admin_run_pattern_hunt(background_tasks: BackgroundTasks) -> dict[str, Any]:
     return {"ok": True, "message": "Pattern hunt started in background. Check events log for results."}
 
 
+@app.post("/api/admin/backup")
+def admin_run_backup(background_tasks: BackgroundTasks) -> dict[str, Any]:
+    """S092: Manually trigger a Postgres backup (admin only)."""
+    background_tasks.add_task(_run_backup)
+    return {"ok": True, "message": "Backup started in background. Check events log for db.backup_complete."}
+
+
 # ---------------------------------------------------------------------------
 # Teams (executive dashboard data)
 # ---------------------------------------------------------------------------
@@ -2067,11 +2090,11 @@ def mission_dim_means(days: int = 30) -> dict[str, Any]:
     """
     days = max(1, min(days, 3650))
     r = rows(
-        """SELECT round(avg(s.cognitive_empathy)  * 100, 1)::float AS cognitive_empathy,
-                  round(avg(s.eq)                 * 100, 1)::float AS eq,
-                  round(avg(s.pressure_composure) * 100, 1)::float AS pressure_composure,
-                  round(avg(s.storytelling)       * 100, 1)::float AS storytelling,
-                  count(*)::int                                     AS n_scored
+        """SELECT round((avg(s.cognitive_empathy)  * 100)::numeric, 1)::float AS cognitive_empathy,
+                  round((avg(s.eq)                 * 100)::numeric, 1)::float AS eq,
+                  round((avg(s.pressure_composure) * 100)::numeric, 1)::float AS pressure_composure,
+                  round((avg(s.storytelling)       * 100)::numeric, 1)::float AS storytelling,
+                  count(*)::int                                                AS n_scored
              FROM audit_scores s
              JOIN audits a ON a.audit_id = s.audit_id
             WHERE a.started_at > now() - (%s || ' days')::interval""",

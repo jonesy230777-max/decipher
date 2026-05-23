@@ -283,7 +283,8 @@ export default function SquarespaceExport() {
         )}
       </div>
 
-      {/* S061: File preview modal */}
+      {/* S061: File preview modal. No display property here -- native <dialog> controls
+          its own display:none / display:block via showModal()/close(). */}
       <dialog
         ref={dialogRef}
         style={{
@@ -294,14 +295,15 @@ export default function SquarespaceExport() {
           maxWidth: "min(720px, 90vw)",
           width: "100%",
           maxHeight: "80vh",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
           background: "var(--colour-bg-system)",
           color: "var(--colour-label)",
         }}
         onClick={(e) => { if (e.target === dialogRef.current) closePreview(); }}
       >
+        {/* Inner flex wrapper keeps content as column -- cannot set display:flex on <dialog>
+            itself or it overrides the UA's display:none that hides the closed dialog. */}
+        <div style={{ display: "flex", flexDirection: "column", maxHeight: "80vh", overflow: "hidden" }}>
+
         {/* Modal header */}
         <div style={{
           display: "flex",
@@ -356,6 +358,7 @@ export default function SquarespaceExport() {
             </pre>
           )}
         </div>
+        </div>{/* end inner flex wrapper */}
       </dialog>
     </div>
   );
