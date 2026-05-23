@@ -1507,7 +1507,7 @@ def team_interventions(team_id: int) -> dict[str, Any]:
             "headline":
                 f"{int(d['n'])} reps, {label_for[d['dimension']]} (Developing)",
             "body":
-                f"This segment scores below 0.40 on {label_for[d['dimension']]}. "
+                f"{int(d['n'])} reps score below 40/100 on {label_for[d['dimension']]}. "
                 f"{intervention_for[d['dimension']]}",
             "kind": "at_risk",
         })
@@ -1521,14 +1521,21 @@ def team_interventions(team_id: int) -> dict[str, Any]:
               AND s.pressure_composure >= 0.85 AND s.storytelling >= 0.85""",
         (team_id,),
     ) or 0
-    out.append({
-        "headline": f"Pair your top {int(elite)} Elite performers",
-        "body":
+    if int(elite) > 0:
+        leverage_headline = f"Pair your top {int(elite)} Elite performers"
+        leverage_body = (
             "Pair each Elite rep with two at-risk reps as in-quarter coaches. "
             "Light load on the Elites, fast lift for the cohort, and you bank "
-            "ROI evidence for the re-audit at 3 months.",
-        "kind": "leverage",
-    })
+            "ROI evidence for the re-audit at 3 months."
+        )
+    else:
+        leverage_headline = "Build your first Elite performers"
+        leverage_body = (
+            "No reps currently score 85+ across all four traits. "
+            "Focus the top quartile on closing their biggest single gap -- "
+            "one trait to Elite creates a coaching anchor for the rest of the team."
+        )
+    out.append({"headline": leverage_headline, "body": leverage_body, "kind": "leverage"})
     return {"interventions": out}
 
 
