@@ -2330,6 +2330,176 @@ def bespoke_list() -> dict[str, Any]:
     )}
 
 
+class BespokeCreateIn(BaseModel):
+    client_name:     str
+    brief:           str           # free-text brief Claude uses to generate questions
+    industry_code:   str | None = None
+    estimated_value: float | None = None
+    primary_colour:  str | None = None  # hex, e.g. "#007AFF"
+
+
+def _slugify(name: str) -> str:
+    import re
+    s = name.lower().strip()
+    s = re.sub(r"[^a-z0-9]+", "-", s)
+    s = s.strip("-")
+    return s[:60]
+
+
+_BESPOKE_QUESTION_SCHEMA = {
+    "type": "object",
+    "required": ["questions"],
+    "properties": {
+        "questions": {
+            "type": "array",
+            "minItems": 10,
+            "maxItems": 20,
+            "items": {
+                "type": "object",
+                "required": ["sequence", "dimension", "prompt", "options"],
+                "properties": {
+                    "sequence":         {"type": "integer"},
+                    "dimension":        {"type": "string", "enum": ["cognitive_empathy", "eq", "pressure_composure", "storytelling"]},
+                    "archetype_signal": {"type": "string"},
+                    "weight":           {"type": "number"},
+                    "prompt":           {"type": "string"},
+                    "options": {
+                        "type": "array",
+                        "minItems": 4,
+                        "maxItems": 4,
+                        "items": {
+                            "type": "object",
+                            "required": ["label", "value"],
+                            "properties": {
+                                "label": {"type": "string"},
+                                "value": {"type": "number", "minimum": 0, "maximum": 1},
+                            },
+                        },
+                    },
+                },
+            },
+        }
+    },
+}
+
+
+@app.post("/api/bespoke")
+def bespoke_create(body: BespokeCreateIn) -> dict[str, Any]:
+    """S051: Ingest a client brief, use Claude to generate bespoke questions,
+    create audit_version + bespoke_client, return the unique_url_slug."""
+    from app.claude_client import complete_structured, ClaudeCallError
+
+    # Resolve industry
+    industry_id: int | None = None
+    industry_name = "sales"
+    if body.industry_code:
+        ind = rows("SELECT industry_id, name FROM industries WHERE code = %s", (body.industry_code,))
+        if ind:
+            industry_id = ind[0]["industry_id"]
+            industry_name = ind[0]["name"]
+
+    # Claude generates the questions
+    prompt = (
+        f"You are building a custom sales DNA audit for '{body.client_name}', "
+        f"a company in the {industry_name} industry.\n\n"
+        f"Client brief:\n{body.brief}\n\n"
+        f"Generate 12-16 scenario-based multiple-choice questions that assess four dimensions: "
+        f"cognitive_empathy, eq (emotional intelligence), pressure_composure, and storytelling. "
+        f"Each question must have exactly 4 options with values 0.0 (worst), 0.33, 0.67, 1.0 (best). "
+        f"Ground every question in the client's industry and context from the brief. "
+        f"Sequence questions 1 through N. Weight each 1.0 unless there is a strong reason to weight differently. "
+        f"Australian English throughout. No em dashes."
+    )
+    try:
+        result = complete_structured(prompt, _BESPOKE_QUESTION_SCHEMA)
+    except ClaudeCallError as exc:
+        event("bespoke.claude_error", severity="error", payload={"error": str(exc), "client": body.client_name})
+        raise HTTPException(502, f"Claude question generation failed: {exc}")
+
+    questions = result.get("questions", [])
+    if not questions:
+        raise HTTPException(502, "Claude returned no questions")
+
+    # Generate unique slug (append suffix if taken)
+    base_slug = _slugify(body.client_name)
+    slug = base_slug
+    suffix = 1
+    while rows("SELECT 1 FROM bespoke_clients WHERE unique_url_slug = %s", (slug,)):
+        slug = f"{base_slug}-{suffix}"
+        suffix += 1
+
+    brand_assets = {"primary_colour": body.primary_colour} if body.primary_colour else {}
+
+    with conn() as c:
+        cur = c.cursor()
+
+        # Create audit_version
+        cur.execute(
+            """INSERT INTO audit_versions (code, name, industry_id, band_thresholds_json, is_active)
+               VALUES (%s, %s, %s, %s, true)
+               RETURNING audit_version_id""",
+            (
+                slug,
+                f"{body.client_name} DNA Audit",
+                industry_id,
+                json.dumps({"elite": [0.85, 1.0], "performing": [0.65, 0.85],
+                             "practising": [0.40, 0.65], "developing": [0.0, 0.40]}),
+            ),
+        )
+        version_id = cur.fetchone()[0]
+
+        # Create bespoke_client linked to the version
+        cur.execute(
+            """INSERT INTO bespoke_clients
+                  (client_name, custom_audit_version_id, unique_url_slug, estimated_value, status, brand_assets_json)
+               VALUES (%s, %s, %s, %s, 'draft', %s)
+               RETURNING bespoke_client_id""",
+            (body.client_name, version_id, slug, body.estimated_value, json.dumps(brand_assets)),
+        )
+        bespoke_id = cur.fetchone()[0]
+
+        # Update audit_version to link back to bespoke_client
+        cur.execute(
+            "UPDATE audit_versions SET bespoke_client_id = %s WHERE audit_version_id = %s",
+            (bespoke_id, version_id),
+        )
+
+        # Insert questions
+        for q in questions:
+            cur.execute(
+                """INSERT INTO questions
+                       (audit_version_id, sequence, dimension, archetype_signal,
+                        weight, prompt, response_type, response_meta)
+                   VALUES (%s,%s,%s,%s,%s,%s,'choice',%s)""",
+                (
+                    version_id,
+                    q["sequence"],
+                    q["dimension"],
+                    q.get("archetype_signal"),
+                    q.get("weight", 1.0),
+                    q["prompt"],
+                    json.dumps({"options": q["options"]}),
+                ),
+            )
+        c.commit()
+
+    event("bespoke.created", payload={
+        "bespoke_client_id": bespoke_id,
+        "client_name": body.client_name,
+        "audit_version_id": version_id,
+        "slug": slug,
+        "n_questions": len(questions),
+    })
+    return {
+        "ok": True,
+        "bespoke_client_id": bespoke_id,
+        "audit_version_id": version_id,
+        "unique_url_slug": slug,
+        "audit_url": f"/audit/{slug}",
+        "n_questions": len(questions),
+    }
+
+
 @app.get("/api/promo-codes")
 def promo_codes_list() -> dict[str, Any]:
     return {"promo_codes": rows(
@@ -3043,14 +3213,36 @@ def audit_version_questions(code: str) -> dict[str, Any]:
 
 
 class AuditStartIn(BaseModel):
-    email:        str
-    name:         str | None = None
-    first_name:   str | None = None
-    last_name:    str | None = None
-    mobile:       str | None = None
-    job_title:    str | None = None
-    company:      str | None = None
-    version_code: str = "media_sales_v1"
+    email:         str
+    name:          str | None = None
+    first_name:    str | None = None
+    last_name:     str | None = None
+    mobile:        str | None = None
+    job_title:     str | None = None
+    company:       str | None = None
+    version_code:  str | None = None   # explicit override; takes priority
+    industry_code: str | None = None   # S050: resolve version by industry
+
+
+def _resolve_audit_version(version_code: str | None, industry_code: str | None) -> int:
+    """Return audit_version_id. Industry → version lookup; falls back to media_sales_v1."""
+    if version_code:
+        v = rows("SELECT audit_version_id FROM audit_versions WHERE code = %s AND is_active", (version_code,))
+        if v:
+            return v[0]["audit_version_id"]
+    if industry_code:
+        v = rows(
+            """SELECT av.audit_version_id FROM audit_versions av
+                 JOIN industries i ON i.industry_id = av.industry_id
+                WHERE i.code = %s AND av.is_active AND av.bespoke_client_id IS NULL
+                ORDER BY av.created_at DESC LIMIT 1""",
+            (industry_code,),
+        )
+        if v:
+            return v[0]["audit_version_id"]
+    # Default
+    v = rows("SELECT audit_version_id FROM audit_versions WHERE code = 'media_sales_v1'")
+    return v[0]["audit_version_id"]
 
 
 def _split_name(full: str | None) -> tuple[str | None, str | None]:
@@ -3066,10 +3258,9 @@ def _split_name(full: str | None) -> tuple[str | None, str | None]:
 
 @app.post("/api/audit/start")
 def audit_start(body: AuditStartIn) -> dict[str, Any]:
-    v = rows("SELECT audit_version_id FROM audit_versions WHERE code = %s", (body.version_code,))
-    if not v:
+    version_id = _resolve_audit_version(body.version_code, body.industry_code)
+    if not version_id:
         raise HTTPException(404, "audit version not found")
-    version_id = v[0]["audit_version_id"]
 
     # Resolve name components: explicit fields override the split fallback.
     first_default, last_default = _split_name(body.name)

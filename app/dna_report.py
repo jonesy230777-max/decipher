@@ -43,8 +43,8 @@ EQ_IDENTITY_LABEL = {
     "namer":        "Namer",
 }
 
-_NARRATIVE_SYSTEM_PROMPT = """\
-You are writing the personal narrative section of a DNA Audit report for a media sales professional. \
+_NARRATIVE_SYSTEM_PROMPT_TEMPLATE = """\
+You are writing the personal narrative section of a DNA Audit report for a {industry} sales professional. \
 The report is produced by Decipher, an Australian sales intelligence platform.
 
 Your role is to write 3-5 sentences that synthesise this person's four dimension scores into a \
@@ -95,6 +95,11 @@ for profiles where all scores are above 85, the contribution opportunity.
 - Plain text only. No markdown, no bullet points, no headings, no bold, no asterisks.
 - Between 3 and 5 sentences total. No more, no fewer.
 """
+
+
+def _narrative_system_prompt(industry_name: str | None) -> str:
+    industry = (industry_name or "media").lower()
+    return _NARRATIVE_SYSTEM_PROMPT_TEMPLATE.format(industry=industry)
 
 _CSS = """
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -311,6 +316,13 @@ def _load_context(audit_id: int) -> dict:
     team = scalar("SELECT name FROM teams WHERE team_id = %s", (r["team_id"],)) if r["team_id"] else None
     company = scalar("SELECT name FROM companies WHERE company_id = %s", (r["company_id"],)) if r["company_id"] else None
 
+    industry_name = scalar(
+        """SELECT i.name FROM audit_versions av
+             JOIN industries i ON i.industry_id = av.industry_id
+            WHERE av.audit_version_id = %s""",
+        (audit["audit_version_id"],),
+    )
+
     bands = rows(
         "SELECT dimension, band, score FROM band_classifications WHERE audit_id = %s",
         (audit_id,),
@@ -340,6 +352,7 @@ def _load_context(audit_id: int) -> dict:
         "respondent": r,
         "team_name": team,
         "company_name": company.replace("Demo: ", "") if company else None,
+        "industry_name": industry_name,
         "bands_by_dim": bands_by_dim,
         "narratives_by": narratives_by,
         "history": history,
@@ -360,9 +373,11 @@ def _build_user_turn(ctx: dict) -> str:
     eq_id = raw_band.get("eq_identity")
     eq_label = EQ_IDENTITY_LABEL.get(eq_id, eq_id or "unknown")
 
+    industry = ctx.get("industry_name") or "Media"
     lines = [
         f"Respondent: {name}",
-        f"Role: {r.get('job_title') or 'Media sales professional'}",
+        f"Industry: {industry} sales",
+        f"Role: {r.get('job_title') or f'{industry} sales professional'}",
         "",
         "Dimension scores:",
     ]
@@ -621,7 +636,7 @@ def generate_report(audit_id: int) -> dict:
     claude_narrative = ""
     try:
         claude_narrative = complete_narrative(
-            _NARRATIVE_SYSTEM_PROMPT,
+            _narrative_system_prompt(ctx.get("industry_name")),
             _build_user_turn(ctx),
         )
     except ClaudeCallError as exc:
