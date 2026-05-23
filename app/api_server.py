@@ -510,58 +510,230 @@ def industries() -> dict[str, Any]:
     return {"industries": rows("SELECT * FROM industries ORDER BY code")}
 
 
+_AI_SYSTEM_PROMPT = """\
+You are the Decipher data assistant, embedded in the Decipher dashboard used by Steve, \
+a media sales intelligence operator based in Australia.
+
+Answer the user's question in 2-4 sentences using only the data context provided. \
+Be direct and specific — cite actual numbers from the context. \
+If the context does not contain enough information to answer, say so plainly and suggest \
+which page would have the relevant data.
+
+Writing rules:
+- Australian English: behaviour, recognise, practise, organisation, colour.
+- No em dashes. Use commas or full stops instead.
+- No filler words: no "unlock", "leverage", "seamless", "game-changer", "empower", "delve".
+- No bro-sales clichés: no "close", "crush it", "killer".
+- Do not fabricate numbers. Every figure you cite must appear in the context below.
+- Plain prose only. No bullet points, no markdown, no headings.\
+"""
+
+
+def _build_ai_context(page: str, team_id: Any, company_id: Any, audit_id: Any) -> str:
+    """Pull page-relevant DB data and format it as a readable context block."""
+    lines: list[str] = []
+
+    # --- Global summary (always included) ---
+    g = rows(
+        """SELECT
+             (SELECT count(*) FROM respondents WHERE role='sales_person')::int         AS n_reps,
+             (SELECT count(*) FROM audits WHERE status IN ('scored','reported'))::int  AS n_scored,
+             (SELECT count(*) FROM reports)::int                                       AS n_reports,
+             (SELECT count(*) FROM (
+                SELECT bc.audit_id FROM band_classifications bc
+                  JOIN audits a USING (audit_id)
+                 WHERE bc.band = 'developing'
+                 GROUP BY bc.audit_id HAVING count(*) >= 2
+             ) s)::int                                                                 AS at_risk,
+             (SELECT count(*) FROM audit_scores
+               WHERE cognitive_empathy >= 0.85 AND eq >= 0.85
+                 AND pressure_composure >= 0.85 AND storytelling >= 0.85)::int        AS elite,
+             (SELECT coalesce(sum(estimated_value),0)
+                FROM bespoke_clients WHERE status='active')                            AS pipeline_aud"""
+    )
+    if g:
+        r = g[0]
+        lines.append(
+            f"Global cohort: {r['n_reps']} sales reps, {r['n_scored']} scored audits, "
+            f"{r['n_reports']} reports generated."
+        )
+        lines.append(
+            f"At-risk reps (Developing in 2+ traits): {r['at_risk']}. "
+            f"Elite performers (all 4 traits 85+): {r['elite']}. "
+            f"Active bespoke pipeline: AUD ${float(r['pipeline_aud']):,.0f}."
+        )
+
+    # --- Top archetype ---
+    top_arch = rows(
+        """SELECT ar.name, count(*) AS n
+             FROM archetype_assignments aa
+             JOIN archetypes ar USING (archetype_id)
+            WHERE aa.taxonomy_id = 2
+            GROUP BY ar.name ORDER BY n DESC LIMIT 1"""
+    )
+    if top_arch:
+        lines.append(f"Modal archetype: {top_arch[0]['name']} ({top_arch[0]['n']} respondents).")
+
+    # --- 30-day dimension means ---
+    dm = rows(
+        """SELECT round((avg(s.cognitive_empathy)  * 100)::numeric, 1)::float AS ce,
+                  round((avg(s.eq)                 * 100)::numeric, 1)::float AS eq,
+                  round((avg(s.pressure_composure) * 100)::numeric, 1)::float AS pc,
+                  round((avg(s.storytelling)       * 100)::numeric, 1)::float AS np
+             FROM audit_scores s
+             JOIN audits a ON a.audit_id = s.audit_id
+            WHERE a.started_at > now() - interval '30 days'"""
+    )
+    if dm and dm[0]["ce"] is not None:
+        d = dm[0]
+        lines.append(
+            f"30-day cohort means: Cognitive Empathy {d['ce']}, "
+            f"Emotional Intelligence {d['eq']}, "
+            f"Pressure Composure {d['pc']}, "
+            f"Narrative Persuasion {d['np']} (all out of 100)."
+        )
+
+    # --- Team context ---
+    if team_id:
+        try:
+            tid = int(team_id)
+            t = rows("SELECT name, organisation FROM teams WHERE team_id = %s", (tid,))
+            if t:
+                lines.append(f"Current page: team '{t[0]['name']}' ({t[0]['organisation'] or ''}).")
+            tm = rows(
+                """SELECT round((avg(s.cognitive_empathy)  * 100)::numeric, 1)::float AS ce,
+                          round((avg(s.eq)                 * 100)::numeric, 1)::float AS eq,
+                          round((avg(s.pressure_composure) * 100)::numeric, 1)::float AS pc,
+                          round((avg(s.storytelling)       * 100)::numeric, 1)::float AS np,
+                          count(*)::int AS n
+                     FROM audit_scores s
+                     JOIN audits a USING (audit_id)
+                     JOIN respondents r ON r.respondent_id = a.respondent_id
+                    WHERE r.team_id = %s""",
+                (tid,),
+            )
+            if tm and tm[0]["n"]:
+                d = tm[0]
+                lines.append(
+                    f"Team scores ({d['n']} respondents): CE {d['ce']}, EQ {d['eq']}, "
+                    f"PC {d['pc']}, NP {d['np']}."
+                )
+            t_risk = scalar(
+                """SELECT count(*) FROM (
+                     SELECT bc.audit_id FROM band_classifications bc
+                       JOIN audits a USING (audit_id)
+                       JOIN respondents r ON r.respondent_id = a.respondent_id
+                      WHERE r.team_id = %s AND bc.band = 'developing'
+                      GROUP BY bc.audit_id HAVING count(*) >= 2
+                   ) s""",
+                (tid,),
+            ) or 0
+            t_elite = scalar(
+                """SELECT count(*) FROM audit_scores s
+                     JOIN audits a USING (audit_id)
+                     JOIN respondents r ON r.respondent_id = a.respondent_id
+                    WHERE r.team_id = %s
+                      AND s.cognitive_empathy >= 0.85 AND s.eq >= 0.85
+                      AND s.pressure_composure >= 0.85 AND s.storytelling >= 0.85""",
+                (tid,),
+            ) or 0
+            lines.append(f"Team at-risk: {int(t_risk)}. Team elite: {int(t_elite)}.")
+            weakest = rows(
+                """SELECT bc.dimension, round((avg(bc.score))::numeric, 1)::float AS avg_score
+                     FROM band_classifications bc
+                     JOIN audits a USING (audit_id)
+                     JOIN respondents r ON r.respondent_id = a.respondent_id
+                    WHERE r.team_id = %s
+                    GROUP BY bc.dimension ORDER BY avg_score LIMIT 1""",
+                (tid,),
+            )
+            if weakest:
+                lines.append(
+                    f"Weakest team dimension: {weakest[0]['dimension'].replace('_',' ').title()} "
+                    f"(avg {weakest[0]['avg_score']}/100)."
+                )
+        except (ValueError, TypeError):
+            pass
+
+    # --- Company context ---
+    if company_id:
+        try:
+            cid = int(company_id)
+            co = rows("SELECT name FROM companies WHERE company_id = %s", (cid,))
+            if co:
+                lines.append(f"Current page: company '{co[0]['name'].replace('Demo: ', '')}'.")
+            n_teams = scalar("SELECT count(*) FROM teams WHERE company_id = %s", (cid,)) or 0
+            n_reps = scalar(
+                "SELECT count(*) FROM respondents WHERE company_id = %s AND role='sales_person'",
+                (cid,),
+            ) or 0
+            lines.append(f"Company has {int(n_teams)} teams and {int(n_reps)} sales reps.")
+        except (ValueError, TypeError):
+            pass
+
+    # --- Audit context ---
+    if audit_id:
+        try:
+            aid = int(audit_id)
+            a_rows = rows(
+                """SELECT r.name, r.job_title, a.status,
+                          s.cognitive_empathy, s.eq, s.pressure_composure, s.storytelling,
+                          ar.name AS archetype_name
+                     FROM audits a
+                     JOIN respondents r ON r.respondent_id = a.respondent_id
+                LEFT JOIN audit_scores s ON s.audit_id = a.audit_id
+                LEFT JOIN archetype_assignments aa ON aa.audit_id = a.audit_id AND aa.taxonomy_id = 2
+                LEFT JOIN archetypes ar ON ar.archetype_id = aa.archetype_id AND ar.taxonomy_id = 2
+                    WHERE a.audit_id = %s""",
+                (aid,),
+            )
+            if a_rows:
+                ar = a_rows[0]
+                name = ar["name"] or "Respondent"
+                lines.append(
+                    f"Current audit: {name} ({ar['job_title'] or 'Sales Rep'}), "
+                    f"status {ar['status']}, archetype {ar['archetype_name'] or 'unassigned'}."
+                )
+                if ar["cognitive_empathy"] is not None:
+                    lines.append(
+                        f"Scores: CE {round(float(ar['cognitive_empathy'])*100,1)}, "
+                        f"EQ {round(float(ar['eq'])*100,1)}, "
+                        f"PC {round(float(ar['pressure_composure'])*100,1)}, "
+                        f"NP {round(float(ar['storytelling'])*100,1)} (out of 100)."
+                    )
+        except (ValueError, TypeError):
+            pass
+
+    lines.append(f"Page: {page}.")
+    return "\n".join(lines)
+
+
 @app.post("/api/ai/ask")
 def ai_ask(body: dict[str, Any]) -> dict[str, Any]:
-    """Stub for the floating AI assistant.
+    """AI assistant grounded in live DB data. Uses Claude Haiku for low latency."""
+    from app.claude_client import complete_narrative, ClaudeCallError, HAIKU
 
-    Real implementation lands in M4 (Claude API integration). For the
-    prototype, returns deterministic context-aware blurbs derived from the
-    page the user is on plus a small DB lookup, so the surface is usable
-    and so the wiring is testable end-to-end.
-    """
     q = (body.get("q") or "").strip()
     page = body.get("page") or "/"
     team_id = body.get("team_id")
-    if not q:
-        return {"answer": "Ask anything about this page's data. (Try: 'who is at risk?', 'top archetype', 'pipeline value')."}
+    company_id = body.get("company_id")
+    audit_id = body.get("audit_id")
 
-    ql = q.lower()
-    # Lightweight intent routing.
-    if "at risk" in ql or "at-risk" in ql:
-        scope = ""
-        params: tuple = ()
-        if team_id:
-            scope = "JOIN respondents r ON r.respondent_id = a.respondent_id WHERE r.team_id = %s AND"
-            params = (team_id,)
-        n = scalar(
-            f"""SELECT count(*) FROM (
-                 SELECT bc.audit_id FROM band_classifications bc
-                   JOIN audits a USING (audit_id) {scope} bc.band = 'developing'
-                  GROUP BY bc.audit_id HAVING count(*) >= 2
-               ) sub""",
-            params,
-        ) or 0
-        return {"answer": f"{int(n)} respondents are Developing in 2 or more traits — that is the at-risk segment. Coaching priority should focus on Pressure Composure and Storytelling first."}
-    if "elite" in ql or "top" in ql:
-        n = scalar(
-            "SELECT count(*) FROM audit_scores WHERE cognitive_empathy >= 0.85 AND eq >= 0.85 AND pressure_composure >= 0.85 AND storytelling >= 0.85"
-        ) or 0
-        return {"answer": f"{int(n)} respondents are Elite across all four traits. Pair them with at-risk reps for 4 weeks; expect a measurable lift at the 90-day re-audit."}
-    if "pipeline" in ql or "revenue" in ql:
-        v = scalar("SELECT coalesce(sum(estimated_value),0) FROM bespoke_clients WHERE status='active'") or 0
-        return {"answer": f"Active bespoke pipeline is AUD ${float(v):,.0f}. Trojan-horse plan: convert the next 2 audits into consulting briefs by end of quarter."}
-    if "archetype" in ql:
-        top = rows("""SELECT ar.name, ar.description, count(*) AS n FROM archetype_assignments aa
-                       JOIN archetypes ar USING (archetype_id) WHERE aa.taxonomy_id = %s
-                       GROUP BY ar.name, ar.description ORDER BY n DESC LIMIT 1""", (_active_taxonomy_id(),))
-        if top:
-            n = int(top[0]["n"])
-            desc = (top[0]["description"] or "").strip()
-            tail = f" {desc}" if desc else ""
-            return {"answer": f"Modal archetype across the cohort is {top[0]['name']} ({n} {'respondent' if n == 1 else 'respondents'}).{tail}"}
-    if "team" in ql or "company" in ql:
-        return {"answer": "Use the Companies page for org-level rollups, the Teams page for per-team band distributions. Strict scoping: a team's view never includes another team's data."}
-    return {"answer": f"I can answer about: at-risk reps, top performers, pipeline, archetypes, teams, companies. You asked about '{q}' on {page}. Claude API integration ships in M4 and will give substantive answers grounded in the same scoped query you see on screen."}
+    if not q:
+        return {"answer": "Ask anything about this page's data. Try: 'who is at risk?', 'what is the weakest dimension?', 'how many elite performers?'."}
+
+    context = _build_ai_context(page, team_id, company_id, audit_id)
+    try:
+        answer = complete_narrative(
+            _AI_SYSTEM_PROMPT,
+            f"Data context:\n{context}\n\nQuestion: {q}",
+            model=HAIKU,
+        )
+    except ClaudeCallError as exc:
+        event("ai_ask.error", severity="error", payload={"error": str(exc), "q": q})
+        answer = "Unable to answer right now. Please try again in a moment."
+
+    return {"answer": answer}
 
 
 # Australian state / territory abbreviations -> full names. Two-way expansion
