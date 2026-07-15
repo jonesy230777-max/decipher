@@ -951,7 +951,7 @@ def archetypes() -> dict[str, Any]:
 
 @app.get("/api/audits")
 def audits_list(limit: int = 500, status: str | None = None,
-                team_id: int | None = None, version: str | None = None) -> dict[str, Any]:
+                team link tag, version: str | None = None) -> dict[str, Any]:
     """Audit list. Optional filter by status, team_id (strict scoping) or
     audit-version code (e.g. media_sales_v1, master_v1)."""
     where_parts: list[str] = []
@@ -3520,7 +3520,7 @@ class AuditStartIn(BaseModel):
     job_title:     str | None = None
     company:       str | None = None
     version_code:  str | None = None   # explicit override; takes priority
-    industry_code: str | None = None   # S050: resolve version by industry
+    industry_code: str | None = None; team_id: int | None = None   # S050: resolve version by industry; team link tag
 
 
 def _resolve_audit_version(version_code: str | None, industry_code: str | None) -> int:
@@ -3566,7 +3566,7 @@ def audit_start(body: AuditStartIn) -> dict[str, Any]:
     first = body.first_name or first_default
     last  = body.last_name  or last_default
 
-    existing = rows("SELECT respondent_id, first_name, last_name, job_title, mobile FROM respondents WHERE email = %s", (body.email,))
+    team_company_id = (rows("SELECT company_id FROM teams WHERE team_id = %s", (body.team_id,)) or [{"company_id": None}])[0]["company_id"] if body.team_id is not None else None; existing = rows("SELECT respondent_id, first_name, last_name, job_title, mobile FROM respondents WHERE email = %s", (body.email,))
     if existing:
         rid = existing[0]["respondent_id"]
         # Backfill standard contact fields (Rule 33) without overwriting non-empty values.
@@ -3597,11 +3597,7 @@ def audit_start(body: AuditStartIn) -> dict[str, Any]:
     with conn() as c:
         cur = c.cursor()
         cur.execute(
-            """INSERT INTO audits (respondent_id, audit_version_id, status)
-               VALUES (%s,%s,'in_progress') RETURNING audit_id""",
-            (rid, version_id),
-        )
-        audit_id = cur.fetchone()[0]
+            """INSERT INTO audits (respondent_id, audit_version_id, status) VALUES (%s,%s,'in_progress') RETURNING audit_id""", (rid, version_id), ); audit_id = cur.fetchone()[0]; cur.execute("UPDATE respondents SET team_id = COALESCE(%s, team_id), company_id = COALESCE(%s, company_id) WHERE respondent_id = %s", (body.team_id, team_company_id, rid))
         cur.execute(
             """INSERT INTO events_log (actor, action, severity, subject_id, payload)
                VALUES ('audit', 'audit.started', 'info', %s, %s::jsonb)""",
