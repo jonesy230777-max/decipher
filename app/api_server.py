@@ -952,7 +952,7 @@ def archetypes() -> dict[str, Any]:
 
 @app.get("/api/audits")
 def audits_list(limit: int = 500, status: str | None = None,
-                team link tag, version: str | None = None) -> dict[str, Any]:
+                team_id: int | None = None, version: str | None = None) -> dict[str, Any]:
     """Audit list. Optional filter by status, team_id (strict scoping) or
     audit-version code (e.g. media_sales_v1, master_v1)."""
     where_parts: list[str] = []
