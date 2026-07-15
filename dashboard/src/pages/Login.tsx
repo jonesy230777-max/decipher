@@ -183,7 +183,7 @@ export default function Login() {
         </div>
       </div>
 
-      <aside style={{ width: 420, padding: "var(--space-7)",
+      {creds.length > 0 && (<aside style={{ width: 420, padding: "var(--space-7)",
                        borderLeft: "1px solid var(--colour-separator-opaque)",
                        background: "var(--colour-bg-system-secondary)" }}>
         <h2 className="hig-title-3" style={{ marginTop: 0 }}>Demo credentials</h2>
@@ -211,7 +211,7 @@ export default function Login() {
             </li>
           ))}
         </ul>
-      </aside>
+      </aside>)}
     </div>
   );
 }
