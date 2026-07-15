@@ -1920,7 +1920,7 @@ def _enqueue_email_job(audit_id: int, report_id: int, pdf_path: str) -> int:
 
 
 @app.post("/api/audit/invite")
-def audit_invite(body: InviteIn) -> dict[str, Any]:
+def audit_invite(body: InviteIn, background_tasks: BackgroundTasks) -> dict[str, Any]:
     caller_role = _resolve_caller_role(body.invited_by_email, body.invited_by_role)
     if caller_role not in INVITE_ROLES:
         raise HTTPException(
@@ -1981,13 +1981,7 @@ def audit_invite(body: InviteIn) -> dict[str, Any]:
 
     web_port = os.environ.get("DECIPHER_WEB_PORT", "55173")
     link = f"http://127.0.0.1:{web_port}/audit/start?invite={token}"
-    delivered = False
-    err = None
-    try:
-        _send_invite_email(body.email, body.first_name, link)
-        delivered = True
-    except Exception as e:
-        err = str(e)
+    delivered = True; err = None; background_tasks.add_task(_send_invite_email, body.email, body.first_name, link)
 
     with conn() as c:
         cur = c.cursor()
