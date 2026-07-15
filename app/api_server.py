@@ -417,12 +417,12 @@ def team_gap_analysis(team_id: int) -> dict[str, Any]:
         "cognitive_empathy":   coh["ce"], "eq": coh["eq"],
         "pressure_composure":  coh["pc"], "storytelling": coh["st"],
     }
-    BAND_BOUNDS = {"elite": 0.85, "performing": 0.65, "practising": 0.40, "developing": 0.0}
+    BAND_BOUNDS = {"elite": 0.85, "performing": 0.70, "practising": 0.50, "developing": 0.0}
     def band_for(v):
         if v is None: return "unknown"
         if v >= 0.85: return "elite"
-        if v >= 0.65: return "performing"
-        if v >= 0.40: return "practising"
+        if v >= 0.70: return "performing"
+        if v >= 0.50: return "practising"
         return "developing"
 
     gaps = []
@@ -430,7 +430,7 @@ def team_gap_analysis(team_id: int) -> dict[str, Any]:
         v = float(val) if val is not None else None
         cohort_v = float(cohort_map[key]) if cohort_map[key] is not None else None
         gap_to_elite      = (0.85 - v) * 100 if v is not None else None
-        gap_to_performing = (0.65 - v) * 100 if v is not None else None
+        gap_to_performing = (0.70 - v) * 100 if v is not None else None
         delta_vs_cohort   = (v - cohort_v) * 100 if (v is not None and cohort_v is not None) else None
         gaps.append({
             "dimension": key, "label": label,
@@ -519,8 +519,8 @@ def respondent_gap_analysis(respondent_id: int) -> dict[str, Any]:
     def band(v):
         if v is None: return "unknown"
         if v >= 0.85: return "elite"
-        if v >= 0.65: return "performing"
-        if v >= 0.40: return "practising"
+        if v >= 0.70: return "performing"
+        if v >= 0.50: return "practising"
         return "developing"
 
     dims = [
@@ -1445,8 +1445,8 @@ def team_overview(team_id: int) -> dict[str, Any]:
 
 def _band_for(score: float) -> str:
     if score >= 0.85: return "Elite"
-    if score >= 0.65: return "Performing"
-    if score >= 0.40: return "Practising"
+    if score >= 0.70: return "Performing"
+    if score >= 0.50: return "Practising"
     return "Developing"
 
 
@@ -2499,8 +2499,8 @@ def bespoke_create(body: BespokeCreateIn) -> dict[str, Any]:
                 slug,
                 f"{body.client_name} DNA Audit",
                 industry_id,
-                json.dumps({"elite": [0.85, 1.0], "performing": [0.65, 0.85],
-                             "practising": [0.40, 0.65], "developing": [0.0, 0.40]}),
+                json.dumps({"elite": [0.85, 1.0], "performing": [0.70, 0.85],
+                             "practising": [0.50, 0.70], "developing": [0.0, 0.50]}),
             ),
         )
         version_id = cur.fetchone()[0]
