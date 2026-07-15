@@ -2177,6 +2177,6 @@
     "regulator",
     "edge_builder",
     "observer",
-    "namer"
+    "labeler"
   ]
 }
