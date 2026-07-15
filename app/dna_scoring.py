@@ -29,12 +29,12 @@ DIM_HUMAN = {
     "cognitive_empathy":   "Cognitive Empathy",
     "eq":                  "EQ",
     "pressure_composure":  "Pressure Composure",
-    "storytelling":        "Narrative Persuasion",
-    "narrative_persuasion":"Narrative Persuasion",
+    "storytelling":        "Storytelling",
+    "narrative_persuasion":"Storytelling",
 }
 
 # 0-100 lower bounds per canonical brief
-BAND_THRESHOLDS = [("elite", 85), ("performing", 65), ("practising", 40), ("developing", 0)]
+BAND_THRESHOLDS = [("elite", 85), ("performing", 70), ("practising", 50), ("developing", 0)]
 
 # top1 / top2 (sorted alphabetical for canonical match) → archetype name
 # The archetype table is bidirectional (top1 ↔ top2 are unordered for matching).
