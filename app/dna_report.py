@@ -25,7 +25,7 @@ DIM_LABEL = {
     "cognitive_empathy":  "Cognitive Empathy",
     "eq":                 "Emotional Intelligence",
     "pressure_composure": "Pressure Composure",
-    "storytelling":       "Narrative Persuasion",
+    "storytelling":       "Storytelling",
 }
 DIM_ORDER = ["cognitive_empathy", "eq", "pressure_composure", "storytelling"]
 
@@ -40,7 +40,7 @@ EQ_IDENTITY_LABEL = {
     "regulator":    "Regulator",
     "edge_builder": "Edge Builder",
     "observer":     "Observer",
-    "namer":        "Namer",
+    "labeler":        "Labeler",
 }
 
 _NARRATIVE_SYSTEM_PROMPT_TEMPLATE = """\
@@ -65,7 +65,7 @@ Pressure Composure: staying diagnostically calm under objection, rate challenges
 comparisons. Replacing defensive reflexes with genuine inquiry. The ability to treat an objection \
 as information rather than an attack.
 
-Narrative Persuasion: structuring stories using the L.E.A.D. framework (Location, Emotion, Action, \
+Storytelling: structuring stories using the L.E.A.D. framework (Location, Emotion, Action, \
 Direct quote) and S.T.A.R. moments (Specific, Tactical, Authentic, Relevant). Making numbers \
 visceral rather than abstract. Ensuring the client is always the hero of the story.
 
@@ -484,8 +484,8 @@ def _build_html(ctx: dict, audit_id: int, claude_narrative: str = "") -> str:
     arch_desc_block = f'<p class="arch-desc">{_esc(archetype_desc)}</p>' if archetype_desc else ""
 
     method_note = (
-        "Scores are normalised to 0-100. Band thresholds: Elite 85+, Performing 65-84, "
-        "Practising 40-64, Developing under 40. Archetype is derived from the two highest "
+        "Scores are normalised to 0-100. Band thresholds: Elite 85+, Performing 70-84, "
+        "Practising 50-69, Developing under 50. Archetype is derived from the two highest "
         "traits, with all-high and all-low special cases."
     )
 
