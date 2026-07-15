@@ -4,6 +4,7 @@ All endpoints DB-driven. No hardcoded numbers. Magic-link auth + JWT roles
 land at M5; the prototype currently treats the operator as the implied caller.
 """
 from __future__ import annotations
+# S104: preview-only verification build for deploy-boundary 502 repro (no functional change)
 
 import hashlib
 import io
