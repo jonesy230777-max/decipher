@@ -136,9 +136,7 @@ export default function AuditTake() {
         {/* Header */}
         <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-4)" }}>
           <Logo height={32} />
-          <div className="hig-footnote" style={{ color: "var(--colour-label-secondary)" }}>
-            Confidential · 7-10 minutes
-          </div>
+          
         </header>
 
         {/* Progress bar */}
