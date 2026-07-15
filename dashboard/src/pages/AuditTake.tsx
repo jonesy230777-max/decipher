@@ -87,7 +87,7 @@ export default function AuditTake() {
         name:         name.trim(),
         job_title:    jobTitle.trim() || null,
         company:      company.trim() || null,
-        version_code: "media_sales_v1",
+        version_code: "media_sales_v1",       team_id: (() => { const t = new URLSearchParams(window.location.search).get("team"); return t ? Number(t) : null; })(),
       };
       const s = await fetch("/api/audit/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); const sd = await s.json(); if (!s.ok) { alert(sd.detail || "Something went wrong. Please try again."); return; } setAuditId(sd.audit_id); setStep("question"); setStartedAt(Date.now()); nav(`/audit/${sd.audit_id}`, { replace: true }); } finally {
       setBusy(false);
