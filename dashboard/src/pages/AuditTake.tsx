@@ -61,9 +61,9 @@ export default function AuditTake() {
   const [email, setEmail]       = useState("");
   const [name,  setName]        = useState("");
   const [jobTitle, setJobTitle] = useState(""); const [company, setCompany] = useState("");
-  const [promoCode, setPromoCode] = useState("");
-  const [promoState, setPromoState] = useState<{ valid: boolean; is_free: boolean; discount_pct: number; error?: string } | null>(null);
-  const [promoChecking, setPromoChecking] = useState(false);
+  
+  
+  
   const [startedAt, setStartedAt] = useState<number>(Date.now());
 
   useEffect(() => {
@@ -78,19 +78,6 @@ export default function AuditTake() {
   const q = questions[idx];
   const progress = questions.length ? (idx / questions.length) : 0;
 
-  async function checkPromo() {
-    const code = promoCode.trim();
-    if (!code) return;
-    setPromoChecking(true);
-    try {
-      const r = await fetch(`/api/promo/validate?code=${encodeURIComponent(code)}`);
-      const d = await r.json();
-      setPromoState(d);
-    } finally {
-      setPromoChecking(false);
-    }
-  }
-
   async function start() {
     if (!email.trim() || !name.trim()) return;
     setBusy(true);
@@ -99,44 +86,10 @@ export default function AuditTake() {
         email:        email.trim(),
         name:         name.trim(),
         job_title:    jobTitle.trim() || null,
-        company:      company.trim() || null, promo_code:   promoCode.trim() || null,
+        company:      company.trim() || null,
         version_code: "media_sales_v1",
       };
-      const r = await fetch("/api/checkout/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const d = await r.json();
-      if (!r.ok) {
-        if (r.status === 503) {
-          // Stripe not configured -- dev mode fallback, skip payment
-          const s = await fetch("/api/audit/start", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: body.email, name: body.name, job_title: body.job_title, company: body.company, version_code: "media_sales_v1" }),
-          });
-          const sd = await s.json();
-          setAuditId(sd.audit_id);
-          setStep("question");
-          setStartedAt(Date.now());
-          nav(`/audit/${sd.audit_id}`, { replace: true });
-          return;
-        }
-        alert(d.detail || "Something went wrong. Please try again.");
-        return;
-      }
-      if (d.free && d.audit_id) {
-        // 100% promo -- jump straight to questions
-        setAuditId(d.audit_id);
-        setStep("question");
-        setStartedAt(Date.now());
-        nav(`/audit/${d.audit_id}`, { replace: true });
-      } else if (d.checkout_url) {
-        // Redirect to Stripe Checkout
-        window.location.href = d.checkout_url;
-      }
-    } finally {
+      const s = await fetch("/api/audit/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); const sd = await s.json(); if (!s.ok) { alert(sd.detail || "Something went wrong. Please try again."); return; } setAuditId(sd.audit_id); setStep("question"); setStartedAt(Date.now()); nav(`/audit/${sd.audit_id}`, { replace: true }); } finally {
       setBusy(false);
     }
   }
@@ -225,58 +178,11 @@ export default function AuditTake() {
               <Field label="Full name" value={name} onChange={setName} placeholder="Your name" />
               <Field label="Work email" value={email} onChange={setEmail} placeholder="you@company.com" type="email" />
               <Field label="Job title" value={jobTitle} onChange={setJobTitle} placeholder="Sales rep, Sales Director, etc." /> <Field label="Company" value={company} onChange={setCompany} placeholder="Your company name" />
-              <div>
-                <div className="hig-caption-1" style={{ textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--colour-label-secondary)", marginBottom: "var(--space-1)" }}>
-                  Promo code (optional)
-                </div>
-                <div style={{ display: "flex", gap: "var(--space-2)" }}>
-                  <input
-                    className="hig-body hig-numeric"
-                    style={{
-                      flex: 1,
-                      padding: "var(--space-2) var(--space-3)",
-                      border: `1px solid ${promoState ? (promoState.valid ? "var(--colour-system-green)" : "var(--colour-system-red)") : "var(--colour-separator-opaque)"}`,
-                      borderRadius: "var(--radius-md)",
-                      background: "var(--colour-bg-system)",
-                      color: "var(--colour-label)",
-                      fontSize: "var(--type-body)",
-                      textTransform: "uppercase",
-                    }}
-                    value={promoCode}
-                    onChange={e => { setPromoCode(e.target.value); setPromoState(null); }}
-                    onBlur={checkPromo}
-                    placeholder="e.g. LAUNCH100"
-                  />
-                  <button
-                    onClick={checkPromo}
-                    disabled={promoChecking || !promoCode.trim()}
-                    className="hig-callout"
-                    style={{
-                      padding: "var(--space-2) var(--space-4)",
-                      borderRadius: "var(--radius-md)",
-                      border: "1px solid var(--colour-separator-opaque)",
-                      background: "var(--colour-fill-quaternary)",
-                      color: "var(--colour-label)",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {promoChecking ? "..." : "Apply"}
-                  </button>
-                </div>
-                {promoState && (
-                  <div className="hig-footnote" style={{ marginTop: "var(--space-1)", color: promoState.valid ? "var(--colour-system-green)" : "var(--colour-system-red)" }}>
-                    {promoState.valid
-                      ? promoState.is_free
-                        ? "Free access. No payment required."
-                        : `${promoState.discount_pct}% discount applied.`
-                      : promoState.error}
-                  </div>
-                )}
-              </div>
+              
             </div>
             <div style={{ marginTop: "var(--space-5)", display: "flex", justifyContent: "flex-end" }}>
               <Button onClick={start} variant="filled" size="lg">
-                {busy ? "Processing..." : promoState?.is_free ? "Begin audit →" : "Continue to payment →"}
+                {busy ? "Processing..." : "Begin audit →"}
               </Button>
             </div>
           </Card>
