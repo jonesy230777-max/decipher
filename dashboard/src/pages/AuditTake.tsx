@@ -450,7 +450,7 @@ function Field({
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
+        placeholder={placeholder} onMouseEnter={(e) => (e.currentTarget.style.background = "#ffffff")} onMouseLeave={(e) => (e.currentTarget.style.background = "var(--colour-bg-system-secondary)")}
         style={{
           height: 40,
           padding: "0 var(--space-3)",
