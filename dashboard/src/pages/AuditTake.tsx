@@ -60,7 +60,7 @@ export default function AuditTake() {
   // Intro fields
   const [email, setEmail]       = useState("");
   const [name,  setName]        = useState("");
-  const [jobTitle, setJobTitle] = useState("");
+  const [jobTitle, setJobTitle] = useState(""); const [company, setCompany] = useState("");
   const [promoCode, setPromoCode] = useState("");
   const [promoState, setPromoState] = useState<{ valid: boolean; is_free: boolean; discount_pct: number; error?: string } | null>(null);
   const [promoChecking, setPromoChecking] = useState(false);
@@ -99,7 +99,7 @@ export default function AuditTake() {
         email:        email.trim(),
         name:         name.trim(),
         job_title:    jobTitle.trim() || null,
-        promo_code:   promoCode.trim() || null,
+        company:      company.trim() || null, promo_code:   promoCode.trim() || null,
         version_code: "media_sales_v1",
       };
       const r = await fetch("/api/checkout/session", {
@@ -114,7 +114,7 @@ export default function AuditTake() {
           const s = await fetch("/api/audit/start", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: body.email, name: body.name, job_title: body.job_title, version_code: "media_sales_v1" }),
+            body: JSON.stringify({ email: body.email, name: body.name, job_title: body.job_title, company: body.company, version_code: "media_sales_v1" }),
           });
           const sd = await s.json();
           setAuditId(sd.audit_id);
@@ -224,7 +224,7 @@ export default function AuditTake() {
             <div style={{ display: "grid", gap: "var(--space-3)", marginTop: "var(--space-5)" }}>
               <Field label="Full name" value={name} onChange={setName} placeholder="Your name" />
               <Field label="Work email" value={email} onChange={setEmail} placeholder="you@company.com" type="email" />
-              <Field label="Job title" value={jobTitle} onChange={setJobTitle} placeholder="Sales rep, Sales Director, etc." />
+              <Field label="Job title" value={jobTitle} onChange={setJobTitle} placeholder="Sales rep, Sales Director, etc." /> <Field label="Company" value={company} onChange={setCompany} placeholder="Your company name" />
               <div>
                 <div className="hig-caption-1" style={{ textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--colour-label-secondary)", marginBottom: "var(--space-1)" }}>
                   Promo code (optional)
