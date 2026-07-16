@@ -27,7 +27,6 @@ compliance/hig_mirror/
 .git/
 .gitignore
 docs/
-reference_docs/
 _bmad/
 _bmad-output/
 demo/
