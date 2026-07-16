@@ -239,8 +239,8 @@ const DIM_LABEL: Record<string, string> = {
   cognitive_empathy:    "Cognitive Empathy",
   eq:                   "Emotional Intelligence",
   pressure_composure:   "Pressure Composure",
-  narrative_persuasion: "Narrative Persuasion",
-  storytelling:         "Narrative Persuasion",
+  narrative_persuasion: "Storytelling",
+  storytelling:         "Storytelling",
 };
 const BAND_COLOUR: Record<string, string> = {
   elite:      "var(--colour-band-elite)",
@@ -250,7 +250,7 @@ const BAND_COLOUR: Record<string, string> = {
 };
 const EQ_IDENTITY_LABEL: Record<string, string> = {
   regulator: "Regulator", edge_builder: "Edge Builder",
-  observer:  "Observer",  namer:        "Namer",
+  observer:  "Observer",  labeler:        "Labeler",
 };
 
 function DoneCard({ auditId, result }: { auditId: number | null; result: CompleteResult | null }) {

@@ -94,9 +94,9 @@ EQ_IDENTITY_NARRATIVES = {
             "hear that you saw it, so they do not have to perform."
         ),
     },
-    "namer": {
+    "labeler": {
         "strength": (
-            "Your EQ signature is the Namer. You will say the awkward thing "
+            "Your EQ signature is the Labeler. You will say the awkward thing "
             "out loud when others rush past it. Buyers find this disarming, "
             "and it shortens the distance from objection to honest answer."
         ),

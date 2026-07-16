@@ -1046,7 +1046,7 @@
         {
           "letter": "EQ-D",
           "text": "My strength is naming the emotion out loud \u2014 even when it's uncomfortable",
-          "identity": "namer"
+          "identity": "labeler"
         }
       ]
     },
@@ -1073,7 +1073,7 @@
         {
           "letter": "EQ-D",
           "text": "Under pressure I call out what's really happening \u2014 even if it's awkward",
-          "identity": "namer"
+          "identity": "labeler"
         }
       ]
     },
@@ -1100,7 +1100,7 @@
         {
           "letter": "EQ-D",
           "text": "After a difficult meeting I think about whether I named the hard thing or avoided it",
-          "identity": "namer"
+          "identity": "labeler"
         }
       ]
     }
@@ -1964,7 +1964,7 @@
       {
         "letter": "EQ-D",
         "text": "My strength is naming the emotion out loud \u2014 even when it's uncomfortable",
-        "identity": "namer"
+        "identity": "labeler"
       }
     ],
     "EQ2": [
@@ -1986,7 +1986,7 @@
       {
         "letter": "EQ-D",
         "text": "Under pressure I call out what's really happening \u2014 even if it's awkward",
-        "identity": "namer"
+        "identity": "labeler"
       }
     ],
     "EQ3": [
@@ -2008,7 +2008,7 @@
       {
         "letter": "EQ-D",
         "text": "After a difficult meeting I think about whether I named the hard thing or avoided it",
-        "identity": "namer"
+        "identity": "labeler"
       }
     ]
   },
@@ -2177,6 +2177,6 @@
     "regulator",
     "edge_builder",
     "observer",
-    "namer"
+    "labeler"
   ]
 }

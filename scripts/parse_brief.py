@@ -42,7 +42,7 @@ BAND_THRESHOLDS = {  # per brief §4.2
     "practising": 40,
     "developing": 0,
 }
-EQ_IDENTITIES = ["regulator", "edge_builder", "observer", "namer"]
+EQ_IDENTITIES = ["regulator", "edge_builder", "observer", "labeler"]
 
 
 def _tables_as_rows(doc: Document) -> list[list[list[str]]]:
