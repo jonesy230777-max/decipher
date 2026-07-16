@@ -37,6 +37,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Application code
 COPY app/           ./app/
 COPY scripts/       ./scripts/
+COPY reference_docs/ ./reference_docs/
 COPY nginx/         ./nginx/
 COPY supervisord/   ./supervisord/
 COPY schema.sql seed.sql ./
