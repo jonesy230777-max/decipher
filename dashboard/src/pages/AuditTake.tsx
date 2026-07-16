@@ -168,7 +168,7 @@ export default function AuditTake() {
         {step === "intro" && (
           <Card>
             <h1 className="hig-large-title" style={{ margin: 0 }}>{version.version.name}</h1>
-            <p className="hig-body" style={{ color: "var(--colour-label-secondary)", marginTop: "var(--space-3)" }}>
+            <p className="hig-body" style={{ color: "var(--colour-label)", marginTop: "var(--space-3)" }}>
               This assessment is confidential. Answer honestly. There are no right
               or wrong answers. {questions.length} questions, roughly 7-10 minutes.
             </p>
@@ -349,7 +349,7 @@ function Field({
 }) {
   return (
     <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-      <span className="hig-caption-1">{label}</span>
+      <span className="hig-caption-1" style={{ color: "var(--colour-label)" }}>{label}</span>
       <input
         type={type}
         value={value}
