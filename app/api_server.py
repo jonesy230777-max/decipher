@@ -386,7 +386,8 @@ def industries_create(body: IndustryCreate) -> dict[str, Any]:
 
 
 @app.get("/api/teams/{team_id}/gap-analysis")
-def team_gap_analysis(team_id: int) -> dict[str, Any]:
+def team_gap_analysis(team_id: int, request: Request) -> dict[str, Any]:
+    _require_team_access(request, team_id)
     """Gap analysis for a team: weakest dimension, distance from each band
     boundary, sub-segments (top vs bottom quartile), and remediation
     suggestions per dimension."""
@@ -1362,8 +1363,38 @@ def _team_or_404(team_id: int) -> dict:
     return t[0]
 
 
+adef _require_team_access(request: Request, team_id: int) -> dict:
+    """Ensure the authenticated caller may see this team's data.
+    Admin sees every team. ceo/hr/learning_development are scoped to
+    their own company (all teams in it). sales_director is scoped to
+    their own team only. Anyone else, or no valid session, is refused."""
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows(
+        "SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s",
+        (int(caller["sub"]),),
+    )
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    role = me[0]["role"]
+    if role == "admin":
+        return me[0]
+    team = _team_or_404(team_id)
+    if role == "sales_director":
+        if me[0]["team_id"] == team_id:
+            return me[0]
+        raise HTTPException(403, "forbidden")
+    if role in ("ceo", "hr", "learning_development"):
+        if me[0]["company_id"] and me[0]["company_id"] == team.get("company_id"):
+            return me[0]
+        raise HTTPException(403, "forbidden")
+    raise HTTPException(403, "forbidden")
+
+
 @app.get("/api/teams/{team_id}/overview")
-def team_overview(team_id: int) -> dict[str, Any]:
+def team_overview(team_id: int, request: Request) -> dict[str, Any]:
+    _require_team_access(request, team_id)
     t = _team_or_404(team_id)
     director = rows(
         """SELECT respondent_id, name, email, role
@@ -1453,7 +1484,8 @@ def _band_for(score: float) -> str:
 
 
 @app.get("/api/teams/{team_id}/distribution")
-def team_distribution(team_id: int) -> dict[str, Any]:
+def team_distribution(team_id: int, request: Request) -> dict[str, Any]:
+    _require_team_access(request, team_id)
     _team_or_404(team_id)
     raw = rows(
         """SELECT bc.dimension, bc.band, count(*) AS n
@@ -1486,7 +1518,8 @@ def team_distribution(team_id: int) -> dict[str, Any]:
 
 
 @app.get("/api/teams/{team_id}/trait-averages")
-def team_trait_averages(team_id: int) -> dict[str, Any]:
+def team_trait_averages(team_id: int, request: Request) -> dict[str, Any]:
+    _require_team_access(request, team_id)
     _team_or_404(team_id)
     row = rows(
         """SELECT avg(cognitive_empathy) AS cognitive_empathy,
@@ -1519,7 +1552,8 @@ def team_trait_averages(team_id: int) -> dict[str, Any]:
 
 
 @app.get("/api/teams/{team_id}/archetypes")
-def team_archetypes(team_id: int) -> dict[str, Any]:
+def team_archetypes(team_id: int, request: Request) -> dict[str, Any]:
+    _require_team_access(request, team_id)
     _team_or_404(team_id)
     data = rows(
         """SELECT ar.code, ar.name, count(*) AS n
@@ -1536,7 +1570,8 @@ def team_archetypes(team_id: int) -> dict[str, Any]:
 
 
 @app.get("/api/teams/{team_id}/interventions")
-def team_interventions(team_id: int) -> dict[str, Any]:
+def team_interventions(team_id: int, request: Request) -> dict[str, Any]:
+    _require_team_access(request, team_id)
     """Per spec §7B: top 3 at-risk segments by count + 1 pair-top-performers.
 
     M6 will swap this for Claude-API generated cards. The prototype derives
@@ -1616,7 +1651,8 @@ def team_interventions(team_id: int) -> dict[str, Any]:
 
 
 @app.get("/api/teams/{team_id}/export.pdf")
-def team_export_pdf(team_id: int) -> StreamingResponse:
+def team_export_pdf(team_id: int, request: Request) -> StreamingResponse:
+    _require_team_access(request, team_id)
     """Multi-page executive summary PDF. Includes:
       Page 1: Header, director, KPI strip, distribution, trait averages
       Page 2: Archetype breakdown, every intervention (full bodies)
@@ -2349,7 +2385,8 @@ def respondent_detail(respondent_id: int) -> dict[str, Any]:
 
 
 @app.get("/api/teams/{team_id}/audits")
-def team_audits(team_id: int) -> dict[str, Any]:
+def team_audits(team_id: int, request: Request) -> dict[str, Any]:
+    _require_team_access(request, team_id)
     _team_or_404(team_id)
     data = rows(
         """SELECT a.audit_id, a.status, a.started_at, a.completed_at,
@@ -3449,7 +3486,8 @@ def teams_create(body: TeamCreate) -> dict[str, Any]:
 
 
 @app.get("/api/teams/{team_id}/roster")
-def team_roster(team_id: int) -> dict[str, Any]:
+def team_roster(team_id: int, request: Request) -> dict[str, Any]:
+    _require_team_access(request, team_id)
     """Roster of consented respondents in a team. Identity gated by consent.
 
     Non-consented respondents show up as "Anonymised" so the director can
