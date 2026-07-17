@@ -25,6 +25,7 @@ from fastapi.responses import PlainTextResponse, StreamingResponse
 from pydantic import BaseModel
 
 from .db import conn, event, rows, scalar
+from app.admin_bootstrap import bootstrap_admin_password
 
 log = logging.getLogger(__name__)
 
@@ -46,6 +47,7 @@ def _run_backup() -> None:
 
 async def _lifespan(app: FastAPI):
     from app.cohort_jobs import run_snapshot, run_pattern_hunt
+    bootstrap_admin_password()
     scheduler = BackgroundScheduler(timezone="Australia/Sydney")
     scheduler.add_job(run_snapshot,     "cron", hour=2,  minute=0,  id="cohort_snapshot")
     scheduler.add_job(run_pattern_hunt, "cron", hour=3,  minute=0,  day_of_week="mon", id="pattern_hunt")
@@ -1869,9 +1871,6 @@ def _resolve_caller_role(invited_by_email: str | None, invited_by_role: str | No
         r = rows("SELECT role FROM respondents WHERE email = %s", (invited_by_email,))
         if r:
             return r[0]["role"]
-    # If only role is claimed, accept (prototype only).
-    if invited_by_role and invited_by_role in VALID_ROLES:
-        return invited_by_role
     return "sales_person"
 
 
