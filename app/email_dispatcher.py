@@ -1,10 +1,10 @@
-"""Email dispatcher -- delivers queued DNA report emails via Mailpit.
+"""Email dispatcher -- delivers queued DNA report emails via Resend.
 
 Reads audit_jobs WHERE job_type='email' AND status='queued', sends the
 PDF attachment, marks the job done or error.
 
-Rule 17: this module drops mail into Mailpit only. Steve forwards to
-respondents from his own account; no external SMTP configured here.
+Sends live transactional email via the Resend API (https://resend.com).
+Requires RESEND_API_KEY in the environment; MAIL_FROM controls the sender.
 
 Run standalone:
     python -m app.email_dispatcher           # continuous 5-second poll
@@ -16,21 +16,23 @@ from __future__ import annotations
 
 import json
 import os
-import smtplib
+import base64
 import sys
 import time
-from email.message import EmailMessage
+import urllib.error
+import urllib.request
 
 from app.db import conn, rows, event
 
-_MAIL_HOST = os.getenv("DECIPHER_MAIL_HOST", "127.0.0.1")
-_MAIL_PORT = int(os.getenv("DECIPHER_MAIL_PORT", "1025"))
+_RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+_RESEND_API_URL = "https://api.resend.com/emails"
+_MAIL_FROM = os.getenv("MAIL_FROM", "Decipher Reports <noreply@decipher.com.au>")
 
 
 def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
-    """Build and deliver the DNA report email to Mailpit.
+    """Build and deliver the DNA report email via Resend.
 
-    Sets reports.delivered_at on success. Raises on SMTP or missing-file errors.
+    Sets reports.delivered_at on success. Raises on API or missing-file errors.
     """
     rec = rows(
         """SELECT r.email, r.first_name, r.name, ar.name AS archetype_name
@@ -53,39 +55,58 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
     except FileNotFoundError:
         raise RuntimeError(f"pdf_missing:{pdf_path}")
 
-    msg = EmailMessage()
-    msg["From"] = "noreply@decipher.com.au"
-    msg["To"]   = r["email"]
-    msg["Subject"] = f"Your Decipher DNA report · {archetype}"
-    msg.set_content(
+        if not _RESEND_API_KEY:
+        raise RuntimeError("RESEND_API_KEY not configured")
+
+    text_body = (
         f"Hi {first},\n\n"
         f"Your Decipher DNA report is attached. Headline archetype: {archetype}.\n\n"
         f"Full breakdown across Cognitive Empathy, Emotional Intelligence, "
         f"Pressure Composure and Narrative Persuasion is on page 1.\n\n"
         f"decipher.com.au"
     )
-    msg.add_alternative(
-        f"""<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>
-<p>Hi {first},</p>
-<p>Your <strong>Decipher DNA report</strong> is attached.</p>
-<p>Headline archetype: <strong>{archetype}</strong>.
-Full breakdown across the four traits is on page 1; per-trait coaching
-actions are on pages 2 and 3.</p>
-<p style='color:#636366;font-size:12px;'>decipher.com.au</p>
-</body></html>""",
-        subtype="html",
-    )
-    msg.add_attachment(
-        pdf_bytes,
-        maintype="application",
-        subtype="pdf",
-        filename=os.path.basename(pdf_path),
+    html_body = (
+        "<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>"
+        f"<p>Hi {first},</p>"
+        "<p>Your <strong>Decipher DNA report</strong> is attached.</p>"
+        f"<p>Headline archetype: <strong>{archetype}</strong>. "
+        "Full breakdown across the four traits is on page 1; per-trait coaching "
+        "actions are on pages 2 and 3.</p>"
+        "<p style='color:#636366;font-size:12px;'>decipher.com.au</p>"
+        "</body></html>"
     )
 
-    with smtplib.SMTP(_MAIL_HOST, _MAIL_PORT, timeout=5) as s:
-        s.send_message(msg)
+    payload = {
+        "from": _MAIL_FROM,
+        "to": [r["email"]],
+        "subject": f"Your Decipher DNA report · {archetype}",
+        "text": text_body,
+        "html": html_body,
+        "attachments": [
+            {
+                "filename": os.path.basename(pdf_path),
+                "content": base64.b64encode(pdf_bytes).decode("ascii"),
+            }
+        ],
+    }
 
-    with conn() as cdb, cdb.cursor() as cur:
+    req = urllib.request.Request(
+        _RESEND_API_URL,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {_RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            resp.read()
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", "replace")
+        raise RuntimeError(f"resend_error:{exc.code}:{body[:300]}")
+
+with conn() as cdb, cdb.cursor() as cur:
         cur.execute(
             "UPDATE reports SET delivered_at = now(), recipient_email = %s WHERE report_id = %s",
             (r["email"], report_id),
@@ -159,7 +180,7 @@ def dispatch_one() -> bool:
 def run(poll_interval: int = 5) -> None:
     """Continuous polling loop. Drains the queue, then sleeps poll_interval seconds."""
     print(
-        f"[email_dispatcher] started  host={_MAIL_HOST}:{_MAIL_PORT}"
+        f"[email_dispatcher] started via Resend, from={_MAIL_FROM}"
         f"  poll={poll_interval}s",
         flush=True,
     )
