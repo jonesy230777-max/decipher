@@ -2279,7 +2279,7 @@ def squarespace_generate() -> dict[str, Any]:
 
 
 @app.get("/api/respondents/{respondent_id}")
-def respondent_detail(respondent_id: int) -> dict[str, Any]:
+def respondent_detail(respondent_id: int, request: Request) -> dict[str, Any]:
     """Individual respondent drill-down.
 
     Identity (name/email/mobile) is gated by consent_share_individual.
@@ -2296,6 +2296,7 @@ def respondent_detail(respondent_id: int) -> dict[str, Any]:
     if not r:
         raise HTTPException(404, "respondent not found")
     rec = r[0]
+    _require_respondent_access(request, rec)
     can_see_identity = bool(rec.get("consent_share_individual"))
     if not can_see_identity:
         for k in ("name", "email", "first_name", "last_name", "mobile"):
@@ -3004,6 +3005,30 @@ def _caller_from_request(request: Request) -> dict | None:
     if not auth.startswith("Bearer "):
         return None
     return _decode_jwt(auth[7:].strip())
+
+
+def _require_respondent_access(request: Request, rec: dict) -> None:
+    """Ensure the authenticated caller may view this respondent's audit data.
+    Admin sees everyone. sales_director must share the respondent's team.
+    ceo/hr/learning_development must share the respondent's company.
+    Everyone else, or no valid session, is refused."""
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows(
+        "SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s",
+        (int(caller["sub"]),),
+    )
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    role = me[0]["role"]
+    if role == "admin":
+        return
+    if role == "sales_director" and me[0]["team_id"] and me[0]["team_id"] == rec.get("team_id"):
+        return
+    if role in ("ceo", "hr", "learning_development") and me[0]["company_id"] and me[0]["company_id"] == rec.get("company_id"):
+        return
+    raise HTTPException(403, "forbidden")
 
 
 class LoginIn(BaseModel):
