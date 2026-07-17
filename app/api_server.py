@@ -138,16 +138,16 @@ def health_scoring() -> dict[str, Any]:
     )
     counts = rows(
         """SELECT
-              (SELECT count(*) FROM audits WHERE audit_version_id = 2)::int                                        AS v2_audits,
-              (SELECT count(*) FROM audit_scores s JOIN audits a USING(audit_id) WHERE a.audit_version_id = 2)::int AS v2_scored,
-              (SELECT count(*) FROM reports r JOIN audits a USING(audit_id) WHERE a.audit_version_id = 2)::int      AS v2_reports,
+              (SELECT count(*) FROM audits WHERE audit_version_id = 3)::int                                        AS v2_audits,
+              (SELECT count(*) FROM audit_scores s JOIN audits a USING(audit_id) WHERE a.audit_version_id = 3)::int AS v2_scored,
+              (SELECT count(*) FROM reports r JOIN audits a USING(audit_id) WHERE a.audit_version_id = 3)::int      AS v2_reports,
               (SELECT count(*) FROM reports r WHERE delivered_at IS NOT NULL)::int                                  AS reports_delivered,
               (SELECT count(*) FROM audits a LEFT JOIN reports r ON r.audit_id = a.audit_id
                 WHERE a.status = 'reported' AND r.report_id IS NULL)::int                                           AS orphan_reported,
               (SELECT to_char(max(generated_at), 'YYYY-MM-DD HH24:MI') FROM reports)                                AS last_report,
               (SELECT to_char(max(delivered_at), 'YYYY-MM-DD HH24:MI') FROM reports)                                AS last_delivery""",
     )[0]
-    questions = scalar("SELECT count(*) FROM questions WHERE audit_version_id = 2")
+    questions = scalar("SELECT count(*) FROM questions WHERE audit_version_id = 3")
     mail_host = os.environ.get("DECIPHER_MAIL_HOST", "127.0.0.1")
     mail_port = int(os.environ.get("DECIPHER_MAIL_PORT", "1025"))
 
@@ -3636,6 +3636,8 @@ def _score_and_report(audit_id: int) -> None:
         score_audit(audit_id)
         report = generate_report(audit_id)
         _enqueue_email_job(audit_id, report["report_id"], report["pdf_path"])
+        from app.email_dispatcher import send_report_email
+        send_report_email(audit_id, report["report_id"], report["pdf_path"])
     except Exception as exc:
         event("audit.score_error", severity="error", subject_id=str(audit_id),
               payload={"error": str(exc)})
@@ -3685,7 +3687,7 @@ def audit_complete(audit_id: int, background_tasks: BackgroundTasks) -> dict[str
     # The client receives the response immediately; status transitions to
     # 'scored' -> 'reported' in the background thread.
     audit_version_id = a[0]["audit_version_id"]
-    if audit_version_id == 2:
+    if audit_version_id == 3:
         background_tasks.add_task(_score_and_report, audit_id)
         return {"ok": True, "audit_id": audit_id, "status": "processing"}
     return {"ok": True, "audit_id": audit_id, "status": "completed"}
@@ -3697,13 +3699,15 @@ def audit_score(audit_id: int) -> dict[str, Any]:
     a = rows("SELECT audit_version_id FROM audits WHERE audit_id = %s", (audit_id,))
     if not a:
         raise HTTPException(404, "audit not found")
-    if a[0]["audit_version_id"] != 2:
-        raise HTTPException(400, "scoring engine only supports media_sales_v1 (version 2)")
+    if a[0]["audit_version_id"] != 3:
+        raise HTTPException(400, "scoring engine only supports media_sales_v1 (version 3)")
     from app.dna_scoring import score_audit
     from app.dna_report  import generate_report
     score  = score_audit(audit_id)
     report = generate_report(audit_id)
     email_job_id = _enqueue_email_job(audit_id, report["report_id"], report["pdf_path"])
+    from app.email_dispatcher import send_report_email
+    send_report_email(audit_id, report["report_id"], report["pdf_path"])
     return {
         "ok":          True,
         "audit_id":    audit_id,
