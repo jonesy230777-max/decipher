@@ -354,13 +354,13 @@ function Field({
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--colour-accent-tint-bg)"; e.currentTarget.style.borderColor = "var(--colour-accent)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "var(--colour-bg-system-secondary)"; e.currentTarget.style.borderColor = "var(--colour-separator-opaque)"; }} onFocus={(e) => { e.currentTarget.style.background = "var(--colour-accent-tint-bg)"; e.currentTarget.style.borderColor = "var(--colour-accent)"; }} onBlur={(e) => { e.currentTarget.style.background = "var(--colour-bg-system-secondary)"; e.currentTarget.style.borderColor = "var(--colour-separator-opaque)"; }}
+        placeholder={placeholder} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--colour-accent-tint-bg)"; e.currentTarget.style.borderColor = "var(--colour-accent)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; e.currentTarget.style.borderColor = "var(--colour-separator-opaque)"; }} onFocus={(e) => { e.currentTarget.style.background = "var(--colour-accent-tint-bg)"; e.currentTarget.style.borderColor = "var(--colour-accent)"; }} onBlur={(e) => { e.currentTarget.style.background = "#ffffff"; e.currentTarget.style.borderColor = "var(--colour-separator-opaque)"; }}
         style={{
           height: 40,
           padding: "0 var(--space-3)",
           border: "1px solid var(--colour-separator-opaque)",
           borderRadius: "var(--radius-sm)",
-          background: "var(--colour-bg-system-secondary)",
+          background: "#ffffff",
           color: "var(--colour-label)",
           fontSize: "var(--type-body)",
           fontFamily: "inherit",
