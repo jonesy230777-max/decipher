@@ -1,4 +1,4 @@
-"""Repair media_sales_v1 (audit_version_id=2) questions to align with the
+"""Repair media_sales_v1 (audit_version_id=3) questions to align with the
 canonical brief: correct dimension per trait_by_qnum, and embed per-option
 canonical 1-5 scores + EQ identity codes inside response_meta.
 
@@ -59,7 +59,7 @@ def build_response_meta(q: dict) -> dict:
 
 def main() -> None:
     with conn() as c, c.cursor() as cur:
-        cur.execute("SELECT question_id, sequence FROM questions WHERE audit_version_id=2 ORDER BY sequence")
+        cur.execute("SELECT question_id, sequence FROM questions WHERE audit_version_id=3 ORDER BY sequence")
         rows = cur.fetchall()
         if len(rows) != len(QUESTIONS):
             raise SystemExit(f"questions mismatch: DB has {len(rows)}, canonical has {len(QUESTIONS)}")
@@ -79,7 +79,7 @@ def main() -> None:
                 (dim, q["prompt"], json.dumps(meta), question_id),
             )
             updated += 1
-        print(f"Updated {updated} questions for media_sales_v1 (audit_version_id=2)")
+        print(f"Updated {updated} questions for media_sales_v1 (audit_version_id=3)")
 
 
 if __name__ == "__main__":
