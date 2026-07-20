@@ -56,7 +56,7 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
         raise RuntimeError(f"pdf_missing:{pdf_path}")
 
         if not _RESEND_API_KEY:
-        raise RuntimeError("RESEND_API_KEY not configured")
+            raise RuntimeError("RESEND_API_KEY not configured")
 
     text_body = (
         f"Hi {first},\n\n"
