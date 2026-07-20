@@ -56,7 +56,7 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
         raise RuntimeError(f"pdf_missing:{pdf_path}")
 
         if not _RESEND_API_KEY:
-        raise RuntimeError("RESEND_API_KEY not configured")
+            raise RuntimeError("RESEND_API_KEY not configured")
 
     text_body = (
         f"Hi {first},\n\n"
@@ -96,6 +96,7 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
         headers={
             "Authorization": f"Bearer {_RESEND_API_KEY}",
             "Content-Type": "application/json",
+            "User-Agent": "decipher-app/1.0",
         },
         method="POST",
     )
@@ -106,11 +107,11 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
         body = exc.read().decode("utf-8", "replace")
         raise RuntimeError(f"resend_error:{exc.code}:{body[:300]}")
 
-with conn() as cdb, cdb.cursor() as cur:
-        cur.execute(
-            "UPDATE reports SET delivered_at = now(), recipient_email = %s WHERE report_id = %s",
-            (r["email"], report_id),
-        )
+    with conn() as cdb, cdb.cursor() as cur:
+            cur.execute(
+                "UPDATE reports SET delivered_at = now(), recipient_email = %s WHERE report_id = %s",
+                (r["email"], report_id),
+            )
 
 
 def dispatch_one() -> bool:
