@@ -106,11 +106,11 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
         body = exc.read().decode("utf-8", "replace")
         raise RuntimeError(f"resend_error:{exc.code}:{body[:300]}")
 
-with conn() as cdb, cdb.cursor() as cur:
-        cur.execute(
-            "UPDATE reports SET delivered_at = now(), recipient_email = %s WHERE report_id = %s",
-            (r["email"], report_id),
-        )
+    with conn() as cdb, cdb.cursor() as cur:
+            cur.execute(
+                "UPDATE reports SET delivered_at = now(), recipient_email = %s WHERE report_id = %s",
+                (r["email"], report_id),
+            )
 
 
 def dispatch_one() -> bool:
