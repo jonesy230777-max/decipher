@@ -17,15 +17,14 @@ INSERT INTO archetypes (taxonomy_id, code, name, description) VALUES
     (1, 'edge_builder', 'Edge-Builder', 'Challenger; frames the conversation; leans in.'),
     (1, 'observer',     'Observer',     'Analytical; listens long; intervenes precisely.'),
     (1, 'labeler',      'Labeler',      'Names what is happening in the room, NVC-style.'),
-    (2, 'strategic_empath',     'Strategic Empath',     'Placeholder.'),
-    (2, 'trust_architect',      'Trust Architect',      'Placeholder.'),
-    (2, 'confident_storyteller','Confident Storyteller','Placeholder.'),
-    (2, 'story_listener',       'Story Listener',       'Placeholder.'),
-    (2, 'elite_operator',       'Elite Operator',       'Placeholder.'),
-    (2, 'calm_diagnostician',   'Calm Diagnostician',   'Placeholder.'),
-    (2, 'composed_reader',      'Composed Reader',      'Placeholder.'),
-    (2, 'raw_material',         'Raw Material',         'Placeholder.')
-ON CONFLICT (taxonomy_id, code) DO NOTHING;
+        (2, 'strategic_empath',     'The Strategic Empath',     'Placeholder.'),
+    (2, 'trust_architect',      'The Trust Architect',      'Placeholder.'),
+    (2, 'confident_storyteller','The Confident Storyteller','Placeholder.'),
+    (2, 'story_listener',       'The Story Listener',       'Placeholder.'),
+    (2, 'elite_operator',       'The Elite Operator',       'Placeholder.'),
+    (2, 'calm_diagnostician',   'The Calm Diagnostician',   'Placeholder.'),
+    (2, 'composed_reader',      'The Composed Reader',      'Placeholder.'),
+    (2, 'raw_material',         'The Raw Material',         'Placeholder.')
 
 INSERT INTO industries (code, name, description) VALUES
     ('media',      'Media',      'Advertising, publishing, content.'),
