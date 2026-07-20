@@ -96,6 +96,7 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
         headers={
             "Authorization": f"Bearer {_RESEND_API_KEY}",
             "Content-Type": "application/json",
+            "User-Agent": "decipher-app/1.0",
         },
         method="POST",
     )
