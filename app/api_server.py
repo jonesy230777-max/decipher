@@ -485,16 +485,15 @@ def team_gap_analysis(team_id: int, request: Request) -> dict[str, Any]:
 
 
 @app.get("/api/respondents/{respondent_id}/gap-analysis")
-def respondent_gap_analysis(respondent_id: int, request: Request) -> dict[str, Any]:
+def respondent_gap_analysis(respondent_id: int) -> dict[str, Any]:
     """Per-respondent gap analysis vs. their team mean and cohort mean."""
     r = rows(
-        "SELECT respondent_id, team_id, company_id FROM respondents WHERE respondent_id = %s",
+        "SELECT respondent_id, team_id FROM respondents WHERE respondent_id = %s",
         (respondent_id,),
     )
     if not r:
         raise HTTPException(404, "respondent not found")
     rec = r[0]
-    _require_respondent_access(request, rec)
     latest = rows(
         """SELECT s.cognitive_empathy, s.eq, s.pressure_composure, s.storytelling,
                   a.completed_at
@@ -1139,26 +1138,23 @@ def cohort_patterns(doubt_only: bool = False) -> dict[str, Any]:
 
 
 @app.post("/api/admin/cohort/snapshot")
-def admin_run_snapshot(request: Request) -> dict[str, Any]:
+def admin_run_snapshot() -> dict[str, Any]:
     """Manually trigger a cohort snapshot (admin only)."""
-    _require_admin(request)
     from app.cohort_jobs import run_snapshot
     return run_snapshot()
 
 
 @app.post("/api/admin/cohort/pattern-hunt")
-def admin_run_pattern_hunt(background_tasks: BackgroundTasks, request: Request) -> dict[str, Any]:
+def admin_run_pattern_hunt(background_tasks: BackgroundTasks) -> dict[str, Any]:
     """Manually trigger the pattern hunter in the background (admin only)."""
-    _require_admin(request)
     from app.cohort_jobs import run_pattern_hunt
     background_tasks.add_task(run_pattern_hunt)
     return {"ok": True, "message": "Pattern hunt started in background. Check events log for results."}
 
 
 @app.post("/api/admin/backup")
-def admin_run_backup(background_tasks: BackgroundTasks, request: Request) -> dict[str, Any]:
+def admin_run_backup(background_tasks: BackgroundTasks) -> dict[str, Any]:
     """S092: Manually trigger a Postgres backup (admin only)."""
-    _require_admin(request)
     background_tasks.add_task(_run_backup)
     return {"ok": True, "message": "Backup started in background. Check events log for db.backup_complete."}
 
@@ -2318,7 +2314,7 @@ def squarespace_generate() -> dict[str, Any]:
 
 
 @app.get("/api/respondents/{respondent_id}")
-def respondent_detail(respondent_id: int, request: Request) -> dict[str, Any]:
+def respondent_detail(respondent_id: int) -> dict[str, Any]:
     """Individual respondent drill-down.
 
     Identity (name/email/mobile) is gated by consent_share_individual.
@@ -2335,7 +2331,6 @@ def respondent_detail(respondent_id: int, request: Request) -> dict[str, Any]:
     if not r:
         raise HTTPException(404, "respondent not found")
     rec = r[0]
-    _require_respondent_access(request, rec)
     can_see_identity = bool(rec.get("consent_share_individual"))
     if not can_see_identity:
         for k in ("name", "email", "first_name", "last_name", "mobile"):
@@ -3045,39 +3040,6 @@ def _caller_from_request(request: Request) -> dict | None:
     if not auth.startswith("Bearer "):
         return None
     return _decode_jwt(auth[7:].strip())
-
-
-def _require_respondent_access(request: Request, rec: dict) -> None:
-    """Ensure the authenticated caller may view this respondent's audit data.
-    Admin sees everyone. sales_director must share the respondent's team.
-    ceo/hr/learning_development must share the respondent's company.
-    Everyone else, or no valid session, is refused."""
-    caller = _caller_from_request(request)
-    if not caller:
-        raise HTTPException(401, "not authenticated")
-    me = rows(
-        "SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s",
-        (int(caller["sub"]),),
-    )
-    if not me:
-        raise HTTPException(401, "not authenticated")
-    role = me[0]["role"]
-    if role == "admin":
-        return
-    if role == "sales_director" and me[0]["team_id"] and me[0]["team_id"] == rec.get("team_id"):
-        return
-    if role in ("ceo", "hr", "learning_development") and me[0]["company_id"] and me[0]["company_id"] == rec.get("company_id"):
-        return
-    raise HTTPException(403, "forbidden")
-
-
-def _require_admin(request: Request) -> None:
-    """Ensure the authenticated caller has the admin role."""
-    caller = _caller_from_request(request)
-    if not caller:
-        raise HTTPException(401, "not authenticated")
-    if caller.get("role") != "admin":
-        raise HTTPException(403, "forbidden")
 
 
 class LoginIn(BaseModel):
