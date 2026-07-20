@@ -5,6 +5,7 @@ land at M5; the prototype currently treats the operator as the implied caller.
 """
 from __future__ import annotations
 # S104: preview-only verification build for deploy-boundary 502 repro (no functional change)
+# S105: preview-only build to reproduce deploy-boundary 502 hang (no functional change)
 
 import hashlib
 import io
@@ -1363,7 +1364,7 @@ def _team_or_404(team_id: int) -> dict:
     return t[0]
 
 
-adef _require_team_access(request: Request, team_id: int) -> dict:
+def _require_team_access(request: Request, team_id: int) -> dict:
     """Ensure the authenticated caller may see this team's data.
     Admin sees every team. ceo/hr/learning_development are scoped to
     their own company (all teams in it). sales_director is scoped to
