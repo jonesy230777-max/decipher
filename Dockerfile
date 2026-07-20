@@ -36,11 +36,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Application code
 COPY app/           ./app/
+RUN playwright install --with-deps chromium
 COPY scripts/       ./scripts/
 COPY reference_docs/ ./reference_docs/
 COPY nginx/         ./nginx/
 COPY supervisord/   ./supervisord/
 COPY schema.sql seed.sql ./
+RUN playwright install --with-deps chromium
 
 # Dashboard static build from Stage 1
 COPY --from=dashboard-build /build/dist ./dashboard/dist/
