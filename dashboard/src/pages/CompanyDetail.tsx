@@ -28,11 +28,14 @@ export default function CompanyDetail() {
   const [params] = useSearchParams();
   const [data, setData] = useState<Payload | null>(null);
   const [adding, setAdding] = useState(params.get("add") === "team");
-  const [busy, setBusy] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+const [busy, setBusy] = useState(false);
   const [t, setT] = useState({ name: "", region: "NSW", role_label: "Sales Director", contact_name: "", contact_email: "", contact_mobile: "" });
 
   function refresh() {
-    api<Payload>(`/api/companies/${id}/teams`).then(setData);
+        setError(null);
+    api<Payload>(`/api/companies/${id}/teams`).then(setData)
+      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load company. Please try again."));
   }
   useEffect(() => { refresh(); }, [id]);
 
@@ -56,6 +59,11 @@ export default function CompanyDetail() {
     } finally { setBusy(false); }
   }
 
+    if (error) return (
+    <p className="hig-caption-1" style={{ color: "#D92D20" }}>
+      {error}
+    </p>
+  );
   if (!data) return <p className="hig-footnote">Loading...</p>;
   const c = data.company;
 

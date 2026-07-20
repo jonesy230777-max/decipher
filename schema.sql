@@ -372,7 +372,9 @@ ALTER TABLE reports
 ALTER TABLE teams
     ADD COLUMN IF NOT EXISTS contact_name   TEXT,
     ADD COLUMN IF NOT EXISTS contact_email  TEXT,
-    ADD COLUMN IF NOT EXISTS contact_mobile TEXT;
+        ADD COLUMN IF NOT EXISTS contact_mobile TEXT,
+    ADD COLUMN IF NOT EXISTS region         TEXT,
+    ADD COLUMN IF NOT EXISTS country        TEXT;
 
 ALTER TABLE companies
     ADD COLUMN IF NOT EXISTS contact_name   TEXT,
