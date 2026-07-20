@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
+import { useAuth } from "../auth";
 import { Card, SectionEyebrow, Button } from "../components/Card";
 import { BandBar } from "../components/BandBar";
 
@@ -20,9 +21,11 @@ type Company = {
 };
 
 export default function Companies() {
+  const { me } = useAuth();
   const [rows, setRows] = useState<Company[] | null>(null);
   const [adding, setAdding] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [n, setN] = useState({ name: "", industry: "", contact_name: "", contact_email: "", contact_mobile: "", website: "" });
 
   function refresh() {
@@ -33,18 +36,22 @@ export default function Companies() {
   async function create() {
     if (!n.name.trim()) return;
     setBusy(true);
+    setError(null);
     try {
-      await fetch("/api/companies", {
+      await api("/api/companies", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: n.name.trim(), industry: n.industry || null,
           contact_name: n.contact_name || null, contact_email: n.contact_email || null,
           contact_mobile: n.contact_mobile || null, website: n.website || null,
+          actor_email: me?.email ?? null, actor_role: me?.role ?? null,
         }),
       });
       setAdding(false);
       setN({ name: "", industry: "", contact_name: "", contact_email: "", contact_mobile: "", website: "" });
       refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create company. Please try again.");
     } finally { setBusy(false); }
   }
 
@@ -78,21 +85,26 @@ export default function Companies() {
               <label key={key} style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
                 <span className="hig-caption-1">{lbl}</span>
                 <input value={n[key]}
-                       onChange={(e) => setN({ ...n, [key]: e.target.value })}
-                       placeholder={ph}
-                       style={{ height: 36, padding: "0 var(--space-3)",
-                                border: "1px solid var(--colour-separator-opaque)",
-                                borderRadius: "var(--radius-sm)",
-                                background: "var(--colour-bg-system)",
-                                color: "var(--colour-label)",
-                                fontSize: "var(--type-callout)", fontFamily: "inherit",
-                                width: "100%", boxSizing: "border-box" }} />
+                  onChange={(e) => setN({ ...n, [key]: e.target.value })}
+                  placeholder={ph}
+                  style={{ height: 36, padding: "0 var(--space-3)",
+                    border: "1px solid var(--colour-separator-opaque)",
+                    borderRadius: "var(--radius-sm)",
+                    background: "var(--colour-bg-system)",
+                    color: "var(--colour-label)",
+                    fontSize: "var(--type-callout)", fontFamily: "inherit",
+                    width: "100%", boxSizing: "border-box" }} />
               </label>
             ))}
           </div>
+          {error && (
+            <div className="hig-caption-1" style={{ color: "#D92D20", marginTop: "var(--space-3)" }}>
+              {error}
+            </div>
+          )}
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "var(--space-2)",
-                        marginTop: "var(--space-4)", paddingTop: "var(--space-4)",
-                        borderTop: "1px solid var(--colour-separator)" }}>
+            marginTop: "var(--space-4)", paddingTop: "var(--space-4)",
+            borderTop: "1px solid var(--colour-separator)" }}>
             <Button variant="plain" size="md" onClick={() => setAdding(false)}>Cancel</Button>
             <Button variant="filled" size="md" onClick={create}>{busy ? "Saving..." : "Create company"}</Button>
           </div>
@@ -106,7 +118,7 @@ export default function Companies() {
           <section key={c.company_id} style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
             {/* Big company heading row */}
             <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between",
-                             gap: "var(--space-3)" }}>
+              gap: "var(--space-3)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
                 <Link to={`/companies/${c.company_id}`} style={{ textDecoration: "none", color: "inherit" }}>
                   <h2 className="hig-title-1" style={{ margin: 0, fontWeight: 700, fontSize: 30, letterSpacing: "-0.01em" }}>
@@ -122,15 +134,15 @@ export default function Companies() {
                 )}
                 {c.industry && (
                   <span className="hig-caption-1" style={{ color: "var(--colour-label-tertiary)",
-                                                            textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                    textTransform: "uppercase", letterSpacing: "0.04em" }}>
                     {c.industry}
                   </span>
                 )}
               </div>
               <Link to={`/companies/${c.company_id}`}
-                    style={{ background: "var(--colour-accent)", color: "#FFFFFF",
-                             padding: "8px 14px", borderRadius: "var(--radius-sm)", fontWeight: 700,
-                             fontSize: "var(--type-callout)", textDecoration: "none" }}>
+                style={{ background: "var(--colour-accent)", color: "#FFFFFF",
+                  padding: "8px 14px", borderRadius: "var(--radius-sm)", fontWeight: 700,
+                  fontSize: "var(--type-callout)", textDecoration: "none" }}>
                 Open ›
               </Link>
             </header>
@@ -138,9 +150,9 @@ export default function Companies() {
             <Link to={`/companies/${c.company_id}`} style={{ textDecoration: "none", color: "inherit" }}>
               <Card>
                 <div style={{ display: "grid", gridTemplateColumns: "0.7fr 0.7fr 0.7fr 0.7fr 1.4fr 24px", gap: "var(--space-5)", alignItems: "center" }}>
-                  <Tile label="Teams"   value={c.n_teams} />
-                  <Tile label="Reps"    value={c.n_respondents} />
-                  <Tile label="Avg"     value={`${c.avg_score_100.toFixed(1)}`} suffix="/100" />
+                  <Tile label="Teams" value={c.n_teams} />
+                  <Tile label="Reps" value={c.n_respondents} />
+                  <Tile label="Avg" value={`${c.avg_score_100.toFixed(1)}`} suffix="/100" />
                   <Tile label="Elite / Risk" value={`${c.elite_count} · ${c.at_risk_count}`} />
                   <div style={{ minWidth: 0 }}>
                     <BandBar
