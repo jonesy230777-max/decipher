@@ -322,7 +322,7 @@ h1.page-title { font-size: 16.5pt; font-weight: 800; margin-bottom: 6pt; }
 
 .bars-label { font-size: 6.6pt; font-weight: 700; color: #8E8E93; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 7pt; }
 .bar-row { display: flex; align-items: center; gap: 7pt; margin-bottom: 7pt; }
-.bar-name { font-size: 9pt; font-weight: 700; width: 92pt; flex-shrink: 0; }
+.bar-name { font-size: 9pt; font-weight: 700; width: 108pt; flex-shrink: 0; }
 .bar-track { flex: 1; height: 7pt; background: #F0F0F2; border-radius: 4px; overflow: hidden; }
 .bar-fill { height: 100%; border-radius: 4px; }
 .bar-score { font-size: 9.6pt; font-weight: 800; width: 20pt; text-align: right; flex-shrink: 0; }
@@ -344,12 +344,12 @@ h1.page-title { font-size: 16.5pt; font-weight: 800; margin-bottom: 6pt; }
 .contains-list li { font-size: 9.2pt; line-height: 1.5; padding-left: 13pt; position: relative; margin-bottom: 3pt; }
 .contains-list li::before { content: ""; position: absolute; left: 0; top: 6pt; width: 7pt; height: 2px; background: #2FA84F; }
 
-.legend-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6pt; margin-top: 12pt; }
-.legend-cell { border: 1px solid #E5E5EA; border-radius: 7px; padding: 6pt 7pt; text-align: center; }
+.legend-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4pt; margin-top: 12pt; }
+.legend-cell { border: 1px solid #E5E5EA; border-radius: 7px; padding: 6pt 3pt; text-align: center; }
 .legend-cell.active { border-color: #2FA84F; background: #F1F8F2; }
 .legend-cell-name { font-size: 6.2pt; font-weight: 800; letter-spacing: .04em; color: #8E8E93; }
 .legend-cell.active .legend-cell-name { color: #2E8B41; }
-.legend-cell-range { font-size: 9.6pt; font-weight: 800; margin-top: 1pt; }
+.legend-cell-range { font-size: 9.6pt; font-weight: 800; margin-top: 1pt; white-space: nowrap; }
 
 /* ---- trait pages ---- */
 .trait-grid { display: grid; grid-template-columns: 92pt 1fr; gap: 13pt; }
@@ -418,8 +418,8 @@ h1.page-title { font-size: 16.5pt; font-weight: 800; margin-bottom: 6pt; }
 .closing-line .grey { font-weight: 400; color: #8E8E93; font-style: italic; }
 
 /* ---- glossary ---- */
-.gloss-term { font-size: 9.2pt; font-weight: 800; margin-top: 6pt; margin-bottom: 2pt; }
-.gloss-def { font-size: 9.2pt; line-height: 1.42; color: #3C3C43; }
+.gloss-term { font-size: 9.2pt; font-weight: 800; margin-top: 4pt; margin-bottom: 2pt; }
+.gloss-def { font-size: 9.2pt; line-height: 1.28; color: #3C3C43; }
 
 .footer-note { font-size: 6.6pt; color: #8E8E93; text-align: center; margin-top: 14pt; }
 """
@@ -739,7 +739,7 @@ def _glossary_page(ctx: dict) -> str:
     return f"""<div class="page">
   <div class="eyebrow">Reference</div>
   <h1 class="page-title">Glossary of Terms</h1>
-  <p style="font-size:8.4pt;color:#636366;margin-bottom:7pt">The key terms used throughout your DNA Audit report, defined. Every score, band and trait in this report maps back to one of the definitions below.</p>
+  <p style="font-size:8.4pt;color:#636366;margin-bottom:5pt">The key terms used throughout your DNA Audit report, defined. Every score, band and trait in this report maps back to one of the definitions below.</p>
   {terms}
   {eq_terms}
   <div class="footer-note">CONFIDENTIAL | PREPARED EXCLUSIVELY FOR {_esc(name).upper()} BY DECIPHER &nbsp;&middot;&nbsp; deciphersales.com.au</div>
