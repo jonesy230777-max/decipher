@@ -25,14 +25,14 @@ export default function Landing() {
         <Logo height={40} />
         <nav style={{ display: "flex", gap: "var(--space-3)", alignItems: "center" }}>
           <Link to="/login"
-                style={{ color: "var(--colour-label-secondary)",
-                         textDecoration: "none", fontWeight: 600 }}>
+            style={{ color: "var(--colour-label-secondary)",
+              textDecoration: "none", fontWeight: 600 }}>
             Sign in
           </Link>
           <Link to="/audit/start"
-                style={{ background: "var(--colour-accent)", color: "#FFFFFF",
-                         padding: "10px 18px", borderRadius: "var(--radius-sm)",
-                         textDecoration: "none", fontWeight: 600 }}>
+            style={{ background: "var(--colour-accent)", color: "#FFFFFF",
+              padding: "10px 18px", borderRadius: "var(--radius-sm)",
+              textDecoration: "none", fontWeight: 600 }}>
             Take the audit
           </Link>
         </nav>
@@ -53,32 +53,33 @@ export default function Landing() {
             borderRadius: 999, fontWeight: 700, margin: 0,
           }}>For media sales teams</p>
           <h1 className="hig-large-title" style={{ fontSize: 56, lineHeight: 1.05,
-                  margin: "var(--space-3) 0 var(--space-3) 0" }}>
+            margin: "var(--space-3) 0 var(--space-3) 0" }}>
             The Decipher DNA Audit. <br/>
-            Diagnose the four traits that decide whether a media sales rep wins or stalls.
+            Not a test. A clear picture of your strengths, and what to develop to close more and earn more.
           </h1>
           <p className="hig-body" style={{ color: "var(--colour-label-secondary)",
-                  fontSize: 19, maxWidth: 560 }}>
-            34 behaviourally-anchored questions. 7-10 minutes. A personalised
-            Sales DNA report covering Cognitive Empathy, Emotional Intelligence,
-            Pressure Composure and Narrative Persuasion. Bands from Developing
-            through to Elite, an EQ Identity type, and your two-trait archetype.
+            fontSize: 19, maxWidth: 560 }}>
+            34 behaviourally-anchored questions. 7-10 minutes. No pass or
+            fail — just a personalised Sales DNA report covering Cognitive
+            Empathy, Emotional Intelligence, Pressure Composure and
+            Narrative Persuasion. Bands from Developing through to Elite,
+            an EQ Identity type, and your two-trait archetype.
           </p>
           <div style={{ display: "flex", gap: "var(--space-3)",
-                        marginTop: "var(--space-5)" }}>
+            marginTop: "var(--space-5)" }}>
             <Link to="/audit/start"
-                  style={{ background: "var(--colour-accent)", color: "#FFFFFF",
-                           padding: "14px 22px", borderRadius: "var(--radius-md)",
-                           textDecoration: "none", fontWeight: 700, fontSize: 17 }}>
+              style={{ background: "var(--colour-accent)", color: "#FFFFFF",
+                padding: "14px 22px", borderRadius: "var(--radius-md)",
+                textDecoration: "none", fontWeight: 700, fontSize: 17 }}>
               Take the audit →
             </Link>
             <Link to="/login"
-                  style={{ background: "transparent",
-                           border: "1px solid var(--colour-separator-opaque)",
-                           color: "var(--colour-label)",
-                           padding: "14px 22px", borderRadius: "var(--radius-md)",
-                           textDecoration: "none", fontWeight: 600, fontSize: 17 }}>
-              Facilitator sign-in
+              style={{ background: "transparent",
+                border: "1px solid var(--colour-separator-opaque)",
+                color: "var(--colour-label)",
+                padding: "14px 22px", borderRadius: "var(--radius-md)",
+                textDecoration: "none", fontWeight: 600, fontSize: 17 }}>
+              Client sign-in
             </Link>
           </div>
         </div>
@@ -91,7 +92,7 @@ export default function Landing() {
         }}>
           <h2 className="hig-title-3" style={{ marginTop: 0 }}>What gets measured</h2>
           <ul style={{ listStyle: "none", padding: 0, margin: "var(--space-3) 0",
-                       display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
+            display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
             {[
               ["Cognitive Empathy", "Reading what the buyer is actually feeling, beyond what they say."],
               ["Emotional Intelligence", "Reading the room, regulating self, naming what matters."],
@@ -100,16 +101,16 @@ export default function Landing() {
             ].map(([t, d]) => (
               <li key={t} style={{ display: "flex", gap: "var(--space-3)" }}>
                 <span style={{ width: 8, height: 8, borderRadius: "50%",
-                               background: "var(--colour-accent)", marginTop: 8,
-                               flexShrink: 0 }} />
+                  background: "var(--colour-accent)", marginTop: 8,
+                  flexShrink: 0 }} />
                 <div>
                   <div className="hig-headline">{t}</div>
-                  <div className="hig-callout" style={{ color: "var(--colour-label-secondary)" }}>{d}</div>
+                  <div className="hig-callout" style={{ color: "var(--colour-label)" }}>{d}</div>
                 </div>
               </li>
             ))}
           </ul>
-          <p className="hig-footnote" style={{ color: "var(--colour-label-tertiary)", margin: 0 }}>
+          <p className="hig-footnote" style={{ color: "var(--colour-label)", margin: 0 }}>
             One of 8 named archetypes (e.g. Trust Architect, Calm Diagnostician,
             Confident Storyteller) is assigned from your top two traits.
           </p>
@@ -120,7 +121,7 @@ export default function Landing() {
         borderTop: "1px solid var(--colour-separator)",
         padding: "var(--space-4) var(--space-7)", textAlign: "center",
       }} className="hig-footnote">
-        decipher.com.au · Made in Sydney · © Decipher 2026
+        deciphersales.com.au · Made in Sydney · © Decipher 2026
       </footer>
     </div>
   );

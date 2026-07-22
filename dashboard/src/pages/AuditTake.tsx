@@ -46,6 +46,54 @@ type CompleteResult = {
   report?: { report_id: number; pdf_path: string; version: number };
 };
 
+/**
+ * Deterministic per-(audit, question) shuffle of answer-option display
+ * positions.
+ *
+ * Why: a 2026-07 audit of the canonical question bank found that answer
+ * order correlates with score — the lowest-scoring option sits first
+ * (position A) in ~84% of the 31 scored questions. Showing options in
+ * canonical order lets an attentive respondent learn "avoid the first
+ * option" as a shortcut, inflating their score without reflecting real
+ * trait ability.
+ *
+ * Fix: shuffle the *displayed* order per respondent/per question, while
+ * `answer()` still submits the canonical option index. Scoring
+ * (app/dna_scoring.py `_score_from_response` / `_identity_from_response`)
+ * already resolves `answer_value` as an index into `response_meta.options`
+ * / `options_meta`, completely independent of how it was rendered — so
+ * this is a display-only change. No backend, schema, or scoring changes
+ * needed.
+ *
+ * The shuffle is seeded by (audit_id, question_id) so it's stable across
+ * re-renders for one respondent's view of one question, but two different
+ * respondents (or the same respondent re-auditing later, since audit_id
+ * changes) will almost always see a different order for the same question.
+ */
+function hashSeed(a: number, b: number): number {
+  let h = (Math.imul(a, 2654435761) ^ Math.imul(b, 40503)) >>> 0;
+  h = Math.imul(h ^ (h >>> 16), 2246822507);
+  h = Math.imul(h ^ (h >>> 13), 3266489909);
+  return (h ^ (h >>> 16)) >>> 0;
+}
+
+function seededShuffleIndices(seed: number, length: number): number[] {
+  let s = seed >>> 0;
+  const rand = () => {
+    s |= 0;
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  const arr = Array.from({ length }, (_, i) => i);
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export default function AuditTake() {
   const { auditId: paramAuditId } = useParams();
   const nav = useNavigate();
@@ -58,12 +106,10 @@ export default function AuditTake() {
   const [result, setResult] = useState<CompleteResult | null>(null);
 
   // Intro fields
-  const [email, setEmail]       = useState("");
-  const [name,  setName]        = useState("");
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [jobTitle, setJobTitle] = useState(""); const [company, setCompany] = useState("");
-  
-  
-  
+
   const [startedAt, setStartedAt] = useState<number>(Date.now());
 
   useEffect(() => {
@@ -78,16 +124,25 @@ export default function AuditTake() {
   const q = questions[idx];
   const progress = questions.length ? (idx / questions.length) : 0;
 
+  // Canonical-index order to render options in for this respondent/question.
+  // See hashSeed/seededShuffleIndices above for why this exists.
+  const displayOrder = useMemo(() => {
+    const n = q?.response_meta?.options?.length ?? 0;
+    if (!n) return [];
+    if (auditId == null || q == null) return Array.from({ length: n }, (_, i) => i);
+    return seededShuffleIndices(hashSeed(auditId, q.question_id), n);
+  }, [q, auditId]);
+
   async function start() {
     if (!email.trim() || !name.trim()) return;
     setBusy(true);
     try {
       const body = {
-        email:        email.trim(),
-        name:         name.trim(),
-        job_title:    jobTitle.trim() || null,
-        company:      company.trim() || null,
-        version_code: "media_sales_v1",       team_id: (() => { const t = new URLSearchParams(window.location.search).get("team"); return t ? Number(t) : null; })(),
+        email: email.trim(),
+        name: name.trim(),
+        job_title: jobTitle.trim() || null,
+        company: company.trim() || null,
+        version_code: "media_sales_v1", team_id: (() => { const t = new URLSearchParams(window.location.search).get("team"); return t ? Number(t) : null; })(),
       };
       const s = await fetch("/api/audit/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); const sd = await s.json(); if (!s.ok) { alert(sd.detail || "Something went wrong. Please try again."); return; } setAuditId(sd.audit_id); setStep("question"); setStartedAt(Date.now()); nav(`/audit/${sd.audit_id}`, { replace: true }); } finally {
       setBusy(false);
@@ -136,7 +191,7 @@ export default function AuditTake() {
         {/* Header */}
         <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-4)" }}>
           <Logo height={32} />
-          
+
         </header>
 
         {/* Progress bar */}
@@ -176,7 +231,7 @@ export default function AuditTake() {
               <Field label="Full name" value={name} onChange={setName} placeholder="Your name" />
               <Field label="Work email" value={email} onChange={setEmail} placeholder="you@company.com" type="email" />
               <Field label="Job title" value={jobTitle} onChange={setJobTitle} placeholder="Sales rep, Sales Director, etc." /> <Field label="Company" value={company} onChange={setCompany} placeholder="Your company name" />
-              
+
             </div>
             <div style={{ marginTop: "var(--space-5)", display: "flex", justifyContent: "flex-end" }}>
               <Button onClick={start} variant="filled" size="lg">
@@ -195,11 +250,11 @@ export default function AuditTake() {
               {q.prompt}
             </h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
-              {(q.response_meta?.options ?? []).map((opt, i) => (
+              {displayOrder.map((canonicalIdx, i) => (
                 <button
-                  key={i}
+                  key={canonicalIdx}
                   disabled={busy}
-                  onClick={() => answer(i)}
+                  onClick={() => answer(canonicalIdx)}
                   style={{
                     textAlign: "left",
                     padding: "var(--space-3) var(--space-4)",
@@ -218,7 +273,7 @@ export default function AuditTake() {
                   <span style={{ color: "var(--colour-label-tertiary)", marginRight: "var(--space-3)", fontWeight: 700 }}>
                     {String.fromCharCode(65 + i)}.
                   </span>
-                  {opt}
+                  {q.response_meta?.options?.[canonicalIdx] ?? ""}
                 </button>
               ))}
             </div>
@@ -227,8 +282,8 @@ export default function AuditTake() {
 
         {step === "done" && <DoneCard auditId={auditId} result={result} />}
 
-        <footer className="hig-footnote" style={{ textAlign: "center", color: "var(--colour-label-tertiary)", padding: "var(--space-5) 0" }}>
-          decipher.com.au · {version.version.name}
+        <footer className="hig-footnote" style={{ textAlign: "center", color: "var(--colour-label)", padding: "var(--space-5) 0" }}>
+          deciphersales.com.au · {version.version.name}
         </footer>
       </div>
     </div>
@@ -236,21 +291,21 @@ export default function AuditTake() {
 }
 
 const DIM_LABEL: Record<string, string> = {
-  cognitive_empathy:    "Cognitive Empathy",
-  eq:                   "Emotional Intelligence",
-  pressure_composure:   "Pressure Composure",
+  cognitive_empathy: "Cognitive Empathy",
+  eq: "Emotional Intelligence",
+  pressure_composure: "Pressure Composure",
   narrative_persuasion: "Narrative Persuasion",
-  storytelling:         "Narrative Persuasion",
+  storytelling: "Narrative Persuasion",
 };
 const BAND_COLOUR: Record<string, string> = {
-  elite:      "var(--colour-band-elite)",
+  elite: "var(--colour-band-elite)",
   performing: "var(--colour-band-performing)",
   practising: "var(--colour-band-practising)",
   developing: "var(--colour-band-developing)",
 };
 const EQ_IDENTITY_LABEL: Record<string, string> = {
   regulator: "Regulator", edge_builder: "Edge Builder",
-  observer:  "Observer",  namer:        "Namer",
+  observer: "Observer", namer: "Namer",
 };
 
 function DoneCard({ auditId, result }: { auditId: number | null; result: CompleteResult | null }) {
@@ -258,7 +313,7 @@ function DoneCard({ auditId, result }: { auditId: number | null; result: Complet
     return (
       <Card>
         <h1 className="hig-large-title" style={{ margin: 0 }}>Audit submitted.</h1>
-        <p className="hig-body" style={{ color: "var(--colour-label-secondary)", marginTop: "var(--space-3)" }}>
+        <p className="hig-body" style={{ color: "var(--colour-label)", marginTop: "var(--space-3)" }}>
           Thank you. Your responses are stored against audit #{auditId}. Your
           personalised Decipher DNA report will be emailed to you once scoring
           and report generation complete.
@@ -277,8 +332,8 @@ function DoneCard({ auditId, result }: { auditId: number | null; result: Complet
       </p>
 
       <div style={{ background: "var(--colour-accent)", color: "#FFFFFF",
-                    borderRadius: "var(--radius-md)", padding: "var(--space-4)",
-                    marginTop: "var(--space-4)" }}>
+        borderRadius: "var(--radius-md)", padding: "var(--space-4)",
+        marginTop: "var(--space-4)" }}>
         <div className="hig-caption-1" style={{ opacity: 0.85, textTransform: "uppercase", letterSpacing: "0.06em" }}>
           Archetype · {Math.round(s.confidence * 100)}% confidence
         </div>
@@ -296,7 +351,7 @@ function DoneCard({ auditId, result }: { auditId: number | null; result: Complet
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)",
-                    gap: "var(--space-3)", marginTop: "var(--space-4)" }}>
+        gap: "var(--space-3)", marginTop: "var(--space-4)" }}>
         {order.map((trait) => {
           const score = s.scores_100[trait] ?? 0;
           const dbDim = trait === "narrative_persuasion" ? "storytelling" : trait;
@@ -308,7 +363,7 @@ function DoneCard({ auditId, result }: { auditId: number | null; result: Complet
               borderRadius: "var(--radius-md)", padding: "var(--space-4)",
             }}>
               <div className="hig-caption-1" style={{ color: "var(--colour-label-secondary)",
-                                                       textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                textTransform: "uppercase", letterSpacing: "0.04em" }}>
                 {DIM_LABEL[trait]}
               </div>
               <div className="hig-large-title hig-numeric" style={{ marginTop: 4 }}>
@@ -316,9 +371,9 @@ function DoneCard({ auditId, result }: { auditId: number | null; result: Complet
               </div>
               <div style={{ marginTop: "var(--space-2)" }}>
                 <span style={{ background: BAND_COLOUR[band] ?? "var(--colour-label-tertiary)",
-                                color: "#FFFFFF", fontSize: "var(--type-caption-1)",
-                                padding: "2px 10px", borderRadius: "var(--radius-pill)",
-                                fontWeight: 600, textTransform: "capitalize" }}>
+                  color: "#FFFFFF", fontSize: "var(--type-caption-1)",
+                  padding: "2px 10px", borderRadius: "var(--radius-pill)",
+                  fontWeight: 600, textTransform: "capitalize" }}>
                   {band}
                 </span>
               </div>
