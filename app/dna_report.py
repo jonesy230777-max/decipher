@@ -643,7 +643,7 @@ def generate_report(audit_id: int) -> dict:
         int(x) for x in os.getenv("DECIPHER_REPORT_V2_AUDIT_IDS", "").split(",")
         if x.strip().isdigit()
     }
-    if if audit_id not in _v2_ids:
+    if audit_id not in _v2_ids:
         from app.dna_report_v2 import generate_report as _generate_report_v2
         return _generate_report_v2(audit_id)
 
