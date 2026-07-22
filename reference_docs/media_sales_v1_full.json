@@ -103,11 +103,11 @@
       "id": "Q4",
       "qnum": 4,
       "trait": "cognitive_empathy",
-      "prompt": "You label a buyer's emotion incorrectly. They say, 'I'm not worried; I'm frustrated.' You:",
+      "prompt": "You misread a buyer's emotion. They say, 'I'm not worried; I'm frustrated.' You:",
       "options": [
         {
           "letter": "A",
-          "text": "Apologise and move on quickly",
+          "text": "Apologise quickly and move the conversation along without dwelling on it",
           "score": 2
         },
         {
@@ -117,7 +117,7 @@
         },
         {
           "letter": "C",
-          "text": "Acknowledge the correction and ask them to tell you more",
+          "text": "Acknowledge the correction: 'Tell me more about what's driving that.'",
           "score": 4
         },
         {
@@ -127,7 +127,7 @@
         },
         {
           "letter": "E",
-          "text": "Pivot straight to a solution for frustration",
+          "text": "Skip the correction and jump straight to solving the frustration",
           "score": 2
         }
       ]
@@ -1190,27 +1190,27 @@
     "Q4": [
       {
         "letter": "A",
-        "text": "Apologise and move on quickly",
+        "text": "Apologise quickly and move the conversation along without dwelling on it",
         "score": 2
       },
       {
         "letter": "B",
-        "text": "Defend your original read - they seem worried to you",
+        "text": "Push back on the correction: 'You seem worried to me, though.'",
         "score": 1
       },
       {
         "letter": "C",
-        "text": "Acknowledge the correction and ask them to tell you more",
+        "text": "Acknowledge the correction: 'Tell me more about what's driving that.'",
         "score": 4
       },
       {
         "letter": "D",
-        "text": "Name the emotion more precisely: 'It sounds like I missed that - it's more frustration than worry.'",
+        "text": "Name the emotion more precisely: 'It sounds like I missed that, it's frustration, not worry.'",
         "score": 5
       },
       {
         "letter": "E",
-        "text": "Pivot straight to a solution for frustration",
+        "text": "Skip the correction and jump straight to solving the frustration",
         "score": 2
       }
     ],
