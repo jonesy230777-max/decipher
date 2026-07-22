@@ -89,7 +89,7 @@
         },
         {
           "letter": "D",
-          "text": "Hold the silence - they are processing and will speak",
+          "text": "Hold the silence, as they are processing and will speak",
           "score": 5
         },
         {
@@ -103,7 +103,7 @@
       "id": "Q4",
       "qnum": 4,
       "trait": "cognitive_empathy",
-      "prompt": "You label a buyer's emotion incorrectly. They say 'I'm not worried - I'm frustrated.' You:",
+      "prompt": "You label a buyer's emotion incorrectly. They say, 'I'm not worried; I'm frustrated.' You:",
       "options": [
         {
           "letter": "A",
@@ -112,7 +112,7 @@
         },
         {
           "letter": "B",
-          "text": "Defend your original read - they seem worried to you",
+          "text": "Defend your original read, since they seem worried to you",
           "score": 1
         },
         {
@@ -122,7 +122,7 @@
         },
         {
           "letter": "D",
-          "text": "Name the emotion more precisely: 'It sounds like I missed that - it's more frustration than worry.'",
+          "text": "Name the emotion more precisely: 'It sounds like I missed that; it's more frustration than worry.'",
           "score": 5
         },
         {
@@ -140,7 +140,7 @@
       "options": [
         {
           "letter": "A",
-          "text": "Pushing through your agenda - they're just busy",
+          "text": "Pushing through your agenda, assuming they're just busy",
           "score": 1
         },
         {
@@ -188,7 +188,7 @@
         },
         {
           "letter": "D",
-          "text": "Name what you sense: 'It feels like your focus may have moved elsewhere - happy to pause if that helps.'",
+          "text": "Name what you sense: 'It feels like your focus may have moved elsewhere; happy to pause if that helps.'",
           "score": 5
         },
         {
@@ -235,7 +235,7 @@
       "id": "Q8",
       "qnum": 8,
       "trait": "eq",
-      "prompt": "You sense a buyer is holding back - they're agreeable but not engaged. You:",
+      "prompt": "You sense a buyer is holding back: they're agreeable but not engaged. You:",
       "options": [
         {
           "letter": "A",
@@ -259,7 +259,7 @@
         },
         {
           "letter": "E",
-          "text": "Give them space - push less, let them come to you",
+          "text": "Give them space: push less and let them come to you",
           "score": 3
         }
       ]
@@ -277,7 +277,7 @@
         },
         {
           "letter": "B",
-          "text": "Analyse the relationship dynamics - who had influence you didn't map?",
+          "text": "Analyse the relationship dynamics: who had influence you didn't map?",
           "score": 4
         },
         {
@@ -310,7 +310,7 @@
         },
         {
           "letter": "B",
-          "text": "They were being polite - the deal is probably dead",
+          "text": "They were being polite; the deal is probably dead",
           "score": 2
         },
         {
@@ -358,7 +358,7 @@
         },
         {
           "letter": "E",
-          "text": "Name the dynamic: 'It sounds like there are a few different perspectives in the room - let's surface them.'",
+          "text": "Name the dynamic: 'It sounds like there are a few different perspectives in the room; let's surface them.'",
           "score": 5
         }
       ]
@@ -386,7 +386,7 @@
         },
         {
           "letter": "D",
-          "text": "Name what you sense: 'It seems like something has shifted - I'd rather understand it than guess.'",
+          "text": "Name what you sense: 'It seems like something has shifted; I'd rather understand it than guess.'",
           "score": 5
         },
         {
@@ -419,7 +419,7 @@
         },
         {
           "letter": "D",
-          "text": "Name the pressure: 'It sounds like you're under internal pressure to reduce spend - what would success look like for you in this decision?'",
+          "text": "Name the pressure: 'It sounds like you're under internal pressure to reduce spend; what would success look like for you in this decision?'",
           "score": 5
         },
         {
@@ -475,7 +475,7 @@
         },
         {
           "letter": "B",
-          "text": "Acknowledge it: 'Fair - what would make this conversation worth your time?'",
+          "text": "Acknowledge it: 'Fair enough; what would make this conversation worth your time?'",
           "score": 5
         },
         {
@@ -503,7 +503,7 @@
       "options": [
         {
           "letter": "A",
-          "text": "Commit to matching it - close the deal first, sort it out later",
+          "text": "Commit to matching it, closing the deal first and sorting it out later",
           "score": 1
         },
         {
@@ -513,7 +513,7 @@
         },
         {
           "letter": "C",
-          "text": "Acknowledge the ask: 'It sounds like attribution visibility is the real driver here - is that right?'",
+          "text": "Acknowledge the ask: 'It sounds like attribution visibility is the real driver here; is that right?'",
           "score": 5
         },
         {
@@ -536,7 +536,7 @@
       "options": [
         {
           "letter": "A",
-          "text": "Don't notice - it's a natural empathy signal",
+          "text": "Don't notice it, since it's a natural empathy signal",
           "score": 1
         },
         {
@@ -546,7 +546,7 @@
         },
         {
           "letter": "C",
-          "text": "Recognise it's a filler - you need to ask a better question instead",
+          "text": "Recognise it's a filler, meaning you need to ask a better question instead",
           "score": 4
         },
         {
@@ -565,7 +565,7 @@
       "id": "Q18",
       "qnum": 18,
       "trait": "pressure_composure",
-      "prompt": "A client says 'The last campaign didn't move the needle - we need guarantees to proceed.' You:",
+      "prompt": "A client says, 'The last campaign didn't move the needle; we need guarantees to proceed.' You:",
       "options": [
         {
           "letter": "A",
@@ -650,7 +650,7 @@
         },
         {
           "letter": "D",
-          "text": "A story using L.E.A.D. - location, emotion, action, dialogue - ending with a client quote",
+          "text": "A story using L.E.A.D. (location, emotion, action, dialogue), ending with a client quote",
           "score": 5
         },
         {
@@ -800,22 +800,22 @@
       "options": [
         {
           "letter": "A",
-          "text": "They're busy - keep following up",
+          "text": "They're busy, so keep following up",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Something changed internally - I need to find out what",
+          "text": "Something changed internally; I need to find out what",
           "score": 4
         },
         {
           "letter": "C",
-          "text": "The deal is dead - move on",
+          "text": "The deal is dead, so move on",
           "score": 2
         },
         {
           "letter": "D",
-          "text": "Name what you sense: 'It feels like the timing may have shifted - I want to respect that.'",
+          "text": "Name what you sense: 'It feels like the timing may have shifted; I want to respect that.'",
           "score": 5
         },
         {
@@ -843,7 +843,7 @@
         },
         {
           "letter": "C",
-          "text": "Hold the silence - they're processing",
+          "text": "Hold the silence, as they're processing",
           "score": 5
         },
         {
@@ -876,7 +876,7 @@
         },
         {
           "letter": "C",
-          "text": "Name what you sense: 'It seems like something hasn't clicked yet - am I reading that right?'",
+          "text": "Name what you sense: 'It seems like something hasn't clicked yet; am I reading that right?'",
           "score": 5
         },
         {
@@ -899,27 +899,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Price - buyers are budget-constrained",
+          "text": "Price: buyers are budget-constrained",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Timing - the market isn't right",
+          "text": "Timing: the market isn't right",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Risk - they fear looking bad if the campaign underperforms",
+          "text": "Risk: they fear looking bad if the campaign underperforms",
           "score": 5
         },
         {
           "letter": "D",
-          "text": "Product - your offering doesn't fit their needs",
+          "text": "Product: your offering doesn't fit their needs",
           "score": 2
         },
         {
           "letter": "E",
-          "text": "Competition - a competitor made a better offer",
+          "text": "Competition: a competitor made a better offer",
           "score": 1
         }
       ]
@@ -932,7 +932,7 @@
       "options": [
         {
           "letter": "A",
-          "text": "To defend your position - you believe in what you're selling",
+          "text": "To defend your position, because you believe in what you're selling",
           "score": 1
         },
         {
@@ -1013,7 +1013,7 @@
         },
         {
           "letter": "D",
-          "text": "Certainty and relief - the confidence they won't be embarrassed by this decision",
+          "text": "Certainty and relief: the confidence that they won't be embarrassed by this decision",
           "score": 5
         },
         {
@@ -1045,7 +1045,7 @@
         },
         {
           "letter": "EQ-D",
-          "text": "My strength is naming the emotion out loud - even when it's uncomfortable",
+          "text": "My strength is naming the emotion out loud, even when it's uncomfortable",
           "identity": "namer"
         }
       ]
@@ -1067,12 +1067,12 @@
         },
         {
           "letter": "EQ-C",
-          "text": "Under pressure I watch and wait - reading the room before I act",
+          "text": "Under pressure, I watch and wait, reading the room before I act",
           "identity": "observer"
         },
         {
           "letter": "EQ-D",
-          "text": "Under pressure I call out what's really happening - even if it's awkward",
+          "text": "Under pressure, I call out what's really happening, even if it's awkward",
           "identity": "namer"
         }
       ]
@@ -1094,7 +1094,7 @@
         },
         {
           "letter": "EQ-C",
-          "text": "After a difficult meeting I replay what I noticed - body language, silence, energy",
+          "text": "After a difficult meeting, I replay what I noticed: body language, silence, energy",
           "identity": "observer"
         },
         {
