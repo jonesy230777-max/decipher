@@ -7,8 +7,8 @@ Sends live transactional email via the Resend API (https://resend.com).
 Requires RESEND_API_KEY in the environment; MAIL_FROM controls the sender.
 
 Run standalone:
-    python -m app.email_dispatcher           # continuous 5-second poll
-    python -m app.email_dispatcher --once    # one pass, exit (cron / tests)
+  python -m app.email_dispatcher            # continuous 5-second poll
+  python -m app.email_dispatcher --once      # one pass, exit (cron / tests)
 
 Or call dispatch_one() / send_report_email() from other modules.
 """
@@ -36,11 +36,11 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
     """
     rec = rows(
         """SELECT r.email, r.first_name, r.name, ar.name AS archetype_name
-             FROM audits a
-             JOIN respondents r ON r.respondent_id = a.respondent_id
-        LEFT JOIN archetype_assignments aa ON aa.audit_id = a.audit_id
-        LEFT JOIN archetypes ar ON ar.archetype_id = aa.archetype_id
-            WHERE a.audit_id = %s""",
+           FROM audits a
+           JOIN respondents r ON r.respondent_id = a.respondent_id
+           LEFT JOIN archetype_assignments aa ON aa.audit_id = a.audit_id
+           LEFT JOIN archetypes ar ON ar.archetype_id = aa.archetype_id
+           WHERE a.audit_id = %s""",
         (audit_id,),
     )
     if not rec or not rec[0].get("email"):
@@ -55,15 +55,21 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
     except FileNotFoundError:
         raise RuntimeError(f"pdf_missing:{pdf_path}")
 
-        if not _RESEND_API_KEY:
-            raise RuntimeError("RESEND_API_KEY not configured")
+    if not _RESEND_API_KEY:
+        raise RuntimeError("RESEND_API_KEY not configured")
 
     text_body = (
         f"Hi {first},\n\n"
         f"Your Decipher DNA report is attached. Headline archetype: {archetype}.\n\n"
         f"Full breakdown across Cognitive Empathy, Emotional Intelligence, "
         f"Pressure Composure and Narrative Persuasion is on page 1.\n\n"
-        f"decipher.com.au"
+        f"deciphersales.com.au\n\n"
+        f"--\n"
+        f"Steve Jones\n"
+        f"Trainer & Founder\n"
+        f"m: 0425 292 605\n"
+        f"e: steve@deciphersales.com.au\n"
+        f"w: www.deciphersales.com.au"
     )
     html_body = (
         "<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>"
@@ -72,7 +78,15 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
         f"<p>Headline archetype: <strong>{archetype}</strong>. "
         "Full breakdown across the four traits is on page 1; per-trait coaching "
         "actions are on pages 2 and 3.</p>"
-        "<p style='color:#636366;font-size:12px;'>decipher.com.au</p>"
+        "<p style='color:#636366;font-size:12px;'>deciphersales.com.au</p>"
+        "<hr style='border:0;border-top:1px solid #e5e5ea;margin:20px 0 12px'>"
+        "<p style='font-size:13px;line-height:1.5;color:#1c1c1e;margin:0'>"
+        "Steve Jones<br>"
+        "<span style='color:#2FA84F;font-weight:600'>Trainer &amp; Founder</span><br>"
+        "m: 0425 292 605<br>"
+        "e: <a href='mailto:steve@deciphersales.com.au' style='color:#1A57C7;text-decoration:none'>steve@deciphersales.com.au</a><br>"
+        "w: <a href='https://www.deciphersales.com.au' style='color:#1A57C7;text-decoration:none'>www.deciphersales.com.au</a>"
+        "</p>"
         "</body></html>"
     )
 
@@ -108,10 +122,10 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
         raise RuntimeError(f"resend_error:{exc.code}:{body[:300]}")
 
     with conn() as cdb, cdb.cursor() as cur:
-            cur.execute(
-                "UPDATE reports SET delivered_at = now(), recipient_email = %s WHERE report_id = %s",
-                (r["email"], report_id),
-            )
+        cur.execute(
+            "UPDATE reports SET delivered_at = now(), recipient_email = %s WHERE report_id = %s",
+            (r["email"], report_id),
+        )
 
 
 def dispatch_one() -> bool:
@@ -125,15 +139,15 @@ def dispatch_one() -> bool:
     with conn() as c, c.cursor() as cur:
         cur.execute(
             """UPDATE audit_jobs
-                  SET status = 'running', started_at = now()
-                WHERE job_id = (
-                    SELECT job_id FROM audit_jobs
-                     WHERE job_type = 'email' AND status = 'queued'
-                     ORDER BY enqueued_at
-                     FOR UPDATE SKIP LOCKED
-                     LIMIT 1
-                )
-             RETURNING job_id, audit_id, payload""",
+               SET status = 'running', started_at = now()
+               WHERE job_id = (
+                   SELECT job_id FROM audit_jobs
+                   WHERE job_type = 'email' AND status = 'queued'
+                   ORDER BY enqueued_at
+                   FOR UPDATE SKIP LOCKED
+                   LIMIT 1
+               )
+               RETURNING job_id, audit_id, payload""",
         )
         row = cur.fetchone()
 
@@ -144,7 +158,7 @@ def dispatch_one() -> bool:
     if isinstance(payload, str):
         payload = json.loads(payload)
     report_id = int(payload.get("report_id", 0))
-    pdf_path  = str(payload.get("pdf_path", ""))
+    pdf_path = str(payload.get("pdf_path", ""))
 
     try:
         send_report_email(audit_id, report_id, pdf_path)
@@ -163,8 +177,8 @@ def dispatch_one() -> bool:
         with conn() as c, c.cursor() as cur:
             cur.execute(
                 """UPDATE audit_jobs
-                      SET status = 'error', finished_at = now(), error = %s
-                    WHERE job_id = %s""",
+                   SET status = 'error', finished_at = now(), error = %s
+                   WHERE job_id = %s""",
                 (str(exc)[:500], job_id),
             )
         event(
@@ -182,7 +196,7 @@ def run(poll_interval: int = 5) -> None:
     """Continuous polling loop. Drains the queue, then sleeps poll_interval seconds."""
     print(
         f"[email_dispatcher] started via Resend, from={_MAIL_FROM}"
-        f"  poll={poll_interval}s",
+        f" poll={poll_interval}s",
         flush=True,
     )
     while True:
