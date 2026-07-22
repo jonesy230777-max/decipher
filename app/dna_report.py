@@ -7,6 +7,11 @@ Page 3: Coaching priorities + audit history
 `generate_report(audit_id)` renders HTML via Playwright Chromium to PDF,
 writes to var/reports/, inserts a row into the reports table.
 Idempotent: bumps version on each call.
+
+Report v2 (app/dna_report_v2.py) is available behind an allowlist flag:
+set DECIPHER_REPORT_V2_AUDIT_IDS to a comma-separated list of audit_ids to
+route those specific audits to the new template while everyone else keeps
+getting this one, unchanged.
 """
 from __future__ import annotations
 
@@ -22,25 +27,25 @@ REPORT_DIR = Path(os.getenv("DECIPHER_REPORT_DIR", "var/reports"))
 REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
 DIM_LABEL = {
-    "cognitive_empathy":  "Cognitive Empathy",
-    "eq":                 "Emotional Intelligence",
+    "cognitive_empathy": "Cognitive Empathy",
+    "eq": "Emotional Intelligence",
     "pressure_composure": "Pressure Composure",
-    "storytelling":       "Narrative Persuasion",
+    "storytelling": "Narrative Persuasion",
 }
 DIM_ORDER = ["cognitive_empathy", "eq", "pressure_composure", "storytelling"]
 
 BAND_HEX = {
-    "elite":      "#34C759",
+    "elite": "#34C759",
     "performing": "#007AFF",
     "practising": "#FF9500",
     "developing": "#FF3B30",
 }
 
 EQ_IDENTITY_LABEL = {
-    "regulator":    "Regulator",
+    "regulator": "Regulator",
     "edge_builder": "Edge Builder",
-    "observer":     "Observer",
-    "namer":        "Namer",
+    "observer": "Observer",
+    "namer": "Namer",
 }
 
 _NARRATIVE_SYSTEM_PROMPT_TEMPLATE = """\
@@ -100,6 +105,7 @@ for profiles where all scores are above 85, the contribution opportunity.
 def _narrative_system_prompt(industry_name: str | None) -> str:
     industry = (industry_name or "media").lower()
     return _NARRATIVE_SYSTEM_PROMPT_TEMPLATE.format(industry=industry)
+
 
 _CSS = """
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -295,11 +301,11 @@ def _load_context(audit_id: int) -> dict:
                   s.cognitive_empathy, s.eq, s.pressure_composure, s.storytelling, s.raw_band_json,
                   aa.confidence, ar.name AS archetype_name, ar.description AS archetype_description,
                   ar.code AS archetype_code
-             FROM audits a
-        LEFT JOIN audit_scores s ON s.audit_id = a.audit_id
-        LEFT JOIN archetype_assignments aa ON aa.audit_id = a.audit_id AND aa.taxonomy_id = 2
-        LEFT JOIN archetypes ar ON ar.archetype_id = aa.archetype_id AND ar.taxonomy_id = 2
-            WHERE a.audit_id = %s""",
+           FROM audits a
+           LEFT JOIN audit_scores s ON s.audit_id = a.audit_id
+           LEFT JOIN archetype_assignments aa ON aa.audit_id = a.audit_id AND aa.taxonomy_id = 2
+           LEFT JOIN archetypes ar ON ar.archetype_id = aa.archetype_id AND ar.taxonomy_id = 2
+           WHERE a.audit_id = %s""",
         (audit_id,),
     )
     if not a:
@@ -309,7 +315,7 @@ def _load_context(audit_id: int) -> dict:
     r = rows(
         """SELECT respondent_id, name, first_name, last_name, email, mobile, job_title,
                   team_id, company_id, role
-             FROM respondents WHERE respondent_id = %s""",
+           FROM respondents WHERE respondent_id = %s""",
         (audit["respondent_id"],),
     )[0]
 
@@ -318,8 +324,8 @@ def _load_context(audit_id: int) -> dict:
 
     industry_name = scalar(
         """SELECT i.name FROM audit_versions av
-             JOIN industries i ON i.industry_id = av.industry_id
-            WHERE av.audit_version_id = %s""",
+           JOIN industries i ON i.industry_id = av.industry_id
+           WHERE av.audit_version_id = %s""",
         (audit["audit_version_id"],),
     )
 
@@ -331,19 +337,19 @@ def _load_context(audit_id: int) -> dict:
 
     narratives = rows(
         """SELECT dimension, band, strength, action
-             FROM narrative_library
-            WHERE taxonomy_code = 'media_sales_v1'""",
+           FROM narrative_library
+           WHERE taxonomy_code = 'media_sales_v1'""",
     )
     narratives_by = {(n["dimension"], n["band"]): n for n in narratives}
 
     history = rows(
         """SELECT a.audit_id, a.started_at, a.status,
                   s.cognitive_empathy, s.eq, s.pressure_composure, s.storytelling
-             FROM audits a
-        LEFT JOIN audit_scores s ON s.audit_id = a.audit_id
-            WHERE a.respondent_id = %s
-            ORDER BY a.started_at DESC
-            LIMIT 6""",
+           FROM audits a
+           LEFT JOIN audit_scores s ON s.audit_id = a.audit_id
+           WHERE a.respondent_id = %s
+           ORDER BY a.started_at DESC
+           LIMIT 6""",
         (r["respondent_id"],),
     )
 
@@ -553,40 +559,40 @@ def _build_html(ctx: dict, audit_id: int, claude_narrative: str = "") -> str:
 <body>
 
 <div class="page">
-  <h1>Decipher DNA Audit</h1>
-  <div class="subtitle">Media Sales DNA v1 &nbsp;&middot;&nbsp; Individual report</div>
-  <hr>
-  <div class="respondent-name">{_esc(name)}</div>
-  <div class="respondent-meta">{_esc(subtitle)}</div>
-  <div class="score-grid">{score_cards}</div>
-  {narrative_block}
-  <div class="archetype-panel">
-    <div class="arch-label">ARCHETYPE</div>
-    <div class="arch-name">{_esc(archetype_name)}</div>
-    <div class="arch-meta">Confidence {_esc(conf_str)} &nbsp;&middot;&nbsp; EQ identity: {_esc(eq_label)}</div>
-    {arch_desc_block}
-  </div>
-  <p class="method-note">{_esc(method_note)}</p>
+<h1>Decipher DNA Audit</h1>
+<div class="subtitle">Media Sales DNA v1 &nbsp;&middot;&nbsp; Individual report</div>
+<hr>
+<div class="respondent-name">{_esc(name)}</div>
+<div class="respondent-meta">{_esc(subtitle)}</div>
+<div class="score-grid">{score_cards}</div>
+{narrative_block}
+<div class="archetype-panel">
+<div class="arch-label">ARCHETYPE</div>
+<div class="arch-name">{_esc(archetype_name)}</div>
+<div class="arch-meta">Confidence {_esc(conf_str)} &nbsp;&middot;&nbsp; EQ identity: {_esc(eq_label)}</div>
+{arch_desc_block}
+</div>
+<p class="method-note">{_esc(method_note)}</p>
 </div>
 
 <div class="page">
-  {eq_section}
-  <div class="section-heading">Where you stand, trait by trait</div>
-  {trait_sections}
+{eq_section}
+<div class="section-heading">Where you stand, trait by trait</div>
+{trait_sections}
 </div>
 
 <div class="page">
-  <div class="section-heading">Coaching priorities</div>
-  <p class="hint">Address from weakest to strongest. Each 5-point lift compounds across the funnel.</p>
-  {priority_items}
-  <hr style="margin-top:12pt">
-  <div class="section-heading" style="margin-top:10pt">Audit history</div>
-  <table class="history-table">
-    <thead>
-      <tr><th>Date</th><th>Status</th><th>CE</th><th>EQ</th><th>PC</th><th>NP</th></tr>
-    </thead>
-    <tbody>{history_rows_html}</tbody>
-  </table>
+<div class="section-heading">Coaching priorities</div>
+<p class="hint">Address from weakest to strongest. Each 5-point lift compounds across the funnel.</p>
+{priority_items}
+<hr style="margin-top:12pt">
+<div class="section-heading" style="margin-top:10pt">Audit history</div>
+<table class="history-table">
+<thead>
+<tr><th>Date</th><th>Status</th><th>CE</th><th>EQ</th><th>PC</th><th>NP</th></tr>
+</thead>
+<tbody>{history_rows_html}</tbody>
+</table>
 </div>
 
 </body>
@@ -627,7 +633,20 @@ def _render_pdf(html: str, audit_id: int) -> bytes:
 def generate_report(audit_id: int) -> dict:
     """Render the 3-page PDF, persist to disk and the reports table.
     Returns { report_id, pdf_path, version }.
+
+    Report v2 flag: if audit_id is listed in the DECIPHER_REPORT_V2_AUDIT_IDS
+    env var (comma-separated), delegate to app.dna_report_v2.generate_report
+    instead. Everyone not on that list takes the exact code path below,
+    unchanged.
     """
+    _v2_ids = {
+        int(x) for x in os.getenv("DECIPHER_REPORT_V2_AUDIT_IDS", "").split(",")
+        if x.strip().isdigit()
+    }
+    if audit_id in _v2_ids:
+        from app.dna_report_v2 import generate_report as _generate_report_v2
+        return _generate_report_v2(audit_id)
+
     from app.claude_client import complete_narrative, ClaudeCallError
 
     ctx = _load_context(audit_id)
@@ -658,8 +677,8 @@ def generate_report(audit_id: int) -> dict:
         version = cur.fetchone()[0]
         cur.execute(
             """INSERT INTO reports (audit_id, pdf_path, version, recipient_email)
-                 VALUES (%s, %s, %s, %s)
-              RETURNING report_id""",
+               VALUES (%s, %s, %s, %s)
+               RETURNING report_id""",
             (audit_id, str(pdf_path), version, r.get("email")),
         )
         report_id = cur.fetchone()[0]
