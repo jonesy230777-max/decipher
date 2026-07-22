@@ -121,8 +121,20 @@ export default function AuditTake() {
     () => (version?.questions ?? []).filter((q) => q.response_type === "choice"),
     [version],
   );
-  const q = questions[idx];
-  const progress = questions.length ? (idx / questions.length) : 0;
+  // Deterministic per-audit shuffle of question *order* (not just answer
+  // options) so respondents don't answer in fixed trait blocks (Cognitive
+  // Empathy, then EQ, then Pressure Composure, ...) -- fixed blocks make it
+  // obvious which trait is being probed. Seeded by auditId with a fixed
+  // salt so it's stable across re-renders/reloads for one respondent but
+  // differs audit to audit. Scoring is keyed by question_id/canonical_trait,
+  // not position, so this is a display-only change.
+  const shuffledQuestions = useMemo(() => {
+    if (!questions.length || auditId == null) return questions;
+    const order = seededShuffleIndices(hashSeed(auditId, 8675309), questions.length);
+    return order.map((i) => questions[i]);
+  }, [questions, auditId]);
+  const q = shuffledQuestions[idx];
+  const progress = shuffledQuestions.length ? (idx / shuffledQuestions.length) : 0;
 
   // Canonical-index order to render options in for this respondent/question.
   // See hashSeed/seededShuffleIndices above for why this exists.
@@ -163,7 +175,7 @@ export default function AuditTake() {
         }),
       });
       setStartedAt(Date.now());
-      if (idx + 1 >= questions.length) {
+      if (idx + 1 >= shuffledQuestions.length) {
         const res = await api<CompleteResult>(`/api/audit/${auditId}/complete`, { method: "POST" });
         setResult(res);
         setStep("done");
@@ -215,7 +227,7 @@ export default function AuditTake() {
               />
             </div>
             <div className="hig-caption-1" style={{ marginTop: 6, textAlign: "right" }}>
-              Question {idx + 1} of {questions.length}
+              Question {idx + 1} of {shuffledQuestions.length}
             </div>
           </div>
         )}
