@@ -271,7 +271,7 @@ _CSS = """
 
 body {
   font-family: "Liberation Sans", -apple-system, system-ui, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  font-size: 8.5pt;
+  font-size: 9.5pt;
   line-height: 1.42;
   color: #1C1C1E;
   -webkit-print-color-adjust: exact;
@@ -302,30 +302,30 @@ h1.page-title { font-size: 16.5pt; font-weight: 800; margin-bottom: 6pt; }
 .cover-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 18pt; }
 .arch-tag-label { font-size: 6.6pt; font-weight: 700; color: #8E8E93; letter-spacing: .06em; text-transform: uppercase; }
 .arch-name { font-size: 21pt; font-weight: 800; line-height: 1.1; margin: 4pt 0 7pt; }
-.arch-desc { font-size: 8.8pt; line-height: 1.55; color: #3C3C43; margin-bottom: 10pt; }
+.arch-desc { font-size: 9.8pt; line-height: 1.55; color: #3C3C43; margin-bottom: 10pt; }
 .objective-row { margin-bottom: 12pt; }
 
 .section-divider { border: 0; border-top: 1px solid #E5E5EA; margin: 12pt 0; }
 
 .eqid-label { font-size: 6.6pt; font-weight: 700; color: #8E8E93; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 3pt; }
 .eqid-name { font-size: 14pt; font-weight: 800; margin-bottom: 5pt; }
-.eqid-desc { font-size: 8.6pt; line-height: 1.5; color: #3C3C43; margin-bottom: 7pt; }
+.eqid-desc { font-size: 9.6pt; line-height: 1.5; color: #3C3C43; margin-bottom: 7pt; }
 
-.confidential-box { background: #F1F8F2; border: 1px solid #D1E8D4; border-radius: 8px; padding: 9pt 11pt; font-size: 7.8pt; line-height: 1.5; color: #2E6B3A; margin-top: 10pt; }
+.confidential-box { background: #F1F8F2; border: 1px solid #D1E8D4; border-radius: 8px; padding: 9pt 11pt; font-size: 8.8pt; line-height: 1.5; color: #2E6B3A; margin-top: 10pt; }
 .confidential-box b { color: #1C5128; }
 
 /* score circle */
 .score-panel { border: 1px solid #E5E5EA; border-radius: 10px; padding: 12pt 14pt; display: flex; gap: 12pt; align-items: center; border-left: 4px solid #2FA84F; margin-bottom: 12pt; }
 .score-big { font-size: 34pt; font-weight: 800; color: #2FA84F; line-height: 1; }
 .score-band-name { font-size: 12pt; font-weight: 800; margin-bottom: 2pt; }
-.score-band-desc { font-size: 7.8pt; color: #636366; line-height: 1.4; }
+.score-band-desc { font-size: 8.8pt; color: #636366; line-height: 1.4; }
 
 .bars-label { font-size: 6.6pt; font-weight: 700; color: #8E8E93; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 7pt; }
 .bar-row { display: flex; align-items: center; gap: 7pt; margin-bottom: 7pt; }
-.bar-name { font-size: 8pt; font-weight: 700; width: 92pt; flex-shrink: 0; }
+.bar-name { font-size: 9pt; font-weight: 700; width: 92pt; flex-shrink: 0; }
 .bar-track { flex: 1; height: 7pt; background: #F0F0F2; border-radius: 4px; overflow: hidden; }
 .bar-fill { height: 100%; border-radius: 4px; }
-.bar-score { font-size: 8.6pt; font-weight: 800; width: 20pt; text-align: right; flex-shrink: 0; }
+.bar-score { font-size: 9.6pt; font-weight: 800; width: 20pt; text-align: right; flex-shrink: 0; }
 .bar-band { font-size: 6.6pt; font-weight: 700; width: 58pt; text-align: right; flex-shrink: 0; letter-spacing: .02em; }
 
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8pt; margin: 7pt 0; }
@@ -337,11 +337,11 @@ h1.page-title { font-size: 16.5pt; font-weight: 800; margin-bottom: 6pt; }
 .callout-mini.growth .callout-mini-label { color: #C97A12; }
 .callout-mini-trait { font-size: 9.6pt; font-weight: 800; margin-bottom: 2pt; }
 .callout-mini-score { font-size: 7pt; color: #636366; margin-bottom: 4pt; }
-.callout-mini-text { font-size: 7.8pt; line-height: 1.45; color: #3C3C43; }
+.callout-mini-text { font-size: 8.8pt; line-height: 1.45; color: #3C3C43; }
 
 .contains-label { font-size: 6.6pt; font-weight: 700; color: #8E8E93; letter-spacing: .06em; text-transform: uppercase; margin: 12pt 0 6pt; }
 .contains-list { list-style: none; }
-.contains-list li { font-size: 8.2pt; line-height: 1.5; padding-left: 13pt; position: relative; margin-bottom: 3pt; }
+.contains-list li { font-size: 9.2pt; line-height: 1.5; padding-left: 13pt; position: relative; margin-bottom: 3pt; }
 .contains-list li::before { content: ""; position: absolute; left: 0; top: 6pt; width: 7pt; height: 2px; background: #2FA84F; }
 
 .legend-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6pt; margin-top: 12pt; }
@@ -349,7 +349,7 @@ h1.page-title { font-size: 16.5pt; font-weight: 800; margin-bottom: 6pt; }
 .legend-cell.active { border-color: #2FA84F; background: #F1F8F2; }
 .legend-cell-name { font-size: 6.2pt; font-weight: 800; letter-spacing: .04em; color: #8E8E93; }
 .legend-cell.active .legend-cell-name { color: #2E8B41; }
-.legend-cell-range { font-size: 8.6pt; font-weight: 800; margin-top: 1pt; }
+.legend-cell-range { font-size: 9.6pt; font-weight: 800; margin-top: 1pt; }
 
 /* ---- trait pages ---- */
 .trait-grid { display: grid; grid-template-columns: 92pt 1fr; gap: 13pt; }
@@ -361,7 +361,7 @@ h1.page-title { font-size: 16.5pt; font-weight: 800; margin-bottom: 6pt; }
 .trait-band-label-sm { font-size: 6.4pt; font-weight: 700; color: #8E8E93; letter-spacing: .04em; text-transform: uppercase; }
 .trait-band-name { font-size: 10.5pt; font-weight: 800; margin-top: 1pt; }
 
-.lead-para { font-size: 7.9pt; line-height: 1.42; margin-bottom: 4pt; color: #262628; }
+.lead-para { font-size: 8.9pt; line-height: 1.42; margin-bottom: 4pt; color: #262628; }
 
 .ladder-label { font-size: 6.4pt; font-weight: 700; color: #8E8E93; letter-spacing: .06em; text-transform: uppercase; margin: 6pt 0 3pt; }
 .ladder-row { display: flex; gap: 8pt; padding: 3pt 0; border-bottom: 1px solid #F2F2F3; align-items: flex-start; }
@@ -369,7 +369,7 @@ h1.page-title { font-size: 16.5pt; font-weight: 800; margin-bottom: 6pt; }
 .ladder-row.here { background: #F7FAF7; margin: 0 -6pt; padding: 3pt 6pt; border-radius: 6px; border-bottom-color: transparent; }
 .ladder-band-name { width: 68pt; flex-shrink: 0; font-size: 7.4pt; font-weight: 800; letter-spacing: .02em; padding-top: 1pt; }
 .ladder-here-tag { display: inline-block; font-size: 5.6pt; font-weight: 800; color: #fff; background: #2FA84F; padding: 1px 5px; border-radius: 5px; margin-top: 2pt; letter-spacing: .03em; }
-.ladder-text { font-size: 7.3pt; line-height: 1.32; color: #3C3C43; }
+.ladder-text { font-size: 8.3pt; line-height: 1.32; color: #3C3C43; }
 
 .gap-strength-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7pt; margin: 6pt 0; }
 .gs-box { border-radius: 7px; padding: 6pt 8pt; }
@@ -378,10 +378,10 @@ h1.page-title { font-size: 16.5pt; font-weight: 800; margin-bottom: 6pt; }
 .gs-label { font-size: 6.4pt; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 3pt; }
 .gs-box.strength .gs-label { color: #2E8B41; }
 .gs-box.gap .gs-label { color: #C97A12; }
-.gs-text { font-size: 7.2pt; line-height: 1.32; color: #3C3C43; }
+.gs-text { font-size: 8.2pt; line-height: 1.32; color: #3C3C43; }
 
 .block-heading { font-size: 7.8pt; font-weight: 800; margin: 6pt 0 2pt; }
-.block-text { font-size: 7.6pt; line-height: 1.36; color: #262628; margin-bottom: 2pt; }
+.block-text { font-size: 8.6pt; line-height: 1.36; color: #262628; margin-bottom: 2pt; }
 
 .callout-rule { border-left: 3px solid; border-radius: 0 6px 6px 0; padding: 5pt 8pt; margin: 6pt 0; }
 .callout-rule.where { border-color: #007AFF; background: #F0F6FF; }
@@ -391,35 +391,35 @@ h1.page-title { font-size: 16.5pt; font-weight: 800; margin-bottom: 6pt; }
 .callout-rule.where .callout-rule-label { color: #0A5FD1; }
 .callout-rule.cost .callout-rule-label { color: #C97A12; }
 .callout-rule.action .callout-rule-label { color: #2E8B41; }
-.callout-rule-text { font-size: 7.4pt; line-height: 1.34; color: #2E2E30; }
+.callout-rule-text { font-size: 8.4pt; line-height: 1.34; color: #2E2E30; }
 
 .conversation-box { background: #F7F7F8; border: 1px solid #E5E5EA; border-radius: 7px; padding: 6pt 8pt; margin: 6pt 0; }
 .conversation-label { font-size: 6.4pt; font-weight: 700; color: #8E8E93; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 4pt; }
-.conversation-text { font-size: 7.3pt; line-height: 1.32; font-style: italic; color: #3C3C43; }
+.conversation-text { font-size: 8.3pt; line-height: 1.32; font-style: italic; color: #3C3C43; }
 
 /* ---- roadmap page ---- */
-.roadmap-sub { font-size: 7.8pt; color: #636366; margin-bottom: 7pt; }
+.roadmap-sub { font-size: 8.8pt; color: #636366; margin-bottom: 7pt; }
 .week-card { border: 1px solid #E5E5EA; border-radius: 8px; padding: 6pt 10pt; margin-bottom: 5pt; display: flex; gap: 10pt; align-items: flex-start; }
 .week-num-col { width: 26pt; flex-shrink: 0; text-align: center; }
 .week-num-label { font-size: 6pt; font-weight: 700; color: #8E8E93; letter-spacing: .04em; }
 .week-num { font-size: 14pt; font-weight: 800; }
 .week-focus { font-size: 6.6pt; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 2pt; }
 .week-title { font-size: 9.2pt; font-weight: 800; margin-bottom: 1pt; }
-.week-desc { font-size: 7.3pt; line-height: 1.32; color: #3C3C43; }
+.week-desc { font-size: 8.3pt; line-height: 1.32; color: #3C3C43; }
 
 .immediate-label { font-size: 6.4pt; font-weight: 700; color: #8E8E93; letter-spacing: .06em; text-transform: uppercase; margin: 8pt 0 5pt; }
 .immediate-item { display: flex; gap: 8pt; margin-bottom: 5pt; align-items: flex-start; }
 .immediate-num { width: 16pt; height: 16pt; border-radius: 4px; background: #1C1C1E; color: #fff; font-size: 8pt; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .immediate-title { font-size: 9pt; font-weight: 800; margin-bottom: 1pt; }
 .immediate-trait { font-size: 6.4pt; font-weight: 700; color: #2FA84F; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 2pt; }
-.immediate-text { font-size: 7.2pt; line-height: 1.3; color: #3C3C43; }
+.immediate-text { font-size: 8.2pt; line-height: 1.3; color: #3C3C43; }
 
-.closing-line { text-align: center; font-size: 8.6pt; font-weight: 700; margin-top: 8pt; padding-top: 7pt; border-top: 1px solid #E5E5EA; }
+.closing-line { text-align: center; font-size: 9.6pt; font-weight: 700; margin-top: 8pt; padding-top: 7pt; border-top: 1px solid #E5E5EA; }
 .closing-line .grey { font-weight: 400; color: #8E8E93; font-style: italic; }
 
 /* ---- glossary ---- */
 .gloss-term { font-size: 9.2pt; font-weight: 800; margin-top: 6pt; margin-bottom: 2pt; }
-.gloss-def { font-size: 8.2pt; line-height: 1.42; color: #3C3C43; }
+.gloss-def { font-size: 9.2pt; line-height: 1.42; color: #3C3C43; }
 
 .footer-note { font-size: 6.6pt; color: #8E8E93; text-align: center; margin-top: 14pt; }
 """
