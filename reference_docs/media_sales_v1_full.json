@@ -41,27 +41,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Immediately explain why this time will be different",
+          "text": "Jump straight to reassurance: 'This time will be different, I promise.'",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Apologise and offer a discount to rebuild goodwill",
+          "text": "Apologise for their past experience and offer a discount to rebuild goodwill",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Ask them to tell you more about what happened",
+          "text": "Ask a simple follow-up: 'Can you tell me more about what happened?'",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Reflect back: 'Didn't work?' and wait",
+          "text": "Reflect their words back: 'Didn't work?' and hold the silence to see what surfaces",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name the feeling: 'It sounds like that experience left you cautious about committing again.'",
+          "text": "Name the feeling underneath it: 'That experience left you cautious about trying again.'",
           "score": 5
         }
       ]
@@ -1136,27 +1136,27 @@
     "Q2": [
       {
         "letter": "A",
-        "text": "Immediately explain why this time will be different",
+        "text": "Jump straight to reassurance: 'This time will be different, I promise.'",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "Apologise and offer a discount to rebuild goodwill",
+        "text": "Apologise for their past experience and offer a discount to rebuild goodwill",
         "score": 1
       },
       {
         "letter": "C",
-        "text": "Ask them to tell you more about what happened",
+        "text": "Ask a simple follow-up: 'Can you tell me more about what happened?'",
         "score": 3
       },
       {
         "letter": "D",
-        "text": "Reflect back: 'Didn't work?' and wait",
+        "text": "Reflect their words back: 'Didn't work?' and hold the silence to see what surfaces",
         "score": 4
       },
       {
         "letter": "E",
-        "text": "Name the feeling: 'It sounds like that experience left you cautious about committing again.'",
+        "text": "Name the feeling underneath it: 'That experience left you cautious about trying again.'",
         "score": 5
       }
     ],
