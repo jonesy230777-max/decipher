@@ -255,9 +255,6 @@ export default function AuditTake() {
 
         {step === "question" && q && (
           <Card>
-            <div className="hig-caption-1" style={{ color: "var(--colour-label-secondary)" }}>
-              {q.dimension.replace("_", " ")} {q.archetype_signal ? `· archetype` : ""}
-            </div>
             <h2 className="hig-title-2" style={{ margin: "var(--space-2) 0 var(--space-4) 0" }}>
               {q.prompt}
             </h2>
