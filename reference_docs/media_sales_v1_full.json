@@ -730,21 +730,21 @@
       "id": "Q23",
       "qnum": 23,
       "trait": "narrative_persuasion",
-      "prompt": "A client is hesitating because the previous agency 'let them down.' You address this by:",
+      "prompt": "A client is hesitating because the previous publisher/vendor 'let them down.' You address this by:",
       "options": [
         {
           "letter": "A",
-          "text": "Highlighting your accountability processes and reporting",
+          "text": "Say directly: 'Here's exactly how our accountability processes and reporting will keep you informed every step of the way.'",
           "score": 2
         },
         {
           "letter": "B",
-          "text": "Offering a performance-based pricing model",
+          "text": "Offer them a clear performance-based pricing model, and say: 'You'll only pay us based on the results we actually deliver.'",
           "score": 2
         },
         {
           "letter": "C",
-          "text": "Sharing a testimonial from a satisfied client",
+          "text": "Share a detailed testimonial from a client who was in a very similar situation before working with us",
           "score": 3
         },
         {
@@ -754,7 +754,7 @@
         },
         {
           "letter": "E",
-          "text": "Acknowledging their concern and moving to your product strengths",
+          "text": "Acknowledge their concern directly, then move the conversation toward your product's core strengths and what sets it apart",
           "score": 2
         }
       ]
@@ -767,12 +767,12 @@
       "options": [
         {
           "letter": "A",
-          "text": "You emphasise how great your product performed",
+          "text": "You emphasise how great your product performed for them throughout the campaign",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "You focus on your team's strategic thinking and execution",
+          "text": "You focus mainly on your team's strategic thinking and flawless execution behind the scenes",
           "score": 1
         },
         {
@@ -782,7 +782,7 @@
         },
         {
           "letter": "D",
-          "text": "You split the credit equally between your company and the client",
+          "text": "You split the credit equally between your company and the client for the win",
           "score": 2
         },
         {
@@ -866,27 +866,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Take their positivity at face value",
+          "text": "Take their positivity at face value and move the conversation forward as planned",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Ask about their decision-making timeline",
+          "text": "Ask them directly: 'What does your decision-making timeline actually look like from here?'",
           "score": 3
         },
         {
           "letter": "C",
-          "text": "Name what you sense: 'It seems like something hasn't clicked yet; am I reading that right?'",
+          "text": "Name what you're sensing and ask directly if you're reading the situation right",
           "score": 5
         },
         {
           "letter": "D",
-          "text": "Send a more detailed proposal to address any unstated concerns",
+          "text": "Send over a more detailed proposal that addresses any concerns they haven't voiced yet",
           "score": 2
         },
         {
           "letter": "E",
-          "text": "Ask their assistant if there are any issues you should know about",
+          "text": "Ask their assistant directly: 'Is there anything going on I should know about?'",
           "score": 2
         }
       ]
@@ -965,27 +965,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Their budget range",
+          "text": "Their overall budget range for this specific campaign",
           "score": 2
         },
         {
           "letter": "B",
-          "text": "Their preferred media channels",
+          "text": "Their preferred media channels and formats for this",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Their KPIs and success metrics",
+          "text": "Their specific KPIs and how they measure success",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "What they personally fear will happen if this campaign fails",
+          "text": "What they personally fear happening if it fails",
           "score": 5
         },
         {
           "letter": "E",
-          "text": "Their relationship with the previous agency",
+          "text": "Their working relationship with their previous media agency",
           "score": 3
         }
       ]
