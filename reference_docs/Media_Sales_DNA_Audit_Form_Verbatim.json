@@ -75,11 +75,11 @@
     "title": "Q5. A buyer says very little but their body language is tense. You prioritise:",
     "description": null,
     "options": [
-      "Pushing through your agenda, they're just busy",
-      "Asking a direct question: 'Is everything okay?'",
-      "Slowing your pace and asking an open calibrated question",
-      "Narrating what you observe: 'It seems like there's a lot on your plate today.'",
-      "Acknowledging the tension and offering to reschedule"
+      "Pushing straight through your agenda, assuming they're just busy today",
+      "Asking them a direct question: 'Is everything okay right now?'",
+      "Slowing your pace down and asking an open, calibrated question",
+      "Naming what you observe: 'There's a lot on your plate.'",
+      "Acknowledging the visible tension and offering to reschedule the call"
     ]
   },
   {
@@ -88,11 +88,11 @@
     "title": "Q6. After a strong discovery session, a buyer goes cold and stops responding. You:",
     "description": null,
     "options": [
-      "Send a 'just checking in' follow-up email",
-      "Call them and walk through your proposal again",
-      "Send a short email asking if priorities have shifted",
-      "Frame your response: 'It feels like your focus may have moved elsewhere, happy to pause if that helps.'",
-      "Wait two weeks before reaching out again",
+      "Send a quick 'just checking in' follow-up email to keep the conversation open for now",
+      "Call them directly and walk back through your proposal in more detail",
+      "Send a short, low-pressure email asking whether their priorities have shifted since you last spoke",
+      "Acknowledge that their attention seems to have shifted and offer to pause",
+      "Wait a couple of weeks before reaching out to them again",
       ""
     ]
   },
@@ -102,10 +102,10 @@
     "title": "Q7. A client is venting about a difficult internal situation that has nothing to do with your proposal. You:",
     "description": null,
     "options": [
-      "Listen politely then redirect to your agenda",
-      "Offer sympathy: 'I'm sorry to hear that'",
-      "Ask a question that connects their situation to your solution",
-      "Fully listen, then reflect back what you heard before moving on",
+      "Listen politely for a moment, then redirect the conversation back to your agenda",
+      "Offer sympathy by saying 'I'm sorry to hear that' and pause for a moment",
+      "Ask a thoughtful question that connects their situation back to your proposed solution",
+      "Fully listen to what they're saying, then reflect back what you heard before moving on",
       "Name what they're feeling and invite them to say more before pivoting"
     ]
   },
@@ -115,11 +115,11 @@
     "title": "Q8. You sense a buyer is holding back, they're agreeable but not engaged. You:",
     "description": null,
     "options": [
-      "Present more compelling data to re-engage them",
-      "Ask directly: 'Are you interested in moving forward?'",
-      "Ask an open question about their current priorities",
+      "Present more compelling data or examples in an effort to re-engage them again",
+      "Ask them directly whether they're interested in moving forward with the proposal right now",
+      "Ask an open question: 'What's most important to you as you think this through?'",
       "Name what you notice: 'It seems like something hasn't quite landed yet.'",
-      "Give them space, push less, let them come to you"
+      "Give them space by pushing less and letting them come to you naturally"
     ]
   },
   {
@@ -141,11 +141,11 @@
     "title": "Q10. A client gives you positive feedback to your face but doesn't return calls. You interpret this as:",
     "description": null,
     "options": [
-      "They're genuinely interested but busy",
-      "They were being polite, the deal is probably dead",
-      "There's an internal obstacle they haven't told you about",
-      "A signal to send more proof points and case studies",
-      "An invitation to name the gap: 'It feels like something has shifted since we last spoke.'"
+      "They're genuinely interested in what you're offering but simply pulled in other directions",
+      "They were simply being polite, and the deal is most likely already dead",
+      "A sign of something unspoken: 'There's more going on behind the scenes than they're letting on.'",
+      "A signal to send even more proof points and case studies to build the case",
+      "A sign that something has shifted internally that hasn't been named yet"
     ]
   },
   {
@@ -154,11 +154,11 @@
     "title": "Q11. In a group pitch, one stakeholder keeps interrupting with objections while others stay silent. You:",
     "description": null,
     "options": [
-      "Address the loud objector head-on to neutralise the resistance",
-      "Pause and ask the quiet stakeholders for their perspective",
-      "Continue your pitch and handle objections at the end",
-      "Acknowledge the objector's concern then open to the room",
-      "Label the dynamic: 'It sounds like there are a few different perspectives in the room, let's surface them.'"
+      "Address the loud objector head-on right away to try to neutralise their resistance",
+      "Pause the conversation for a moment and directly ask the quieter stakeholders what they think",
+      "Continue delivering your pitch as planned and handle any objections once you're finished",
+      "Acknowledge the objector's concern directly, then open the floor to the rest of the room",
+      "Name the dynamic in the room and invite other perspectives to surface"
     ]
   },
   {
@@ -167,11 +167,11 @@
     "title": "Q12. A long-term client suddenly reduces their spend with no explanation. Your first move is:",
     "description": null,
     "options": [
-      "Send a revised proposal with better pricing",
-      "Request a meeting to present new campaign options",
-      "Call and ask if something has changed on their end",
-      "Frame the situation: 'It seems like something has shifted, I'd rather understand it than guess.'",
-      "Speak to your manager before contacting the client"
+      "Send over a revised proposal with more competitive pricing to win them back",
+      "Request a meeting to walk them through some new campaign options and ideas",
+      "Call them directly and ask if anything has changed on their end recently",
+      "Name what you're sensing and ask directly what's changed on their end",
+      "Speak to your manager first to get their read before reaching out to the client"
     ]
   },
   {
@@ -180,11 +180,11 @@
     "title": "Q13. A Media Director says: 'Match this rate or the budget moves to your competitor.' You:",
     "description": null,
     "options": [
-      "Match the rate to protect the relationship",
-      "Defend your rate card with audience and reach data",
-      "Acknowledge the pressure and ask what outcome they're optimising for",
-      "Label the pressure: 'It sounds like you're under internal pressure to reduce spend, what would success look like for you in this decision?'",
-      "Ask for time to consult your manager before responding"
+      "Match the rate straight away without pushback in order to protect the long-term relationship",
+      "Defend your rate card firmly using audience numbers and reach data to back it up",
+      "Acknowledge the pressure they're under and ask what outcome they're really trying to optimise for",
+      "Name the pressure they're under and ask what success looks like for them",
+      "Ask for some time to consult your manager before you give them a response"
     ]
   },
   {
@@ -193,11 +193,11 @@
     "title": "Q14. A buyer says 'We don't have budget' and then goes silent. You:",
     "description": null,
     "options": [
-      "Immediately offer a lower-cost option",
-      "Ask when their budget cycle resets",
-      "Mirror: 'Don't have budget?' and hold silence",
-      "Ask what the budget situation looked like before this conversation",
-      "Summarise the ROI case to justify the spend"
+      "Offer them a lower-cost option right away to keep the conversation moving forward",
+      "Ask them directly when their budget cycle is expected to reset next",
+      "Reflect it back: 'No budget?' and then hold the silence to see what comes next",
+      "Ask: 'What did the budget situation look like before this conversation started?'",
+      "Say: 'Here's the ROI case that I believe justifies the spend' and walk them through it"
     ]
   },
   {
@@ -206,11 +206,11 @@
     "title": "Q15. Mid-pitch, a senior stakeholder says 'I've heard all this before.' You:",
     "description": null,
     "options": [
-      "Fast-forward to your most compelling slide",
-      "Acknowledge it: 'Fair, what would make this conversation worth your time?'",
-      "Defend your approach as different from competitors",
-      "Ask what they heard before that didn't land",
-      "Wrap up quickly and follow up with a tailored proposal"
+      "Say: 'Let's skip ahead to the part that matters most to you.'",
+      "Acknowledge it honestly and ask what would make this worth their time",
+      "Defend your approach by explaining how it's different from what competitors offer",
+      "Ask them directly: 'What didn't land for you last time we talked?'",
+      "Wrap up efficiently and follow up afterward with a proposal tailored to them"
     ]
   },
   {
@@ -219,11 +219,11 @@
     "title": "Q16. An agency contact says: 'Your competitor is offering CPC guarantees and post-click attribution. Can you match it?' You:",
     "description": null,
     "options": [
-      "Commit to matching it, close the deal first, sort it out later",
-      "Explain why CPC guarantees are often misleading metrics",
-      "Acknowledge the ask: 'It sounds like attribution visibility is the real driver here, is that right?'",
-      "Ask what they would do with the attribution data",
-      "Offer a performance bonus structure as a compromise"
+      "Say: 'Let's lock this in now and work out the details afterward.'",
+      "Explain directly: 'CPC guarantees often hide misleading metrics that don't tell the full story.'",
+      "Acknowledge the ask and check whether attribution visibility is really the driver here",
+      "Ask them directly what they'd actually do with the attribution data if they had it",
+      "Offer them a performance bonus structure instead as a fair middle-ground compromise"
     ]
   },
   {
@@ -245,11 +245,11 @@
     "title": "Q18. A client says 'The last campaign didn't move the needle, we need guarantees to proceed.' You:",
     "description": null,
     "options": [
-      "Promise results to close the deal",
-      "Ask what 'moving the needle' means to them specifically",
-      "Present a new campaign structure with stronger targeting",
-      "Acknowledge: 'It sounds like the previous investment left you needing more certainty before committing again.'",
-      "Share a third-party case study showing comparable results"
+      "Promise strong results upfront in order to close the deal as quickly as possible",
+      "Ask them directly what 'moving the needle' actually means to them specifically",
+      "Say: 'Here's a new campaign structure built with much stronger targeting this time.'",
+      "Acknowledge that the previous investment left them needing more certainty before committing again",
+      "Say: 'Here's a case study from a similar client that shows comparable results.'"
     ]
   },
   {
@@ -258,11 +258,11 @@
     "title": "Q19. You have 2 minutes to introduce your solution in a first meeting. You start with:",
     "description": null,
     "options": [
-      "Your company's reach and audience data",
-      "Your product's unique features versus competitors",
-      "A question about their biggest current challenge",
-      "A brief story about a client in a similar situation, time is of the essence",
-      "A specific client story using location, emotion, and a direct quote"
+      "Your company's overall reach and detailed audience data",
+      "Say: 'Here's what makes our product different from everything else out there.'",
+      "Ask them: 'What's the biggest challenge you're facing with this right now?'",
+      "A brief story about a client who faced a similar situation",
+      "A specific, quote-based client story"
     ]
   },
   {
@@ -271,11 +271,11 @@
     "title": "Q20. A sceptical CMO asks 'Why should I choose you over your competitor?' You respond with:",
     "description": null,
     "options": [
-      "A comparison that lets the actual numbers do the talking: reach, CPM, and audience data from your current media kit",
-      "A list that cuts straight to your strongest differentiators: your top three, each backed by a solid proof point",
-      "A client success story that lets someone else make your case for you, with a specific, measurable outcome",
+      "Walk them through it directly: 'Here's what the actual numbers show: reach, CPM, and audience data from your current media kit for this campaign.'",
+      "Say directly: 'Here are your top three differentiators, and each one is backed by a solid proof point we can show you right now.'",
+      "A client success story that lets someone else make your case for you, complete with a specific and clearly measurable outcome for them",
       "A short story that draws them into the moment, the place, the stakes, what you did, ending on the client's own words",
-      "A question back that turns the pressure right around on them: 'What would success look like for you in this space?'"
+      "A question back that turns the pressure right around on them: 'What would success actually look like for you in this space right now?'"
     ]
   },
   {
@@ -294,12 +294,12 @@
   {
     "i": 24,
     "type": "multiple_choice",
-    "title": "Q22. Your media agency contact is taking your proposal into a boardroom without you. You ensure they can advocate for you by:",
+    "title": "Q22. Your agency contact is putting multiple publisher options in front of the client and will make the recommendation. You help your proposal stand out by:",
     "description": null,
     "options": [
-      "Including all the data they'll need in the deck",
-      "Briefing them on the top three product features",
-      "Giving them a clear ROI argument to use",
+      "Including all the data they might need to reference",
+      "Briefing them on your top three product features",
+      "Giving them a clear ROI argument they can use in the comparison",
       "Arming them with one short, vivid story they can retell confidently",
       "Following up with a summary email after the meeting"
     ]
