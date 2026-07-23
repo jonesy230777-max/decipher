@@ -139,27 +139,27 @@
     "options": [
       {
         "letter": "A",
-        "text": "Pushing through your agenda \u2014 they're just busy",
+        "text": "Pushing straight through your agenda, assuming they're just busy today",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "Asking a direct question: 'Is everything okay?'",
+        "text": "Asking them a direct question: 'Is everything okay right now?'",
         "score": 2
       },
       {
         "letter": "C",
-        "text": "Slowing your pace and asking an open calibrated question",
+        "text": "Slowing your pace down and asking an open, calibrated question",
         "score": 4
       },
       {
         "letter": "D",
-        "text": "Naming what you observe: 'It seems like there's a lot on your plate today.'",
+        "text": "Naming what you observe: 'There's a lot on your plate.'",
         "score": 5
       },
       {
         "letter": "E",
-        "text": "Acknowledging the tension and offering to reschedule",
+        "text": "Acknowledging the visible tension and offering to reschedule the call",
         "score": 3
       }
     ]
@@ -172,27 +172,27 @@
     "options": [
       {
         "letter": "A",
-        "text": "Send a 'just checking in' follow-up email",
+        "text": "Send a quick 'just checking in' follow-up email to keep the conversation open for now",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "Call them and walk through your proposal again",
+        "text": "Call them directly and walk back through your proposal in more detail",
         "score": 1
       },
       {
         "letter": "C",
-        "text": "Send a short email asking if priorities have shifted",
+        "text": "Send a short, low-pressure email asking whether their priorities have shifted since you last spoke",
         "score": 3
       },
       {
         "letter": "D",
-        "text": "Name what you sense: 'It feels like your focus may have moved elsewhere \u2014 happy to pause if that helps.'",
+        "text": "Acknowledge that their attention seems to have shifted and offer to pause",
         "score": 5
       },
       {
         "letter": "E",
-        "text": "Wait two weeks before reaching out again",
+        "text": "Wait a couple of weeks before reaching out to them again",
         "score": 2
       }
     ]
@@ -205,22 +205,22 @@
     "options": [
       {
         "letter": "A",
-        "text": "Listen politely then redirect to your agenda",
+        "text": "Listen politely for a moment, then redirect the conversation back to your agenda",
         "score": 2
       },
       {
         "letter": "B",
-        "text": "Offer sympathy: 'I'm sorry to hear that'",
+        "text": "Offer sympathy by saying 'I'm sorry to hear that' and pause for a moment",
         "score": 2
       },
       {
         "letter": "C",
-        "text": "Ask a question that connects their situation to your solution",
+        "text": "Ask a thoughtful question that connects their situation back to your proposed solution",
         "score": 3
       },
       {
         "letter": "D",
-        "text": "Fully listen, then reflect back what you heard before moving on",
+        "text": "Fully listen to what they're saying, then reflect back what you heard before moving on",
         "score": 4
       },
       {
@@ -238,17 +238,17 @@
     "options": [
       {
         "letter": "A",
-        "text": "Present more compelling data to re-engage them",
+        "text": "Present more compelling data or examples in an effort to re-engage them again",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "Ask directly: 'Are you interested in moving forward?'",
+        "text": "Ask them directly whether they're interested in moving forward with the proposal right now",
         "score": 2
       },
       {
         "letter": "C",
-        "text": "Ask an open question about their current priorities",
+        "text": "Ask an open question: 'What's most important to you as you think this through?'",
         "score": 3
       },
       {
@@ -258,7 +258,7 @@
       },
       {
         "letter": "E",
-        "text": "Give them space \u2014 push less, let them come to you",
+        "text": "Give them space by pushing less and letting them come to you naturally",
         "score": 3
       }
     ]
@@ -304,27 +304,27 @@
     "options": [
       {
         "letter": "A",
-        "text": "They're genuinely interested but busy",
+        "text": "They're genuinely interested in what you're offering but simply pulled in other directions",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "They were being polite \u2014 the deal is probably dead",
+        "text": "They were simply being polite, and the deal is most likely already dead",
         "score": 2
       },
       {
         "letter": "C",
-        "text": "There's an internal obstacle they haven't told you about",
+        "text": "A sign of something unspoken: 'There's more going on behind the scenes than they're letting on.'",
         "score": 4
       },
       {
         "letter": "D",
-        "text": "A signal to send more proof points and case studies",
+        "text": "A signal to send even more proof points and case studies to build the case",
         "score": 1
       },
       {
         "letter": "E",
-        "text": "An invitation to name the gap: 'It feels like something has shifted since we last spoke.'",
+        "text": "A sign that something has shifted internally that hasn't been named yet",
         "score": 5
       }
     ]
@@ -337,27 +337,27 @@
     "options": [
       {
         "letter": "A",
-        "text": "Address the loud objector head-on to neutralise the resistance",
+        "text": "Address the loud objector head-on right away to try to neutralise their resistance",
         "score": 2
       },
       {
         "letter": "B",
-        "text": "Pause and ask the quiet stakeholders for their perspective",
+        "text": "Pause the conversation for a moment and directly ask the quieter stakeholders what they think",
         "score": 4
       },
       {
         "letter": "C",
-        "text": "Continue your pitch and handle objections at the end",
+        "text": "Continue delivering your pitch as planned and handle any objections once you're finished",
         "score": 1
       },
       {
         "letter": "D",
-        "text": "Acknowledge the objector's concern then open to the room",
+        "text": "Acknowledge the objector's concern directly, then open the floor to the rest of the room",
         "score": 4
       },
       {
         "letter": "E",
-        "text": "Name the dynamic: 'It sounds like there are a few different perspectives in the room \u2014 let's surface them.'",
+        "text": "Name the dynamic in the room and invite other perspectives to surface",
         "score": 5
       }
     ]
@@ -370,27 +370,27 @@
     "options": [
       {
         "letter": "A",
-        "text": "Send a revised proposal with better pricing",
+        "text": "Send over a revised proposal with more competitive pricing to win them back",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "Request a meeting to present new campaign options",
+        "text": "Request a meeting to walk them through some new campaign options and ideas",
         "score": 2
       },
       {
         "letter": "C",
-        "text": "Call and ask if something has changed on their end",
+        "text": "Call them directly and ask if anything has changed on their end recently",
         "score": 3
       },
       {
         "letter": "D",
-        "text": "Name what you sense: 'It seems like something has shifted \u2014 I'd rather understand it than guess.'",
+        "text": "Name what you're sensing and ask directly what's changed on their end",
         "score": 5
       },
       {
         "letter": "E",
-        "text": "Speak to your manager before contacting the client",
+        "text": "Speak to your manager first to get their read before reaching out to the client",
         "score": 1
       }
     ]
@@ -403,27 +403,27 @@
     "options": [
       {
         "letter": "A",
-        "text": "Match the rate to protect the relationship",
+        "text": "Match the rate straight away without pushback in order to protect the long-term relationship",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "Defend your rate card with audience and reach data",
+        "text": "Defend your rate card firmly using audience numbers and reach data to back it up",
         "score": 2
       },
       {
         "letter": "C",
-        "text": "Acknowledge the pressure and ask what outcome they're optimising for",
+        "text": "Acknowledge the pressure they're under and ask what outcome they're really trying to optimise for",
         "score": 4
       },
       {
         "letter": "D",
-        "text": "Name the pressure: 'It sounds like you're under internal pressure to reduce spend \u2014 what would success look like for you in this decision?'",
+        "text": "Name the pressure they're under and ask what success looks like for them",
         "score": 5
       },
       {
         "letter": "E",
-        "text": "Ask for time to consult your manager before responding",
+        "text": "Ask for some time to consult your manager before you give them a response",
         "score": 2
       }
     ]
@@ -436,27 +436,27 @@
     "options": [
       {
         "letter": "A",
-        "text": "Immediately offer a lower-cost option",
+        "text": "Offer them a lower-cost option right away to keep the conversation moving forward",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "Ask when their budget cycle resets",
+        "text": "Ask them directly when their budget cycle is expected to reset next",
         "score": 2
       },
       {
         "letter": "C",
-        "text": "Reflect back: 'Don't have budget?' and hold silence",
+        "text": "Reflect it back: 'No budget?' and then hold the silence to see what comes next",
         "score": 5
       },
       {
         "letter": "D",
-        "text": "Ask what the budget situation looked like before this conversation",
+        "text": "Ask: 'What did the budget situation look like before this conversation started?'",
         "score": 3
       },
       {
         "letter": "E",
-        "text": "Summarise the ROI case to justify the spend",
+        "text": "Say: 'Here's the ROI case that I believe justifies the spend' and walk them through it",
         "score": 1
       }
     ]
@@ -469,27 +469,27 @@
     "options": [
       {
         "letter": "A",
-        "text": "Fast-forward to your most compelling slide",
+        "text": "Say: 'Let's skip ahead to the part that matters most to you.'",
         "score": 2
       },
       {
         "letter": "B",
-        "text": "Acknowledge it: 'Fair \u2014 what would make this conversation worth your time?'",
+        "text": "Acknowledge it honestly and ask what would make this worth their time",
         "score": 5
       },
       {
         "letter": "C",
-        "text": "Defend your approach as different from competitors",
+        "text": "Defend your approach by explaining how it's different from what competitors offer",
         "score": 1
       },
       {
         "letter": "D",
-        "text": "Ask what they heard before that didn't land",
+        "text": "Ask them directly: 'What didn't land for you last time we talked?'",
         "score": 4
       },
       {
         "letter": "E",
-        "text": "Wrap up quickly and follow up with a tailored proposal",
+        "text": "Wrap up efficiently and follow up afterward with a proposal tailored to them",
         "score": 2
       }
     ]
@@ -502,27 +502,27 @@
     "options": [
       {
         "letter": "A",
-        "text": "Commit to matching it \u2014 close the deal first, sort it out later",
+        "text": "Say: 'Let's lock this in now and work out the details afterward.'",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "Explain why CPC guarantees are often misleading metrics",
+        "text": "Explain directly: 'CPC guarantees often hide misleading metrics that don't tell the full story.'",
         "score": 2
       },
       {
         "letter": "C",
-        "text": "Acknowledge the ask: 'It sounds like attribution visibility is the real driver here \u2014 is that right?'",
+        "text": "Acknowledge the ask and check whether attribution visibility is really the driver here",
         "score": 5
       },
       {
         "letter": "D",
-        "text": "Ask what they would do with the attribution data",
+        "text": "Ask them directly what they'd actually do with the attribution data if they had it",
         "score": 4
       },
       {
         "letter": "E",
-        "text": "Offer a performance bonus structure as a compromise",
+        "text": "Offer them a performance bonus structure instead as a fair middle-ground compromise",
         "score": 2
       }
     ]
@@ -568,27 +568,27 @@
     "options": [
       {
         "letter": "A",
-        "text": "Promise results to close the deal",
+        "text": "Promise strong results upfront in order to close the deal as quickly as possible",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "Ask what 'moving the needle' means to them specifically",
+        "text": "Ask them directly what 'moving the needle' actually means to them specifically",
         "score": 5
       },
       {
         "letter": "C",
-        "text": "Present a new campaign structure with stronger targeting",
+        "text": "Say: 'Here's a new campaign structure built with much stronger targeting this time.'",
         "score": 2
       },
       {
         "letter": "D",
-        "text": "Acknowledge: 'It sounds like the previous investment left you needing more certainty before committing again.'",
+        "text": "Acknowledge that the previous investment left them needing more certainty before committing again",
         "score": 5
       },
       {
         "letter": "E",
-        "text": "Share a third-party case study showing comparable results",
+        "text": "Say: 'Here's a case study from a similar client that shows comparable results.'",
         "score": 2
       }
     ]
@@ -601,27 +601,27 @@
     "options": [
       {
         "letter": "A",
-        "text": "Your company's reach and audience data",
+        "text": "Your company's overall reach and detailed audience data",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "Your product's unique features versus competitors",
+        "text": "Say: 'Here's what makes our product different from everything else out there.'",
         "score": 1
       },
       {
         "letter": "C",
-        "text": "A question about their biggest current challenge",
+        "text": "Ask them: 'What's the biggest challenge you're facing with this right now?'",
         "score": 3
       },
       {
         "letter": "D",
-        "text": "A brief story about a client in a similar situation",
+        "text": "A brief story about a client who faced a similar situation",
         "score": 4
       },
       {
         "letter": "E",
-        "text": "A specific client story using location, emotion, and a direct quote",
+        "text": "A specific, quote-based client story",
         "score": 5
       }
     ]
@@ -634,17 +634,17 @@
     "options": [
       {
         "letter": "A",
-        "text": "A comparison that lets the actual numbers do the talking: reach, CPM, and audience data from your current media kit",
+        "text": "Walk them through it directly: 'Here's what the actual numbers show: reach, CPM, and audience data from your current media kit for this campaign.'",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "A list that cuts straight to your strongest differentiators: your top three, each backed by a solid proof point",
+        "text": "Say directly: 'Here are your top three differentiators, and each one is backed by a solid proof point we can show you right now.'",
         "score": 2
       },
       {
         "letter": "C",
-        "text": "A client success story that lets someone else make your case for you, with a specific, measurable outcome",
+        "text": "A client success story that lets someone else make your case for you, complete with a specific and clearly measurable outcome for them",
         "score": 4
       },
       {
@@ -654,7 +654,7 @@
       },
       {
         "letter": "E",
-        "text": "A question back that turns the pressure right around on them: 'What would success look like for you in this space?'",
+        "text": "A question back that turns the pressure right around on them: 'What would success actually look like for you in this space right now?'",
         "score": 3
       }
     ]
@@ -696,21 +696,21 @@
     "id": "Q22",
     "qnum": 22,
     "trait": "narrative_persuasion",
-    "prompt": "Your media agency contact is taking your proposal into a boardroom without you. You ensure they can advocate for you by:",
+    "prompt": "Your agency contact is putting multiple publisher options in front of the client and will make the recommendation. You help your proposal stand out by:",
     "options": [
       {
         "letter": "A",
-        "text": "Including all the data they'll need in the deck",
+        "text": "Including all the data they might need to reference",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "Briefing them on the top three product features",
+        "text": "Briefing them on your top three product features",
         "score": 2
       },
       {
         "letter": "C",
-        "text": "Giving them a clear ROI argument to use",
+        "text": "Giving them a clear ROI argument they can use in the comparison",
         "score": 3
       },
       {
