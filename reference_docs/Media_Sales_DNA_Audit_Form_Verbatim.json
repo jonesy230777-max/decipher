@@ -307,14 +307,14 @@
   {
     "i": 25,
     "type": "multiple_choice",
-    "title": "Q23. A client is hesitating because the previous media partner 'let them down.' You address this by:",
+    "title": "Q23. A client is hesitating because the previous publisher/vendor 'let them down.' You address this by:",
     "description": null,
     "options": [
-      "Highlighting your accountability processes and reporting",
-      "Offering a performance-based pricing model",
-      "Sharing a testimonial from a satisfied client",
+      "Offer them a clear performance-based pricing model, and say: 'You'll only pay us based on the results we actually deliver.'",
+      "Say directly: 'Here's exactly how our accountability processes and reporting will keep you informed every step of the way.'",
+      "Acknowledge their concern directly, then move the conversation toward your product's core strengths and what sets it apart",
       "Telling a specific story of how you helped a client in a similar post-disappointment situation",
-      "Acknowledging their concern and moving to your product strengths"
+      "Share a detailed testimonial from a client who was in a very similar situation before working with us"
     ]
   },
   {
@@ -323,11 +323,11 @@
     "title": "Q24. In your story, the client is the hero. This means:",
     "description": null,
     "options": [
-      "You open with the campaign results and what your solution delivered",
-      "You focus on your team's strategic thinking and execution",
-      "You position the client's tension and relief as the emotional arc",
-      "You balance the narrative between the client's challenge and your company's response",
-      "You lead with the data and let the numbers speak for the work"
+      "You emphasise how great your product performed for them throughout the campaign",
+      "You focus mainly on your team's strategic thinking and flawless execution behind the scenes",
+      "You centre the story on the client's problem and their relief when it was solved",
+      "You split the credit equally between your company and the client for the win",
+      "You lead with the data that proves the outcome"
     ]
   },
   {
@@ -362,11 +362,11 @@
     "title": "Q27. A client is calm and agreeable but you sense the deal isn't moving. You:",
     "description": null,
     "options": [
-      "Take their positivity at face value",
-      "Ask about their decision-making timeline",
-      "Call out what you sense: 'It seems like something hasn't clicked yet, am I reading that right?'",
-      "Send a more detailed proposal to address any unstated concerns",
-      "Ask their media coordinator if there are any issues you should know about"
+      "Take their positivity at face value and move the conversation forward as planned",
+      "Ask them directly: 'What does your decision-making timeline actually look like from here?'",
+      "Name what you're sensing and ask directly if you're reading the situation right",
+      "Send over a more detailed proposal that addresses any concerns they haven't voiced yet",
+      "Ask their assistant directly: 'Is there anything going on I should know about?'"
     ]
   },
   {
@@ -401,11 +401,11 @@
     "title": "Q30. The most important thing to understand about a buyer before you pitch is:",
     "description": null,
     "options": [
-      "Their budget range",
-      "Their preferred media channels",
-      "Their KPIs and success metrics",
-      "What they personally fear will happen if this campaign fails",
-      "Their relationship with the previous media partner"
+      "Their overall budget range for this specific campaign",
+      "Their preferred media channels and formats for this",
+      "Their specific KPIs and how they measure success",
+      "What they personally fear happening if it fails",
+      "Their working relationship with their previous media agency"
     ]
   },
   {
