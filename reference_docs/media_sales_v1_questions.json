@@ -73,22 +73,22 @@
     "options": [
       {
         "letter": "A",
-        "text": "Fill the silence with a clarifying follow-up question",
+        "text": "Fill the silence quickly with a clarifying follow-up question, just to keep things moving",
         "score": 2
       },
       {
         "letter": "B",
-        "text": "Rephrase the question in case they didn't understand",
+        "text": "Rephrase the question in a different way in case they didn't quite understand it",
         "score": 1
       },
       {
         "letter": "C",
-        "text": "Wait up to 5 seconds then gently prompt",
+        "text": "Wait up to 5 seconds after asking, then gently prompt them if nothing comes",
         "score": 3
       },
       {
         "letter": "D",
-        "text": "Hold the silence \u2014 they are processing and will speak",
+        "text": "Hold the silence, since they are still processing it and will speak when ready",
         "score": 5
       },
       {
@@ -102,31 +102,31 @@
     "id": "Q4",
     "qnum": 4,
     "trait": "cognitive_empathy",
-    "prompt": "You label a buyer's emotion incorrectly. They say 'I'm not worried \u2014 I'm frustrated.' You:",
+    "prompt": "You misread a buyer's emotion. They say, 'I'm not worried; I'm frustrated.' You:",
     "options": [
       {
         "letter": "A",
-        "text": "Apologise and move on quickly",
+        "text": "Apologise and move on: 'Sorry, my mistake, let's keep going and not dwell on it.'",
         "score": 2
       },
       {
         "letter": "B",
-        "text": "Defend your original read \u2014 they seem worried to you",
+        "text": "Defend your original read: 'I hear you, but you still seem worried to me from where I'm sitting.'",
         "score": 1
       },
       {
         "letter": "C",
-        "text": "Acknowledge the correction and ask them to tell you more",
+        "text": "Acknowledge the correction: 'Thanks for that, tell me more about what's actually driving it.'",
         "score": 4
       },
       {
         "letter": "D",
-        "text": "Name the emotion more precisely: 'It sounds like I missed that \u2014 it's more frustration than worry.'",
+        "text": "Name the emotion more precisely: 'It sounds like I missed that; it's more frustration than worry.'",
         "score": 5
       },
       {
         "letter": "E",
-        "text": "Pivot straight to a solution for frustration",
+        "text": "Pivot to a solution: 'Let's talk about how we fix the frustration you're feeling.'",
         "score": 2
       }
     ]
@@ -799,27 +799,27 @@
     "options": [
       {
         "letter": "A",
-        "text": "They're busy \u2014 keep following up",
+        "text": "You read it as them just being busy, so you keep following up on a regular schedule",
         "score": 1
       },
       {
         "letter": "B",
-        "text": "Something changed internally \u2014 I need to find out what",
+        "text": "Your instinct says something changed internally on their end, so you dig in to find out what before assuming anything",
         "score": 4
       },
       {
         "letter": "C",
-        "text": "The deal is dead \u2014 move on",
+        "text": "Your gut says the deal is dead, so you move on and focus your energy elsewhere",
         "score": 2
       },
       {
         "letter": "D",
-        "text": "Name what you sense: 'It feels like the timing may have shifted \u2014 I want to respect that.'",
+        "text": "Name what you sense: 'It feels like the timing may have shifted; I want to respect that.'",
         "score": 5
       },
       {
         "letter": "E",
-        "text": "Send a breakup email to re-engage",
+        "text": "You feel it's time to cut your losses, so you send a breakup email to try to re-engage them one last time",
         "score": 3
       }
     ]
