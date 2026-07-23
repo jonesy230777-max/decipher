@@ -49,24 +49,24 @@
     "title": "Q3. There is a 7-second silence after you ask a key discovery question. You:",
     "description": null,
     "options": [
-      "Fill the silence with a clarifying follow-up question",
-      "Rephrase the question in case they didn't understand",
-      "Wait up to 5 seconds then gently prompt",
-      "Hold the silence, they are processing and will speak",
+      "Fill the silence quickly with a clarifying follow-up question, just to keep things moving",
+      "Rephrase the question in a different way in case they didn't quite understand it",
+      "Wait up to 5 seconds after asking, then gently prompt them if nothing comes",
+      "Hold the silence, since they are still processing it and will speak when ready",
       "Summarise what you've heard so far to give them something to react to"
     ]
   },
   {
     "i": 6,
     "type": "multiple_choice",
-    "title": "Q4. You call out a buyer's emotion incorrectly. They say 'I'm not worried,  I'm frustrated.' You:",
+    "title": "Q4. You misread a buyer's emotion. They say, 'I'm not worried; I'm frustrated.' You:",
     "description": null,
     "options": [
-      "Apologise and move on quickly",
-      "Defend your original read, they seem worried to you",
-      "Acknowledge the correction and ask them to tell you more",
-      "Use a follow-up statement: 'It sounds like I missed that, it's more frustration than worry.'",
-      "Pivot straight to a solution for frustration"
+      "Apologise and move on: 'Sorry, my mistake, let's keep going and not dwell on it.'",
+      "Defend your original read: 'I hear you, but you still seem worried to me from where I'm sitting.'",
+      "Acknowledge the correction: 'Thanks for that, tell me more about what's actually driving it.'",
+      "Name the emotion more precisely: 'It sounds like I missed that; it's more frustration than worry.'",
+      "Pivot to a solution: 'Let's talk about how we fix the frustration you're feeling.'"
     ]
   },
   {
@@ -336,11 +336,11 @@
     "title": "Q25. When a client stops responding to your outreach, your gut says:",
     "description": null,
     "options": [
-      "They're busy, keep following up",
-      "Something changed internally, I need to find out what",
-      "The deal is dead, move on",
-      "Acknowledge the silence directly without pressure, name what might be happening for them",
-      "Send one final message that creates a clear close or open. Force a response either way"
+      "You read it as them just being busy, so you keep following up on a regular schedule",
+      "Your instinct says something changed internally on their end, so you dig in to find out what before assuming anything",
+      "Your gut says the deal is dead, so you move on and focus your energy elsewhere",
+      "Name what you sense: 'It feels like the timing may have shifted; I want to respect that.'",
+      "You feel it's time to cut your losses, so you send a breakup email to try to re-engage them one last time"
     ]
   },
   {
