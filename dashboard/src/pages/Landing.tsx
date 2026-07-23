@@ -57,14 +57,6 @@ export default function Landing() {
             The Decipher DNA Audit. <br/>
             Not a test. A clear picture of your strengths, and what to develop to close more and earn more.
           </h1>
-          <p className="hig-body" style={{ color: "var(--colour-label-secondary)",
-            fontSize: 19, maxWidth: 560 }}>
-            34 behaviourally-anchored questions. 7-10 minutes. No pass or
-            fail — just a personalised Sales DNA report covering Cognitive
-            Empathy, Emotional Intelligence, Pressure Composure and
-            Narrative Persuasion. Bands from Developing through to Elite,
-            an EQ Identity type, and your two-trait archetype.
-          </p>
           <div style={{ display: "flex", gap: "var(--space-3)",
             marginTop: "var(--space-5)" }}>
             <Link to="/audit/start"
