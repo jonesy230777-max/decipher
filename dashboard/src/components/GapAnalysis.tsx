@@ -7,6 +7,7 @@
  */
 import { useEffect, useState } from "react";
 import { Card } from "./Card";
+import { api } from "../api";
 
 export type GapRow = {
   dimension: string;
@@ -40,7 +41,7 @@ const BAND_COLOUR: Record<string, string> = {
 
 export function GapAnalysis({ kind, href }: { kind: "team" | "individual"; href: string }) {
   const [data, setData] = useState<Payload | null>(null);
-  useEffect(() => { fetch(href).then((r) => r.json()).then(setData); }, [href]);
+  useEffect(() => { api<Payload>(href).then(setData).catch(() => {}); }, [href]);
   if (!data) return <Card title="Gap Analysis"><p className="hig-footnote">Loading…</p></Card>;
   if (!data.gaps?.length) return <Card title="Gap Analysis"><p className="hig-footnote">No scored audits yet.</p></Card>;
 
