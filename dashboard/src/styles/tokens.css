@@ -12,7 +12,7 @@
 [data-theme="light"] {
   /* Labels */
   --colour-label:               rgba(0, 0, 0, 1);
-  --colour-label-secondary:     rgba(60, 60, 67, 0.60);
+  --colour-label-secondary:     #57575D;
   --colour-label-tertiary:      rgba(60, 60, 67, 0.30);
   --colour-label-quaternary:    rgba(60, 60, 67, 0.18);
 
