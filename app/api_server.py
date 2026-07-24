@@ -402,7 +402,11 @@ def team_gap_analysis(team_id: int, request: Request) -> dict[str, Any]:
              FROM audit_scores s
              JOIN audits a USING (audit_id)
              JOIN respondents r ON r.respondent_id = a.respondent_id
-            WHERE r.team_id = %s""",
+            WHERE r.team_id = %s
+            AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                WHERE aa.respondent_id = r.respondent_id
+                ORDER BY aa.started_at DESC LIMIT 1)
+            AND r.role = 'sales_person'""",
         (team_id,),
     )[0]
     dims = [
@@ -456,6 +460,10 @@ def team_gap_analysis(team_id: int, request: Request) -> dict[str, Any]:
                 JOIN audits a USING (audit_id)
                 JOIN respondents r ON r.respondent_id = a.respondent_id
                WHERE r.team_id = %s
+               AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                   WHERE aa.respondent_id = r.respondent_id
+                   ORDER BY aa.started_at DESC LIMIT 1)
+               AND r.role = 'sales_person'
            )
            SELECT * FROM overall ORDER BY sc DESC""",
         (team_id,),
@@ -1433,7 +1441,11 @@ def team_overview(team_id: int, request: Request) -> dict[str, Any]:
              FROM audit_scores s
              JOIN audits a USING (audit_id)
              JOIN respondents r ON r.respondent_id = a.respondent_id
-            WHERE r.team_id = %s""",
+            WHERE r.team_id = %s
+            AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                WHERE aa.respondent_id = r.respondent_id
+                ORDER BY aa.started_at DESC LIMIT 1)
+            AND r.role = 'sales_person'""",
         (team_id,),
     )[0]
     avg_overall = None
@@ -1558,7 +1570,11 @@ def team_trait_averages(team_id: int, request: Request) -> dict[str, Any]:
              FROM audit_scores s
              JOIN audits a USING (audit_id)
              JOIN respondents r ON r.respondent_id = a.respondent_id
-            WHERE r.team_id = %s""",
+            WHERE r.team_id = %s
+            AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                WHERE aa.respondent_id = r.respondent_id
+                ORDER BY aa.started_at DESC LIMIT 1)
+            AND r.role = 'sales_person'""",
         (team_id,),
     )[0]
     labels = {
@@ -1591,6 +1607,10 @@ def team_archetypes(team_id: int, request: Request) -> dict[str, Any]:
              JOIN audits a ON a.audit_id = aa.audit_id
              JOIN respondents r ON r.respondent_id = a.respondent_id
             WHERE r.team_id = %s
+            AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                WHERE aa.respondent_id = r.respondent_id
+                ORDER BY aa.started_at DESC LIMIT 1)
+            AND r.role = 'sales_person'
             GROUP BY ar.code, ar.name
             ORDER BY n DESC""",
         (team_id,),
