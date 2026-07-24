@@ -23,7 +23,6 @@ import People from "./pages/People";
 import Industries from "./pages/Industries";
 import Bespoke from "./pages/Bespoke";
 import PromoCodes from "./pages/PromoCodes";
-import SquarespaceExport from "./pages/SquarespaceExport";
 import EventsLog from "./pages/EventsLog";
 import Settings from "./pages/Settings";
 
@@ -54,7 +53,6 @@ const _ALL_NAV: NavGroup[] = [
     heading: "Commerce",
     items: [
       { path: "/promo",       label: "Promo Codes" },
-      { path: "/squarespace", label: "Squarespace Export" },
     ],
   },
   {
@@ -420,7 +418,6 @@ export default function App() {
               <Route path="/industries"    element={<Industries />} />
               <Route path="/bespoke"       element={<Bespoke />} />
               <Route path="/promo"         element={<PromoCodes />} />
-              <Route path="/squarespace"   element={<SquarespaceExport />} />
               <Route path="/events"        element={<EventsLog />} />
               <Route path="/settings"      element={<Settings boot={boot} />} />
               <Route path="/me"            element={<MyProfile />} />
