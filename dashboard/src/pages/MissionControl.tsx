@@ -74,8 +74,28 @@ function DimHealthCard({ dims, nScored, rangeLabel }: { dims: DimMeans; nScored:
   );
 }
 
+function TrendBadge({ current, previous, label }: { current: number; previous: number; label: string }) {
+  if (!previous) return null;
+  const pct = ((current - previous) / previous) * 100;
+  const flat = Math.abs(pct) < 1;
+  const up = pct >= 0;
+  const colour = flat ? "var(--colour-label-tertiary)" : up ? "var(--colour-system-green)" : "var(--colour-system-red)";
+  const arrow = flat ? "\u2192" : up ? "\u25B2" : "\u25BC";
+  return (
+    <span
+      className="hig-caption-1"
+      title={`${label}: ${current.toFixed(0)} vs ${previous.toFixed(0)} in the prior period`}
+      style={{ display: "inline-flex", alignItems: "center", gap: 3, fontWeight: 700, color: colour, whiteSpace: "nowrap" }}
+    >
+      {arrow} {Math.abs(pct).toFixed(0)}%
+      <span style={{ color: "var(--colour-label-tertiary)", fontWeight: 500, marginLeft: 2 }}>vs prior</span>
+    </span>
+  );
+}
+
 export default function MissionControl({ boot }: { boot: Bootstrap | null }) {
   const [series, setSeries] = useState<Series[]>([]);
+  const [prevSeries, setPrevSeries] = useState<Series[]>([]);
   const [funnel, setFunnel] = useState<Funnel | null>(null);
   const [regions, setRegions] = useState<RegionRow[]>([]);
   const [tops, setTops] = useState<TopArch[]>([]);
@@ -96,14 +116,36 @@ export default function MissionControl({ boot }: { boot: Bootstrap | null }) {
   }, [boot]);
 
   useEffect(() => {
-    api<{ series: Series[] }>(`/api/mission/series?days=${days}`).then((d) => setSeries(d.series));
+    const seriesDays = range === "all" ? days : Math.min(days * 2, 3650);
+    api<{ series: Series[] }>(`/api/mission/series?days=${seriesDays}`).then((d) => {
+      if (range === "all") {
+        setSeries(d.series);
+        setPrevSeries([]);
+      } else {
+        const splitIdx = Math.max(0, d.series.length - days);
+        setSeries(d.series.slice(splitIdx));
+        setPrevSeries(d.series.slice(0, splitIdx));
+      }
+    });
     api<Funnel>(`/api/funnel?days=${days}`).then(setFunnel);
     api<{ regions: RegionRow[] }>("/api/mission/by-region").then((d) => setRegions(d.regions));
     api<{ archetypes: TopArch[] }>("/api/mission/top-archetypes").then((d) => setTops(d.archetypes));
     api<DimMeans>(`/api/mission/dim-means?days=${days}`).then(setDims);
-  }, [days]);
+  }, [days, range]);
 
   if (!boot) return <p className="hig-footnote">Loading...</p>;
+  function periodTotal(rows: Series[], key: "n_audits" | "n_reports"): number {
+    return rows.reduce((sum, r) => sum + (r[key] ?? 0), 0);
+  }
+  function periodMeanScore(rows: Series[]): number {
+    const scored = rows.filter((r) => r.mean_overall > 0);
+    if (!scored.length) return 0;
+    return scored.reduce((sum, r) => sum + r.mean_overall, 0) / scored.length;
+  }
+  const curAudits = periodTotal(series, "n_audits");
+  const prevAudits = periodTotal(prevSeries, "n_audits");
+  const curMeanScore = periodMeanScore(series);
+  const prevMeanScore = periodMeanScore(prevSeries);
   const c = boot.counts;
 
   return (
@@ -145,7 +187,7 @@ export default function MissionControl({ boot }: { boot: Bootstrap | null }) {
       </section>
 
       {/* Time series: audits + reports per day */}
-      <Card title={`Audits and reports - ${rangeLabel}`}>
+      <Card title={`Audits and reports - ${rangeLabel}`} action={<TrendBadge current={curAudits} previous={prevAudits} label="Audits" />}>
         <div style={{ width: "100%", height: 260 }}>
           <ResponsiveContainer>
             <AreaChart data={series} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
@@ -175,7 +217,7 @@ export default function MissionControl({ boot }: { boot: Bootstrap | null }) {
       <section style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr 0.9fr", gap: "var(--space-4)" }}>
         <DimHealthCard dims={dims} nScored={dims.n_scored} rangeLabel={rangeLabel} />
 
-        <Card title={`Cohort average score - ${rangeLabel}`}>
+        <Card title={`Cohort average score - ${rangeLabel}`} action={<TrendBadge current={curMeanScore} previous={prevMeanScore} label="Mean score" />}>
           <div style={{ width: "100%", height: 240 }}>
             <ResponsiveContainer>
               <LineChart data={series} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
