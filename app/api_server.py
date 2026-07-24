@@ -1308,7 +1308,11 @@ def teams_list() -> dict[str, Any]:
                  FROM audit_scores s
                  JOIN audits a USING (audit_id)
                  JOIN respondents r ON r.respondent_id = a.respondent_id
-                WHERE r.team_id = %s""",
+                WHERE r.team_id = %s
+                AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                    WHERE aa.respondent_id = r.respondent_id
+                    ORDER BY aa.started_at DESC LIMIT 1)
+                AND r.role = 'sales_person'""",
             (tid,),
         ) or 0
         elite = scalar(
@@ -1316,6 +1320,10 @@ def teams_list() -> dict[str, Any]:
                  JOIN audits a USING (audit_id)
                  JOIN respondents r ON r.respondent_id = a.respondent_id
                 WHERE r.team_id = %s
+                  AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                      WHERE aa.respondent_id = r.respondent_id
+                      ORDER BY aa.started_at DESC LIMIT 1)
+                  AND r.role = 'sales_person'
                   AND s.cognitive_empathy >= 0.85 AND s.eq >= 0.85
                   AND s.pressure_composure >= 0.85 AND s.storytelling >= 0.85""",
             (tid,),
@@ -1326,6 +1334,10 @@ def teams_list() -> dict[str, Any]:
                    JOIN audits a USING (audit_id)
                    JOIN respondents r ON r.respondent_id = a.respondent_id
                   WHERE r.team_id = %s AND bc.band = 'developing'
+                  AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                      WHERE aa.respondent_id = r.respondent_id
+                      ORDER BY aa.started_at DESC LIMIT 1)
+                  AND r.role = 'sales_person'
                   GROUP BY bc.audit_id HAVING count(*) >= 2
                ) sub""",
             (tid,),
@@ -1337,6 +1349,10 @@ def teams_list() -> dict[str, Any]:
                  JOIN audits a USING (audit_id)
                  JOIN respondents r ON r.respondent_id = a.respondent_id
                 WHERE r.team_id = %s
+                AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                    WHERE aa.respondent_id = r.respondent_id
+                    ORDER BY aa.started_at DESC LIMIT 1)
+                AND r.role = 'sales_person'
                 GROUP BY bc.band""",
             (tid,),
         ):
@@ -1600,6 +1616,10 @@ def team_interventions(team_id: int, request: Request) -> dict[str, Any]:
              JOIN audits a USING (audit_id)
              JOIN respondents r ON r.respondent_id = a.respondent_id
             WHERE r.team_id = %s AND bc.band = 'developing'
+            AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                WHERE aa.respondent_id = r.respondent_id
+                ORDER BY aa.started_at DESC LIMIT 1)
+            AND r.role = 'sales_person'
             GROUP BY bc.dimension
             ORDER BY n DESC
             LIMIT 3""",
@@ -1641,6 +1661,10 @@ def team_interventions(team_id: int, request: Request) -> dict[str, Any]:
              JOIN audits a USING (audit_id)
              JOIN respondents r ON r.respondent_id = a.respondent_id
             WHERE r.team_id = %s
+              AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                  WHERE aa.respondent_id = r.respondent_id
+                  ORDER BY aa.started_at DESC LIMIT 1)
+              AND r.role = 'sales_person'
               AND s.cognitive_empathy >= 0.85 AND s.eq >= 0.85
               AND s.pressure_composure >= 0.85 AND s.storytelling >= 0.85""",
         (team_id,),
