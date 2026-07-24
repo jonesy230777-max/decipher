@@ -800,7 +800,7 @@
       "options": [
         {
           "letter": "A",
-          "text": "You read it as them just being busy, so you keep following up on a regular schedule",
+          "text": "Think: 'They're probably just busy, I'll keep following up on a regular schedule.'",
           "score": 1
         },
         {
@@ -820,7 +820,7 @@
         },
         {
           "letter": "E",
-          "text": "You feel it's time to cut your losses, so you send a breakup email to try to re-engage them one last time",
+          "text": "Send a breakup email: 'I don't want to keep bugging you, so I'll leave it here unless I hear back.'",
           "score": 3
         }
       ]
@@ -998,27 +998,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Reach and frequency",
+          "text": "Reach and frequency that gets them in front of the right audience",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Cost efficiency",
+          "text": "Cost efficiency that stretches their media budget further",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Innovation and differentiation",
+          "text": "Innovation and differentiation that sets them apart from competitors",
           "score": 2
         },
         {
           "letter": "D",
-          "text": "Certainty and relief: the confidence that they won't be embarrassed by this decision",
+          "text": "Certainty and relief that they won't be embarrassed by this decision",
           "score": 5
         },
         {
           "letter": "E",
-          "text": "Data-backed justification for their spend",
+          "text": "Data-backed justification they can defend to their own stakeholders",
           "score": 2
         }
       ]
