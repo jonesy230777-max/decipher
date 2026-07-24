@@ -207,6 +207,7 @@ export default function MissionControl({ boot }: { boot: Bootstrap | null }) {
       {/* Two-up: regions + top archetypes */}
       <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
         <Card title="Reps by Region">
+        {regions.length > 0 ? (
           <div style={{ width: "100%", height: 240 }}>
             <ResponsiveContainer>
               <BarChart data={regions}>
@@ -218,8 +219,12 @@ export default function MissionControl({ boot }: { boot: Bootstrap | null }) {
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </Card>
+        ) : (
+          <p className="hig-footnote" style={{ color: "var(--colour-label-secondary)", margin: 0 }}>No teams created yet — reps will appear here once teams exist.</p>
+        )}
+      </Card>
         <Card title="Top Archetypes">
+        {tops.length > 0 ? (
           <div style={{ width: "100%", height: 240 }}>
             <ResponsiveContainer>
               <BarChart data={tops} layout="vertical" margin={{ top: 10, right: 20, left: 80, bottom: 0 }}>
@@ -231,7 +236,10 @@ export default function MissionControl({ boot }: { boot: Bootstrap | null }) {
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </Card>
+        ) : (
+          <p className="hig-footnote" style={{ color: "var(--colour-label-secondary)", margin: 0 }}>No archetype assignments yet — this fills in once audits are scored.</p>
+        )}
+      </Card>
       </section>
 
       <footer className="hig-footnote">
