@@ -620,9 +620,9 @@ def _render_pdf(html: str, audit_id: int) -> bytes:
             pdf_bytes = page.pdf(
                 format="A4",
                 print_background=True,
-                display_header_footer=True,
+                display_header_footer=False,
                 header_template="<span></span>",
-                footer_template=footer,
+                footer_template="",
                 margin={"top": "15mm", "bottom": "15mm", "left": "18mm", "right": "18mm"},
             )
         finally:
