@@ -2075,8 +2075,7 @@ def mission_series(days: int = 30) -> dict[str, Any]:
               SELECT a.started_at::date AS day,
                      count(*)::int AS n_audits,
                      count(DISTINCT r.audit_id)::int AS n_reports,
-                     avg((COALESCE(s.cognitive_empathy,0)+COALESCE(s.eq,0)+
-                          COALESCE(s.pressure_composure,0)+COALESCE(s.storytelling,0))/4.0) * 100
+                     avg((s.cognitive_empathy+s.eq+s.pressure_composure+s.storytelling)/4.0) * 100
                        AS mean_overall
                 FROM audits a
            LEFT JOIN audit_scores s ON s.audit_id = a.audit_id
@@ -2103,8 +2102,7 @@ def mission_by_region() -> dict[str, Any]:
                   count(DISTINCT t.team_id)::int AS teams,
                   count(r.respondent_id) FILTER (WHERE r.role='sales_person')::int AS reps,
                   COALESCE(round(avg(
-                    (COALESCE(s.cognitive_empathy,0)+COALESCE(s.eq,0)+
-                     COALESCE(s.pressure_composure,0)+COALESCE(s.storytelling,0))/4.0
+                    (s.cognitive_empathy+s.eq+s.pressure_composure+s.storytelling)/4.0
                   )::numeric * 100, 1), 0) AS avg_overall
              FROM teams t
         LEFT JOIN respondents r ON r.team_id = t.team_id
@@ -3504,8 +3502,7 @@ def team_roster(team_id: int, request: Request) -> dict[str, Any]:
                        ELSE 'anonymised' END AS email,
                   r.consent_share_individual,
                   s.cognitive_empathy, s.eq, s.pressure_composure, s.storytelling,
-                  (COALESCE(s.cognitive_empathy,0)+COALESCE(s.eq,0)+
-                   COALESCE(s.pressure_composure,0)+COALESCE(s.storytelling,0)) / 4.0 AS overall,
+                  (s.cognitive_empathy+s.eq+s.pressure_composure+s.storytelling) / 4.0 AS overall,
                   ar.name AS archetype_name,
                   a.completed_at AS latest_audit_at
              FROM respondents r
