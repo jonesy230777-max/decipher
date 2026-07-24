@@ -421,7 +421,6 @@ h1.page-title { font-size: 16.5pt; font-weight: 800; margin-bottom: 6pt; }
 .gloss-term { font-size: 9.2pt; font-weight: 800; margin-top: 4pt; margin-bottom: 2pt; }
 .gloss-def { font-size: 9.2pt; line-height: 1.28; color: #3C3C43; }
 
-.footer-note { font-size: 6.6pt; color: #8E8E93; text-align: center; margin-top: 14pt; }
 """
 
 
@@ -541,7 +540,6 @@ def _page1(ctx: dict, synthesis: dict) -> str:
       {_legend_row(overall_band)}
     </div>
   </div>
-  <div class="footer-note">CONFIDENTIAL | PREPARED EXCLUSIVELY FOR {_esc(name).upper()} BY DECIPHER &nbsp;&middot;&nbsp; deciphersales.com.au</div>
 </div>"""
 
 
@@ -622,7 +620,6 @@ def _trait_page(ctx: dict, dim: str, synthesis: dict) -> str:
       </div>
     </div>
   </div>
-  <div class="footer-note">CONFIDENTIAL | PREPARED EXCLUSIVELY FOR {_esc(name).upper()} BY DECIPHER &nbsp;&middot;&nbsp; deciphersales.com.au</div>
 </div>"""
 
 
@@ -705,7 +702,6 @@ def _roadmap_page(ctx: dict) -> str:
   {immediate_items}
 
   <div class="closing-line">The gap between Performing and Elite is not talent. <span class="grey">It is repetition under real conditions. This report tells you exactly where to focus. What happens next is up to you.</span></div>
-  <div class="footer-note">CONFIDENTIAL | PREPARED EXCLUSIVELY FOR {_esc(name).upper()} BY DECIPHER &nbsp;&middot;&nbsp; deciphersales.com.au. NOT FOR DISTRIBUTION.</div>
 </div>"""
 
 
@@ -742,7 +738,6 @@ def _glossary_page(ctx: dict) -> str:
   <p style="font-size:8.4pt;color:#636366;margin-bottom:5pt">The key terms used throughout your DNA Audit report, defined. Every score, band and trait in this report maps back to one of the definitions below.</p>
   {terms}
   {eq_terms}
-  <div class="footer-note">CONFIDENTIAL | PREPARED EXCLUSIVELY FOR {_esc(name).upper()} BY DECIPHER &nbsp;&middot;&nbsp; deciphersales.com.au</div>
 </div>"""
 
 
