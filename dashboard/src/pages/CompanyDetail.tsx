@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { api } from "../api";
 import { Card, SectionEyebrow, Button } from "../components/Card";
+import { useAuth } from "../auth";
 
 const AU_REGIONS = ["NSW","VIC","QLD","WA","SA","TAS","ACT","NT","Overseas"];
 
@@ -30,6 +31,7 @@ export default function CompanyDetail() {
   const [adding, setAdding] = useState(params.get("add") === "team");
     const [error, setError] = useState<string | null>(null);
 const [busy, setBusy] = useState(false);
+const { me } = useAuth();
   const [t, setT] = useState({ name: "", region: "NSW", role_label: "Sales Director", contact_name: "", contact_email: "", contact_mobile: "" });
 
   function refresh() {
@@ -47,6 +49,7 @@ const [busy, setBusy] = useState(false);
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: t.name.trim(), company_id: id,
+actor_email: me?.email ?? null, actor_role: me?.role ?? null,
           role_label: t.role_label, region: t.region,
           contact_name: t.contact_name || null,
           contact_email: t.contact_email || null,
