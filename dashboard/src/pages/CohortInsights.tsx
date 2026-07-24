@@ -142,6 +142,12 @@ export default function CohortInsights() {
         </Card>
       )}
 
+      {stats && !stats.totals && (
+        <Card title="Cohort Means">
+          <p className="hig-footnote" style={{ color: "var(--colour-label-secondary)", margin: 0 }}>No scored audits yet in this scope.</p>
+        </Card>
+      )}
+
       <Card title="Distribution by Band, Every Dimension">
         {(["cognitive_empathy", "eq", "pressure_composure", "storytelling"] as const).map((dim) => {
           const bands = stats?.by_band.filter((b) => b.dimension === dim) ?? [];
@@ -183,6 +189,9 @@ export default function CohortInsights() {
             </ResponsiveContainer>
           </div>
         )}
+      {stats && stats.trend.length === 0 && (
+        <p className="hig-footnote" style={{ color: "var(--colour-label-secondary)", margin: 0 }}>No trend data yet — this fills in after the first nightly snapshot runs.</p>
+      )}
       </Card>
 
       {/* People in this team (when scoped to a team) */}
