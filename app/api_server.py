@@ -2156,13 +2156,16 @@ def mission_by_region() -> dict[str, Any]:
     data = rows(
         """SELECT COALESCE(t.region, 'Unset') AS region,
                   count(DISTINCT t.team_id)::int AS teams,
-                  count(r.respondent_id) FILTER (WHERE r.role='sales_person')::int AS reps,
-                  COALESCE(round(avg(
+                  count(DISTINCT r.respondent_id) FILTER (WHERE r.role = 'sales_person')::int AS reps,
+                  COALESCE(round((avg(
                     (s.cognitive_empathy+s.eq+s.pressure_composure+s.storytelling)/4.0
-                  )::numeric * 100, 1), 0) AS avg_overall
+                  ) FILTER (WHERE r.role = 'sales_person'))::numeric * 100, 1), 0) AS avg_overall
              FROM teams t
         LEFT JOIN respondents r ON r.team_id = t.team_id
         LEFT JOIN audits a ON a.respondent_id = r.respondent_id
+                           AND a.audit_id = (SELECT la.audit_id FROM audits la
+                                               WHERE la.respondent_id = r.respondent_id
+                                               ORDER BY la.started_at DESC LIMIT 1)
         LEFT JOIN audit_scores s ON s.audit_id = a.audit_id
          GROUP BY COALESCE(t.region, 'Unset')
          ORDER BY reps DESC NULLS LAST"""
@@ -2176,6 +2179,12 @@ def mission_top_archetypes() -> dict[str, Any]:
         """SELECT ar.name, count(*)::int AS n
              FROM archetype_assignments aa
              JOIN archetypes ar ON ar.archetype_id = aa.archetype_id
+             JOIN audits a ON a.audit_id = aa.audit_id
+             JOIN respondents r ON r.respondent_id = a.respondent_id
+            WHERE r.role = 'sales_person'
+              AND a.audit_id = (SELECT la.audit_id FROM audits la
+                                  WHERE la.respondent_id = r.respondent_id
+                                  ORDER BY la.started_at DESC LIMIT 1)
          GROUP BY ar.name
          ORDER BY n DESC
             LIMIT 8"""
