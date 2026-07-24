@@ -1924,14 +1924,14 @@ def _send_invite_email(to_email: str, first_name: str | None, link: str) -> None
     name = first_name or "there"
     msg.set_content(
         f"Hi {name},\n\nYou've been invited to take the Decipher DNA "
-        f"Audit. It takes 7-10 minutes.\n\nStart here: {link}\n\n"
+        f"Audit. It takes 15 minutes.\n\nStart here: {link}\n\n"
         f"This link is personal to you and expires in 30 days."
     )
     msg.add_alternative(
         f"""<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>
         <p>Hi {name},</p>
         <p>You've been invited to take the <strong>Decipher DNA Audit</strong>.
-        It takes about 7-10 minutes.</p>
+        It takes about 15 minutes.</p>
         <p><a href='{link}' style='background:#1B8A4F;color:#fff;padding:12px 18px;
         text-decoration:none;border-radius:6px;font-weight:600;'>Start the audit</a></p>
         <p style='color:#636366;font-size:12px;'>This link is personal to you and
