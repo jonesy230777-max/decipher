@@ -59,41 +59,58 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
         raise RuntimeError("RESEND_API_KEY not configured")
 
     text_body = (
-        f"Hi {first},\n\n"
-        f"Your Decipher DNA report is attached. Headline archetype: {archetype}.\n\n"
-        f"Full breakdown across Cognitive Empathy, Emotional Intelligence, "
-        f"Pressure Composure and Narrative Persuasion is on page 1.\n\n"
-        f"deciphersales.com.au\n\n"
-        f"--\n"
-        f"Steve Jones\n"
-        f"Trainer & Founder\n"
-        f"m: 0425 292 605\n"
-        f"e: steve@deciphersales.com.au\n"
-        f"w: www.deciphersales.com.au"
-    )
+    f"Hi {first},\n\n"
+    f"Your Decipher DNA report is attached. Headline archetype: {archetype}.\n\n"
+    f"I did not build this to hand you a score. Scores get filed away. I built it "
+    f"because most sales reps can tell you what they sell, but not how they actually "
+    f"operate when it matters, under pressure, mid negotiation, when a deal goes quiet. "
+    f"That gap is where good people start believing they are \"just not a natural,\" "
+    f"instead of learning what they actually do well.\n\n"
+    f"Page 1 is a starting point, not a verdict. What you do with it is the actual point.\n\n"
+    f"The reps who get better fastest are rarely the most talented ones. They are the "
+    f"ones who found language for their own pattern early, and built on it on purpose "
+    f"instead of by accident.\n\n"
+    f"If that is something you want for yourself, not just this report but the next "
+    f"conversation about it, I would like to hear from you.\n\n"
+    f"Steve\n\n"
+    f"--\n"
+    f"Steve Jones\n"
+    f"Trainer & Founder\n"
+    f"m: 0425 292 605\n"
+    f"e: steve@deciphersales.com.au\n"
+    f"w: www.deciphersales.com.au"
+)
     html_body = (
-        "<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>"
-        f"<p>Hi {first},</p>"
-        "<p>Your <strong>Decipher DNA report</strong> is attached.</p>"
-        f"<p>Headline archetype: <strong>{archetype}</strong>. "
-        "Full breakdown across the four traits is on page 1; per-trait coaching "
-        "actions are on pages 2 and 3.</p>"
-        "<p style='color:#636366;font-size:12px;'>deciphersales.com.au</p>"
-        "<hr style='border:0;border-top:1px solid #e5e5ea;margin:20px 0 12px'>"
-        "<p style='font-size:13px;line-height:1.5;color:#1c1c1e;margin:0'>"
-        "Steve Jones<br>"
-        "<span style='color:#2FA84F;font-weight:600'>Trainer &amp; Founder</span><br>"
-        "m: 0425 292 605<br>"
-        "e: <a href='mailto:steve@deciphersales.com.au' style='color:#1A57C7;text-decoration:none'>steve@deciphersales.com.au</a><br>"
-        "w: <a href='https://www.deciphersales.com.au' style='color:#1A57C7;text-decoration:none'>www.deciphersales.com.au</a>"
-        "</p>"
-        "</body></html>"
-    )
+    "<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>"
+    f"<p>Hi {first},</p>"
+    f"<p>Your <strong>Decipher DNA report</strong> is attached. Headline archetype: <strong>{archetype}</strong>.</p>"
+    "<p>I did not build this to hand you a score. Scores get filed away. I built it "
+    "because most sales reps can tell you what they sell, but not how they actually "
+    "operate when it matters, under pressure, mid negotiation, when a deal goes quiet. "
+    "That gap is where good people start believing they are &quot;just not a natural,&quot; "
+    "instead of learning what they actually do well.</p>"
+    "<p>Page 1 is a starting point, not a verdict. What you do with it is the actual point.</p>"
+    "<p>The reps who get better fastest are rarely the most talented ones. They are the "
+    "ones who found language for their own pattern early, and built on it on purpose "
+    "instead of by accident.</p>"
+    "<p>If that is something you want for yourself, not just this report but the next "
+    "conversation about it, I would like to hear from you.</p>"
+    "<p>Steve</p>"
+    "<hr style='border:0;border-top:1px solid #e5e5ea;margin:20px 0 12px'>"
+    "<p style='font-size:13px;line-height:1.5;color:#1c1c1e;margin:0'>"
+    "Steve Jones<br>"
+    "<span style='color:#2FA84F;font-weight:600'>Trainer &amp; Founder</span><br>"
+    "m: 0425 292 605<br>"
+    "e: <a href='mailto:steve@deciphersales.com.au' style='color:#1A57C7;text-decoration:none'>steve@deciphersales.com.au</a><br>"
+    "w: <a href='https://www.deciphersales.com.au' style='color:#1A57C7;text-decoration:none'>www.deciphersales.com.au</a>"
+    "</p>"
+    "</body></html>"
+)
 
     payload = {
         "from": _MAIL_FROM,
         "to": [r["email"]],
-        "subject": f"Your Decipher DNA report · {archetype}",
+        "subject": "Why this report exists",
         "text": text_body,
         "html": html_body,
         "attachments": [
