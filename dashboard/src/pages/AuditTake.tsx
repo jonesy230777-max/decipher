@@ -237,7 +237,7 @@ export default function AuditTake() {
             <h1 className="hig-large-title" style={{ margin: 0 }}>{version.version.name}</h1>
             <p className="hig-body" style={{ color: "var(--colour-label)", marginTop: "var(--space-3)" }}>
               This assessment is confidential. Answer honestly. There are no right
-              or wrong answers. {questions.length} questions, roughly 7-10 minutes.
+              or wrong answers. {questions.length} questions, roughly 15 minutes.
             </p>
             <div style={{ display: "grid", gap: "var(--space-3)", marginTop: "var(--space-5)" }}>
               <Field label="Full name" value={name} onChange={setName} placeholder="Your name" />
