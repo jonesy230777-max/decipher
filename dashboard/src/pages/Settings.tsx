@@ -600,11 +600,10 @@ function ScoringEngineCard() {
   const [data, setData] = useState<ScoringHealth | null>(null);
   const [err,  setErr]  = useState<string | null>(null);
 
-  function refresh() {
-    fetch("/api/health/scoring")
-      .then((r) => r.json())
-      .then(setData)
-      .catch((e) => setErr(String(e)));
+  function refresh() {  
+    api<ScoringHealth>("/api/health/scoring")
+                                  .then(setData)
+                                  .catch((e) => setErr(String(e)));
   }
   useEffect(refresh, []);
 
