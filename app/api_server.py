@@ -357,14 +357,15 @@ class IndustryCreate(BaseModel):
     code:         str
     name:         str
     description:  str | None = None
-    actor_email:  str | None = None
-    actor_role:   str | None = None
 
 
 @app.post("/api/industries")
-def industries_create(body: IndustryCreate) -> dict[str, Any]:
-    caller_role = _resolve_caller_role(body.actor_email, body.actor_role)
-    if caller_role != "admin":
+def industries_create(body: IndustryCreate, request: Request) -> dict[str, Any]:
+        caller = _caller_from_request(request)
+        if not caller:
+                raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me or me[0]["role"] != "admin":
         raise HTTPException(403, "only admin can add industries")
     with conn() as c:
         cur = c.cursor()
