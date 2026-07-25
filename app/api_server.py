@@ -2817,7 +2817,8 @@ def bespoke_create(body: BespokeCreateIn, request: Request) -> dict[str, Any]:
 
 
 @app.get("/api/promo-codes")
-def promo_codes_list() -> dict[str, Any]:
+def promo_codes_list(request: Request) -> dict[str, Any]:
+    _require_admin(request)
     return {"promo_codes": rows(
         """SELECT code, code_type, discount_pct, uses_remaining,
                   valid_until, source_campaign, created_at
