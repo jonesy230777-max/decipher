@@ -66,29 +66,26 @@ export default function Funnel({ boot }: { boot: Bootstrap | null }) {
     if (!email.trim() || !canSend) return;
     setBusy(true);
     try {
-      const r = await fetch("/api/audit/invite", {
+      const json = await api<{ delivered: boolean; link?: string; error?: string }>("/api/audit/invite", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: email.trim(),
           first_name: first.trim() || null,
           last_name: last.trim() || null,
           team_id: teamFilter ? Number(teamFilter) : null,
-          invited_by_email: me?.email,
         }),
       });
-      if (!r.ok) {
-        const t = await r.text();
-        setFlash(`Failed: ${r.status} ${t}`);
-      } else {
-        const json = await r.json();
-        setFlash(json.delivered
-          ? `Invite delivered to ${email} (link: ${json.link}).`
-          : `Recorded but SMTP failed: ${json.error}`);
-        setEmail(""); setFirst(""); setLast("");
-      }
+      setFlash(json.delivered
+        ? `Invite delivered to ${email} (link: ${json.link}).`
+        : `Recorded but SMTP failed: ${json.error}`);
+      setEmail(""); setFirst(""); setLast("");
+    } catch (e) {
+      setFlash(`Failed: ${e instanceof Error ? e.message : "unknown error"}`);
+    } finally {
       refresh();
       setTimeout(() => setFlash(null), 6000);
-    } finally { setBusy(false); }
+      setBusy(false);
+    }
   }
 
   async function sendBulk() {
@@ -96,17 +93,17 @@ export default function Funnel({ boot }: { boot: Bootstrap | null }) {
     if (!confirm(`Invite every unaudited rep ${teamFilter ? `in this team` : "across all teams"}?`)) return;
     setBusy(true);
     try {
-      const r = await fetch("/api/audit/invite/bulk", {
+      const json = await api<{ sent: number; failed: number; targets: number }>("/api/audit/invite/bulk", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           team_id: teamFilter ? Number(teamFilter) : null,
-          invited_by_email: me?.email,
         }),
       });
-      const json = await r.json();
       setFlash(`Sent ${json.sent} invites (${json.failed} failed) across ${json.targets} unaudited reps.`);
       refresh();
       setTimeout(() => setFlash(null), 6000);
+    } catch (e) {
+        setFlash(`Failed: ${e instanceof Error ? e.message : "unknown error"}`);
     } finally { setBusy(false); }
   }
 
