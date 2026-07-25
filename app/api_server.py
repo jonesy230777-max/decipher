@@ -3507,7 +3507,13 @@ class PromoCreate(BaseModel):
 
 
 @app.post("/api/promo-codes")
-def promo_create(body: PromoCreate) -> dict[str, Any]:
+def promo_create(body: PromoCreate, request: Request) -> dict[str, Any]:
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, email FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me or me[0]["role"] != "admin":
+        raise HTTPException(403, "admin only")
     if body.code_type not in ("free", "discount"):
         raise HTTPException(400, "code_type must be 'free' or 'discount'")
     pct = 100.0 if body.code_type == "free" else (body.discount_pct or 0)
@@ -3535,8 +3541,8 @@ def promo_create(body: PromoCreate) -> dict[str, Any]:
         row = cur.fetchone()
         cur.execute(
             """INSERT INTO events_log (actor, action, severity, subject_id, payload)
-               VALUES ('admin', 'promo.created', 'info', %s, %s::jsonb)""",
-            (body.code.upper(), json.dumps(body.model_dump())),
+               VALUES (%s, 'promo.created', 'info', %s, %s::jsonb)""",
+            (me[0]["email"], body.code.upper(), json.dumps(body.model_dump())),
         )
     return {"ok": True, "promo": {
         "code": row[0], "code_type": row[1], "discount_pct": float(row[2]) if row[2] is not None else None,
