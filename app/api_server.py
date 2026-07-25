@@ -3693,6 +3693,7 @@ class AuditStartIn(BaseModel):
     company:       str | None = None
     version_code:  str | None = None   # explicit override; takes priority
     industry_code: str | None = None; team_id: int | None = None   # S050: resolve version by industry; team link tag
+    token: str | None = None  # invite_token from the emailed link; required to claim a team_id
 
 
 def _resolve_audit_version(version_code: str | None, industry_code: str | None) -> int:
@@ -3729,7 +3730,29 @@ def _split_name(full: str | None) -> tuple[str | None, str | None]:
 
 @app.post("/api/audit/start")
 def audit_start(body: AuditStartIn) -> dict[str, Any]:
-    version_id = _resolve_audit_version(body.version_code, body.industry_code)
+    email = body.email
+    team_id = body.team_id
+    version_code = body.version_code
+    invite_row = None
+    if body.token:
+        inv = rows(
+            "SELECT invite_id, email, team_id, audit_version_code, expires_at, accepted_at "
+            "FROM audit_invites WHERE token_hash = %s",
+            (body.token,),
+        )
+        if not inv:
+            raise HTTPException(404, "This invite link is invalid.")
+        invite_row = inv[0]
+        if invite_row["accepted_at"] is not None:
+            raise HTTPException(409, "This invite link has already been used.")
+        if invite_row["expires_at"] and invite_row["expires_at"] < datetime.now(timezone.utc):
+            raise HTTPException(410, "This invite link has expired.")
+        email = invite_row["email"]
+        team_id = invite_row["team_id"]
+        version_code = invite_row["audit_version_code"] or version_code
+    elif body.team_id is not None:
+        raise HTTPException(401, "Starting an audit for a team requires a valid invite link.")
+    version_id = _resolve_audit_version(version_code, body.industry_code)
     if not version_id:
         raise HTTPException(404, "audit version not found")
 
@@ -3738,7 +3761,7 @@ def audit_start(body: AuditStartIn) -> dict[str, Any]:
     first = body.first_name or first_default
     last  = body.last_name  or last_default
 
-    team_company_id = (rows("SELECT company_id FROM teams WHERE team_id = %s", (body.team_id,)) or [{"company_id": None}])[0]["company_id"] if body.team_id is not None else None; existing = rows("SELECT respondent_id, first_name, last_name, job_title, mobile FROM respondents WHERE email = %s", (body.email,))
+    team_company_id = (rows("SELECT company_id FROM teams WHERE team_id = %s", (team_id,)) or [{"company_id": None}])[0]["company_id"] if team_id is not None else None; existing = rows("SELECT respondent_id, first_name, last_name, job_title, mobile FROM respondents WHERE email = %s", (email,))
     if existing:
         rid = existing[0]["respondent_id"]
         # Backfill standard contact fields (Rule 33) without overwriting non-empty values.
@@ -3761,7 +3784,7 @@ def audit_start(body: AuditStartIn) -> dict[str, Any]:
                                             mobile, job_title, company, role, source)
                    VALUES (%s,%s,%s,%s,%s,%s,%s,'sales_person','native_audit')
                    RETURNING respondent_id""",
-                (body.email, body.name, first, last, body.mobile,
+                (email, body.name, first, last, body.mobile,
                  body.job_title, body.company),
             )
             rid = cur.fetchone()[0]
@@ -3769,12 +3792,17 @@ def audit_start(body: AuditStartIn) -> dict[str, Any]:
     with conn() as c:
         cur = c.cursor()
         cur.execute(
-            """INSERT INTO audits (respondent_id, audit_version_id, status) VALUES (%s,%s,'in_progress') RETURNING audit_id""", (rid, version_id), ); audit_id = cur.fetchone()[0]; cur.execute("UPDATE respondents SET team_id = COALESCE(%s, team_id), company_id = COALESCE(%s, company_id) WHERE respondent_id = %s", (body.team_id, team_company_id, rid))
+            """INSERT INTO audits (respondent_id, audit_version_id, status) VALUES (%s,%s,'in_progress') RETURNING audit_id""", (rid, version_id), ); audit_id = cur.fetchone()[0]; cur.execute("UPDATE respondents SET team_id = COALESCE(%s, team_id), company_id = COALESCE(%s, company_id) WHERE respondent_id = %s", (team_id, team_company_id, rid))
         cur.execute(
             """INSERT INTO events_log (actor, action, severity, subject_id, payload)
                VALUES ('audit', 'audit.started', 'info', %s, %s::jsonb)""",
-            (str(audit_id), json.dumps({"version_code": body.version_code, "via": "native"})),
+            (str(audit_id), json.dumps({"version_code": version_code, "via": "native"})),
         )
+        if invite_row:
+            cur.execute(
+                "UPDATE audit_invites SET accepted_at = now(), audit_id = %s WHERE invite_id = %s",
+                (audit_id, invite_row["invite_id"]),
+            )
     return {"audit_id": audit_id, "respondent_id": rid}
 
 
