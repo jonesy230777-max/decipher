@@ -23,20 +23,17 @@ export default function Industries() {
     if (!n.code.trim() || !n.name.trim()) return;
     setBusy(true);
     try {
-      const r = await fetch("/api/industries", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          code: n.code.trim().toLowerCase(),
-          name: n.name.trim(),
-          description: n.description.trim() || null,
-          actor_email: me?.email, actor_role: me?.role,
-        }),
+      await api("/api/industries", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        code: n.code.trim().toLowerCase(),
+        name: n.name.trim(),
+        description: n.description.trim() || null,
+      }),
       });
-      if (r.ok) {
-        setAdding(false);
-        setN({ code: "", name: "", description: "" });
-        refresh();
-      }
+    setAdding(false);
+    setN({ code: "", name: "", description: "" });
+    refresh();
     } finally { setBusy(false); }
   }
 
