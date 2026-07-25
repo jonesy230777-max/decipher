@@ -4081,10 +4081,31 @@ def audit_score(audit_id: int, request: Request) -> dict[str, Any]:
 
 
 @app.get("/api/reports/{report_id}/download")
-def report_download(report_id: int):
+def report_download(report_id: int, request: Request):
     r = rows("SELECT report_id, pdf_path, audit_id FROM reports WHERE report_id = %s", (report_id,))
     if not r:
         raise HTTPException(404, "report not found")
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    caller_role = me[0]["role"]
+    if caller_role != "admin":
+        owner = rows(
+            "SELECT resp.respondent_id, resp.team_id, resp.company_id "
+            "FROM audits a JOIN respondents resp ON resp.respondent_id = a.respondent_id "
+            "WHERE a.audit_id = %s",
+            (r[0]["audit_id"],),
+        )
+        if not owner:
+            raise HTTPException(403, "forbidden")
+        is_self = owner[0]["respondent_id"] == int(caller["sub"])
+        is_team_match = caller_role == "sales_director" and me[0]["team_id"] == owner[0]["team_id"]
+        is_company_match = caller_role in ("ceo", "hr", "learning_development") and me[0]["company_id"] and me[0]["company_id"] == owner[0]["company_id"]
+        if not (is_self or is_team_match or is_company_match):
+            raise HTTPException(403, "forbidden")
     path = r[0]["pdf_path"]
     if not path or not os.path.exists(path):
         raise HTTPException(410, "report file missing on disk")
