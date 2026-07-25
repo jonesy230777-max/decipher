@@ -2367,7 +2367,7 @@ class BulkInviteIn(BaseModel):
 
 
 @app.post("/api/audit/invite/bulk")
-def audit_invite_bulk(body: BulkInviteIn, request: Request) -> dict[str, Any]:
+def audit_invite_bulk(body: BulkInviteIn, background_tasks: BackgroundTasks, request: Request) -> dict[str, Any]:
     caller = _caller_from_request(request)
     if not caller:
         raise HTTPException(401, "not authenticated")
@@ -2398,6 +2398,7 @@ def audit_invite_bulk(body: BulkInviteIn, request: Request) -> dict[str, Any]:
     )
     sent = 0
     failed = 0
+    errors: list[dict[str, Any]] = []
     for t in targets:
         try:
             audit_invite(InviteIn(
@@ -2407,13 +2408,14 @@ def audit_invite_bulk(body: BulkInviteIn, request: Request) -> dict[str, Any]:
             invited_by_email=me[0]["email"],
                 invited_by_role=caller_role,
                 audit_version_code=body.audit_version_code,
-            ))
+            ), background_tasks, request)
             sent += 1
         except HTTPException:
             raise
-        except Exception:
+        except Exception as exc:
             failed += 1
-    return {"ok": True, "sent": sent, "failed": failed, "targets": len(targets)}
+            errors.append({"email": t["email"], "error": str(exc)})
+    return {"ok": True, "sent": sent, "failed": failed, "targets": len(targets), "errors": errors}
 
 
 # ---------------------------------------------------------------------------
