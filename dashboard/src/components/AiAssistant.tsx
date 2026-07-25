@@ -24,17 +24,16 @@ export function AiAssistant() {
     setQ("");
     setBusy(true);
     try {
-      const r = await fetch("/api/ai/ask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          q: text,
-          page: loc.pathname,
-          team_id: params.teamId ? Number(params.teamId) : null,
-          company_id: params.companyId ? Number(params.companyId) : null,
-        }),
-      });
-      const json = await r.json();
+    const json = await api<{ answer: string }>("/api/ai/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        q: text,
+        page: loc.pathname,
+        team_id: params.teamId ? Number(params.teamId) : null,
+        company_id: params.companyId ? Number(params.companyId) : null,
+      }),
+    });
       setHistory((h) => [...h, { who: "ai", text: json.answer ?? "(empty)" }]);
     } catch (e) {
       setHistory((h) => [...h, { who: "ai", text: `Error: ${String(e)}` }]);
