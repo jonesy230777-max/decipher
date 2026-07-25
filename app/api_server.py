@@ -2503,12 +2503,19 @@ def squarespace_generate() -> dict[str, Any]:
 
 
 @app.get("/api/respondents/{respondent_id}")
-def respondent_detail(respondent_id: int) -> dict[str, Any]:
+def respondent_detail(respondent_id: int, request: Request) -> dict[str, Any]:
     """Individual respondent drill-down.
 
     Identity (name/email/mobile) is gated by consent_share_individual.
     M5 JWT will extend this to also allow admin role unconditionally.
     """
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    caller_role = me[0]["role"]
     r = rows(
         """SELECT respondent_id, email, name, first_name, last_name, mobile,
                   job_title, location, timezone,
@@ -2520,6 +2527,13 @@ def respondent_detail(respondent_id: int) -> dict[str, Any]:
     if not r:
         raise HTTPException(404, "respondent not found")
     rec = r[0]
+    if caller_role != "admin" and respondent_id != int(caller["sub"]):
+        if caller_role == "sales_director" and me[0]["team_id"] == rec.get("team_id"):
+            pass
+        elif caller_role in ("ceo", "hr", "learning_development") and me[0]["company_id"] and me[0]["company_id"] == rec.get("company_id"):
+            pass
+        else:
+            raise HTTPException(403, "forbidden")
     can_see_identity = bool(rec.get("consent_share_individual"))
     if not can_see_identity:
         for k in ("name", "email", "first_name", "last_name", "mobile"):
