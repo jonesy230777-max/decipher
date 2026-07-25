@@ -349,7 +349,13 @@ def bootstrap(request: Request) -> dict[str, Any]:
 
 
 @app.get("/api/events")
-def recent_events(limit: int = 200) -> dict[str, Any]:
+def recent_events(request: Request, limit: int = 200) -> dict[str, Any]:
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me or me[0]["role"] not in ("admin", "ceo"):
+        raise HTTPException(403, "admin or ceo only")
     limit = max(1, min(limit, 1000))
     data = rows(
         "SELECT id, occurred_at, actor, action, severity, subject_id, payload "
