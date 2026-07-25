@@ -791,7 +791,7 @@ def _build_ai_context(page: str, team_id: Any, company_id: Any, audit_id: Any) -
 
 
 @app.post("/api/ai/ask")
-def ai_ask(body: dict[str, Any]) -> dict[str, Any]:
+def ai_ask(body: dict[str, Any], request: Request) -> dict[str, Any]:
     """AI assistant grounded in live DB data. Uses Claude Haiku for low latency."""
     from app.claude_client import complete_narrative, ClaudeCallError, HAIKU
 
@@ -800,6 +800,30 @@ def ai_ask(body: dict[str, Any]) -> dict[str, Any]:
     team_id = body.get("team_id")
     company_id = body.get("company_id")
     audit_id = body.get("audit_id")
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows(
+        "SELECT role, company_id FROM respondents WHERE respondent_id = %s",
+        (int(caller["sub"]),),
+    )
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    role, my_company_id = me[0]["role"], me[0]["company_id"]
+
+    if team_id is not None:
+        try:
+            tid = int(team_id)
+        except (ValueError, TypeError):
+            raise HTTPException(400, "invalid team_id")
+        _require_team_access(request, tid)
+    if company_id is not None and role != "admin":
+        try:
+            cid = int(company_id)
+        except (ValueError, TypeError):
+            raise HTTPException(400, "invalid company_id")
+        if role not in ("sales_director", "ceo", "hr", "learning_development") or my_company_id != cid:
+            raise HTTPException(403, "forbidden")
 
     if not q:
         return {"answer": "Ask anything about this page's data. Try: 'who is at risk?', 'what is the weakest dimension?', 'how many elite performers?'."}
