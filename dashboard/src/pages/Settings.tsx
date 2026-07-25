@@ -63,31 +63,30 @@ function RolePermissionMatrix() {
     const idx = LEVEL_ORDER.indexOf(row.level);
     const next = LEVEL_ORDER[(idx + 1) % LEVEL_ORDER.length];
     const key = `${row.role}/${row.capability}`;
-    setBusy(key);
+    setBusy(key); 
     try {
-      const r = await fetch(
+                  await api(
         `/api/permissions/${row.role}/${encodeURIComponent(row.capability)}`,
-        {
+                    {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ level: next, actor_email: me?.email, actor_role: me?.role }),
-        },
+          body: JSON.stringify({ level: next }),
+                    },
       );
-      if (!r.ok) {
-        setFlash(`Failed: ${r.status} ${await r.text()}`);
-      } else {
-        // Optimistic local update
-        setData((d) => d && ({
-          ...d,
-          matrix: d.matrix.map((m) =>
-            m.role === row.role && m.capability === row.capability
-              ? { ...m, level: next } : m,
-          ),
-        }));
-        setFlash(`${ROLE_LABEL[row.role]} -> ${row.capability} = ${LEVEL_LABEL[next]}`);
-      }
-      setTimeout(() => setFlash(null), 3500);
-    } finally { setBusy(null); }
+            setData((d) => d && ({
+                      ...d,
+                      matrix: d.matrix.map((m) =>
+                                  m.role === row.role && m.capability === row.capability
+                                                       ? { ...m, level: next } : m,
+                                                   ),
+            }));
+            setFlash(`${ROLE_LABEL[row.role]} -> ${row.capability} = ${LEVEL_LABEL[next]}`);
+    } catch (e) {
+            setFlash(`Failed: ${String(e)}`);
+    } finally {
+            setBusy(null);
+            setTimeout(() => setFlash(null), 3500);
+    }
   }
 
   if (!data) return (
