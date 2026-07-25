@@ -45,11 +45,10 @@ const { me } = useAuth();
     if (!t.name.trim()) return;
     setBusy(true);
     try {
-      await fetch("/api/teams", {
+      await api("/api/teams", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: t.name.trim(), company_id: id,
-actor_email: me?.email ?? null, actor_role: me?.role ?? null,
           role_label: t.role_label, region: t.region,
           contact_name: t.contact_name || null,
           contact_email: t.contact_email || null,
@@ -59,6 +58,8 @@ actor_email: me?.email ?? null, actor_role: me?.role ?? null,
       setAdding(false);
       setT({ name: "", region: "NSW", role_label: "Sales Director", contact_name: "", contact_email: "", contact_mobile: "" });
       refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to create team. Please try again.");
     } finally { setBusy(false); }
   }
 
