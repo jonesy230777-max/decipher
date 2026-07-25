@@ -4121,7 +4121,8 @@ def report_download(report_id: int, request: Request):
 
 
 @app.get("/api/squarespace/exports/{export_id}/download")
-def squarespace_export_download(export_id: int) -> StreamingResponse:
+def squarespace_export_download(export_id: int, request: Request) -> StreamingResponse:
+    _require_admin(request)
     r = rows("SELECT * FROM squarespace_exports WHERE export_id = %s", (export_id,))
     if not r:
         raise HTTPException(404, "export not found")
