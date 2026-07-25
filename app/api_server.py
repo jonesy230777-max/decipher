@@ -1245,9 +1245,20 @@ def admin_run_backup(background_tasks: BackgroundTasks, request: Request) -> dic
 
 
 @app.get("/api/companies")
-def companies_list() -> dict[str, Any]:
+def companies_list(request: Request) -> dict[str, Any]:
     """All companies with rolled-up aggregates across their teams."""
     base = rows("SELECT company_id, name, industry FROM companies ORDER BY name")
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    if me[0]["role"] != "admin":
+        if me[0]["role"] in ("ceo", "hr") and me[0]["company_id"]:
+            base = [c for c in base if c["company_id"] == me[0]["company_id"]]
+        else:
+            raise HTTPException(403, "forbidden")
     out: list[dict[str, Any]] = []
     for c in base:
         cid = c["company_id"]
@@ -1361,7 +1372,7 @@ def company_teams(company_id: int, request: Request) -> dict[str, Any]:
 
 
 @app.get("/api/teams")
-def teams_list() -> dict[str, Any]:
+def teams_list(request: Request) -> dict[str, Any]:
     """All teams the operator owns, each with per-team aggregates.
 
     Strict per-team scoping: every aggregate is filtered by team_id. Zero
@@ -1377,6 +1388,17 @@ def teams_list() -> dict[str, Any]:
         LEFT JOIN companies c ON c.company_id = t.company_id
             ORDER BY n_respondents DESC NULLS LAST, t.name"""
     )
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    if me[0]["role"] != "admin":
+        if me[0]["role"] in ("ceo", "hr") and me[0]["company_id"]:
+            base = [t for t in base if t["company_id"] == me[0]["company_id"]]
+        else:
+            raise HTTPException(403, "forbidden")
     out: list[dict[str, Any]] = []
     for t in base:
         tid = t["team_id"]
