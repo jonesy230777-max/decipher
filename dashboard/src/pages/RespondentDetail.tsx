@@ -242,15 +242,12 @@ function RescoreButton({ auditId, onDone }: { auditId: number; onDone: () => voi
     if (!confirm(`Re-score audit #${auditId} and regenerate the PDF report?`)) return;
     setBusy(true);
     try {
-      const r = await fetch(`/api/audit/${auditId}/score`, { method: "POST" });
-      const json = await r.json();
-      if (!r.ok) {
-        setMsg(`Failed: ${json.detail ?? r.statusText}`);
+        const json = await api<{ archetype: string; report?: { version: number } }>(`/api/audit/${auditId}/score`, { method: "POST" });
+        setMsg(`Re-scored: ${json.archetype} (report v${json.report?.version}).`);
+        setTimeout(() => { setMsg(null); onDone(); }, 1200);
+    } catch (e) {
+        setMsg(`Failed: ${e instanceof Error ? e.message : "unknown error"}`);
         setTimeout(() => setMsg(null), 5000);
-        return;
-      }
-      setMsg(`Re-scored: ${json.archetype} (report v${json.report?.version}).`);
-      setTimeout(() => { setMsg(null); onDone(); }, 1200);
     } finally { setBusy(false); }
   }
   return (
@@ -279,7 +276,7 @@ function InviteButton({ respondent }: { respondent: Detail["respondent"] }) {
     if (!confirm(`Send a Decipher DNA audit invite to ${respondent.email}?`)) return;
     setBusy(true);
     try {
-      const r = await fetch("/api/audit/invite", {
+        const json = await api<{ delivered: boolean; link?: string; error?: string }>("/api/audit/invite", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: respondent.email,
@@ -290,11 +287,13 @@ function InviteButton({ respondent }: { respondent: Detail["respondent"] }) {
           company_id: respondent.company_id,
         }),
       });
-      const json = await r.json();
       setMsg(json.delivered
         ? `Invite delivered to Mailpit. Link: ${json.link}`
         : `Recorded but SMTP failed: ${json.error ?? "unknown"}`);
       setTimeout(() => setMsg(null), 6000);
+    } catch (e) {
+        setMsg(`Failed: ${e instanceof Error ? e.message : "unknown error"}`);
+        setTimeout(() => setMsg(null), 6000);
     } finally { setBusy(false); }
   }
   return (
