@@ -44,7 +44,6 @@ export default function Companies() {
           name: n.name.trim(), industry: n.industry || null,
           contact_name: n.contact_name || null, contact_email: n.contact_email || null,
           contact_mobile: n.contact_mobile || null, website: n.website || null,
-          actor_email: me?.email ?? null, actor_role: me?.role ?? null,
         }),
       });
       setAdding(false);
