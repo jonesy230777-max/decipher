@@ -1301,8 +1301,9 @@ def companies_list() -> dict[str, Any]:
 
 
 @app.get("/api/companies/{company_id}/teams")
-def company_teams(company_id: int) -> dict[str, Any]:
+def company_teams(company_id: int, request: Request) -> dict[str, Any]:
     """Teams under a single company. Strict per-company scoping."""
+    _require_company_access(request, company_id)
     company = rows(
         "SELECT * FROM companies WHERE company_id = %s", (company_id,)
     )
@@ -1475,6 +1476,25 @@ def _require_team_access(request: Request, team_id: int) -> dict:
     raise HTTPException(403, "forbidden")
 
 
+def _require_company_access(request: Request, company_id: int) -> dict:
+    # Admin sees every company; ceo/hr are scoped to their own company only.
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows(
+        "SELECT role, company_id FROM respondents WHERE respondent_id = %s",
+        (int(caller["sub"]),),
+    )
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    role = me[0]["role"]
+    if role == "admin":
+        return me[0]
+    if role in ("ceo", "hr"):
+        if me[0]["company_id"] and me[0]["company_id"] == company_id:
+            return me[0]
+        raise HTTPException(403, "forbidden")
+    raise HTTPException(403, "forbidden")
 @app.get("/api/teams/{team_id}/overview")
 def team_overview(team_id: int, request: Request) -> dict[str, Any]:
     _require_team_access(request, team_id)
