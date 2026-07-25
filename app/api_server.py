@@ -3507,7 +3507,27 @@ class UserPatch(BaseModel):
 
 
 @app.patch("/api/users/{respondent_id}")
-def users_patch(respondent_id: int, body: UserPatch) -> dict[str, Any]:
+def users_patch(respondent_id: int, body: UserPatch, request: Request) -> dict[str, Any]:
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    caller_role = me[0]["role"]
+    target = rows("SELECT team_id, company_id FROM respondents WHERE respondent_id = %s", (respondent_id,))
+    if not target:
+        raise HTTPException(404, "respondent not found")
+    if caller_role == "admin":
+        pass
+    elif caller_role == "sales_director" and me[0]["team_id"] == target[0]["team_id"]:
+        pass
+    elif caller_role in ("ceo", "hr", "learning_development") and me[0]["company_id"] and me[0]["company_id"] == target[0]["company_id"]:
+        pass
+    else:
+        raise HTTPException(403, "forbidden")
+    if body.role is not None and caller_role != "admin":
+        raise HTTPException(403, "only admin can change role")
     fields = []
     params: list[Any] = []
     if body.role is not None:
@@ -3534,8 +3554,8 @@ def users_patch(respondent_id: int, body: UserPatch) -> dict[str, Any]:
         )
         cur.execute(
             """INSERT INTO events_log (actor, action, severity, subject_id, payload)
-               VALUES ('admin', 'user.updated', 'info', %s, %s::jsonb)""",
-            (str(respondent_id), json.dumps(body.model_dump(exclude_none=True))),
+               VALUES (%s, 'user.updated', 'info', %s, %s::jsonb)""",
+            (caller_role, str(respondent_id), json.dumps(body.model_dump(exclude_none=True))),
         )
     return {"ok": True}
 
