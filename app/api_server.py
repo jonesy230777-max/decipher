@@ -2213,8 +2213,25 @@ def audit_invite(body: InviteIn, background_tasks: BackgroundTasks, request: Req
 
 
 @app.get("/api/audit/invites")
-def list_invites(team_id: int | None = None, company_id: int | None = None,
-                 limit: int = 100) -> dict[str, Any]:
+def list_invites(request: Request, team_id: int | None = None, company_id: int | None = None,
+                  limit: int = 100) -> dict[str, Any]:
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    caller_role = me[0]["role"]
+    if caller_role == "admin":
+        pass
+    elif caller_role == "sales_director":
+        team_id = me[0]["team_id"]
+        company_id = None
+    elif caller_role in ("ceo", "hr", "learning_development"):
+        company_id = me[0]["company_id"]
+        team_id = None
+    else:
+        raise HTTPException(403, "forbidden")
     where = ["1=1"]
     params: list[Any] = []
     if team_id is not None:
