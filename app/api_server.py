@@ -3860,8 +3860,14 @@ def audit_complete(audit_id: int, background_tasks: BackgroundTasks) -> dict[str
 
 
 @app.post("/api/audit/{audit_id}/score")
-def audit_score(audit_id: int) -> dict[str, Any]:
+def audit_score(audit_id: int, request: Request) -> dict[str, Any]:
     """Re-score an existing audit. Useful for backfills + after schema fixes."""
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me or me[0]["role"] != "admin":
+        raise HTTPException(403, "admin only")
     a = rows("SELECT audit_version_id FROM audits WHERE audit_id = %s", (audit_id,))
     if not a:
         raise HTTPException(404, "audit not found")
