@@ -17,6 +17,7 @@ export default function PromoCodes() {
   const [rows, setRows] = useState<Promo[] | null>(null);
   const [adding, setAdding] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [n, setN] = useState({
     code: "", code_type: "discount", discount_pct: "25",
     uses_remaining: "100", valid_until: "", source_campaign: "",
@@ -27,11 +28,12 @@ export default function PromoCodes() {
   }
   useEffect(() => { refresh(); }, []);
 
-  async function create() {
+    async function create() {
     if (!n.code.trim()) return;
     setBusy(true);
+    setError(null);
     try {
-      const r = await fetch("/api/promo-codes", {
+      await api("/api/promo-codes", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           code: n.code.trim().toUpperCase(),
@@ -42,14 +44,14 @@ export default function PromoCodes() {
           source_campaign: n.source_campaign || null,
         }),
       });
-      if (r.ok) {
-        setAdding(false);
-        setN({ code: "", code_type: "discount", discount_pct: "25",
-               uses_remaining: "100", valid_until: "", source_campaign: "" });
-        refresh();
-      }
+      setAdding(false);
+      setN({ code: "", code_type: "discount", discount_pct: "25",
+        uses_remaining: "100", valid_until: "", source_campaign: "" });
+      refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "unknown error");
     } finally { setBusy(false); }
-  }
+    }
 
   const columns: Column<Promo>[] = [
     { key: "code", label: "Code", style: { fontWeight: 600, fontVariantNumeric: "tabular-nums" } },
@@ -106,6 +108,9 @@ export default function PromoCodes() {
             <Field label="Source campaign" value={n.source_campaign} onChange={(v) => setN({ ...n, source_campaign: v })}
                    placeholder="launch_campaign" />
           </div>
+          {error && (
+          <p className="hig-footnote" style={{ color: "#D92D20", marginTop: "var(--space-3)" }}>{error}</p>p>
+        )}
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "var(--space-2)",
                         marginTop: "var(--space-4)", paddingTop: "var(--space-4)",
                         borderTop: "1px solid var(--colour-separator)" }}>
