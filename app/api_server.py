@@ -2001,8 +2001,6 @@ class InviteIn(BaseModel):
     mobile:     str | None = None
     team_id:    int | None = None
     company_id: int | None = None
-    invited_by_email: str | None = None
-    invited_by_role:  str | None = None  # admin / sales_director / hr / l&d
     notes:      str | None = None
     audit_version_code: str = "media_sales_v1"
 
@@ -2065,8 +2063,14 @@ def _enqueue_email_job(audit_id: int, report_id: int, pdf_path: str) -> int:
 
 
 @app.post("/api/audit/invite")
-def audit_invite(body: InviteIn, background_tasks: BackgroundTasks) -> dict[str, Any]:
-    caller_role = _resolve_caller_role(body.invited_by_email, body.invited_by_role)
+def audit_invite(body: InviteIn, background_tasks: BackgroundTasks, request: Request) -> dict[str, Any]:
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, email FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    caller_role = me[0]["role"]
     if caller_role not in INVITE_ROLES:
         raise HTTPException(
             403,
@@ -2118,8 +2122,8 @@ def audit_invite(body: InviteIn, background_tasks: BackgroundTasks) -> dict[str,
                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                RETURNING invite_id, sent_at, expires_at""",
             (rid, body.email, body.first_name, body.last_name, body.mobile,
-             body.team_id, body.company_id, body.audit_version_code,
-             token, body.invited_by_email, body.notes),
+         body.team_id, body.company_id, body.audit_version_code,
+                          token, me[0]["email"], body.notes),
         )
         invite = cur.fetchone()
         invite_id, sent_at, expires_at = invite
