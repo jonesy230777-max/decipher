@@ -3451,8 +3451,25 @@ def magic_link_consume(token: str) -> dict[str, Any]:
 
 
 @app.get("/api/users")
-def users_list(role: str | None = None, team_id: int | None = None,
+def users_list(request: Request, role: str | None = None, team_id: int | None = None,
                company_id: int | None = None, q: str | None = None) -> dict[str, Any]:
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    caller_role = me[0]["role"]
+    if caller_role == "admin":
+        pass
+    elif caller_role == "sales_director":
+        team_id = me[0]["team_id"]
+        company_id = None
+    elif caller_role in ("ceo", "hr", "learning_development"):
+        company_id = me[0]["company_id"]
+        team_id = None
+    else:
+        raise HTTPException(403, "forbidden")
     where = ["1=1"]
     params: list[Any] = []
     if role:
@@ -3475,7 +3492,8 @@ def users_list(role: str | None = None, team_id: int | None = None,
                LIMIT 500"""
     data = rows(sql, tuple(params))
     counts = rows(
-        "SELECT role, count(*)::int AS n FROM respondents GROUP BY role ORDER BY role"
+                f"SELECT role, count(*)::int AS n FROM respondents r WHERE {' AND '.join(where)} GROUP BY role ORDER BY role",
+        tuple(params),
     )
     return {"users": data, "counts_by_role": counts, "valid_roles": sorted(VALID_ROLES)}
 
