@@ -47,27 +47,21 @@ export default function Bespoke() {
     setBusy(true);
     setErr(null);
     setResult(null);
-    try {
-      const res = await fetch("/api/bespoke", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          client_name:     form.client_name.trim(),
-          brief:           form.brief.trim(),
-          industry_code:   form.industry_code || null,
-          estimated_value: form.estimated_value ? parseFloat(form.estimated_value) : null,
-          primary_colour:  form.primary_colour || null,
-        }),
-      });
-      if (!res.ok) {
-        const t = await res.text();
-        setErr(`Failed (${res.status}): ${t}`);
-      } else {
-        const json = await res.json();
-        setResult({ slug: json.unique_url_slug, n: json.n_questions });
-        setForm(EMPTY);
-        refresh();
-      }
+    try { 
+      const json = await api<{ unique_url_slug: string; n_questions: number }>("/api/bespoke", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                          client_name: form.client_name.trim(),
+                          brief: form.brief.trim(),
+                          industry_code: form.industry_code || null,
+                          estimated_value: form.estimated_value ? parseFloat(form.estimated_value) : null,
+                          primary_colour: form.primary_colour || null,
+              }),
+    });
+               setResult({ slug: json.unique_url_slug, n: json.n_questions });
+               setForm(EMPTY);
+               refresh();
     } catch (e: unknown) {
       setErr(String(e));
     } finally {
