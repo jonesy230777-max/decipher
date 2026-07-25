@@ -3058,20 +3058,21 @@ def permissions_list() -> dict[str, Any]:
 
 class PermissionPatch(BaseModel):
     level:        str        # 'none' | 'read' | 'write' | 'both'
-    actor_email:  str | None = None
-    actor_role:   str | None = None
 
 
 @app.patch("/api/permissions/{role}/{capability}")
-def permissions_patch(role: str, capability: str, body: PermissionPatch) -> dict[str, Any]:
+def permissions_patch(role: str, capability: str, body: PermissionPatch, request: Request) -> dict[str, Any]:
     if body.level not in ("none", "read", "write", "both"):
         raise HTTPException(400, "level must be one of: none / read / write / both")
     if role not in VALID_ROLES:
         raise HTTPException(400, f"unknown role: {role}")
     if capability not in CAPABILITY_LABELS:
         raise HTTPException(400, f"unknown capability: {capability}")
-    caller_role = _resolve_caller_role(body.actor_email, body.actor_role)
-    if caller_role != "admin":
+        caller = _caller_from_request(request)
+        if not caller:
+                raise HTTPException(401, "not authenticated")
+        me = rows("SELECT role, email FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me or me[0]["role"] != "admin":
         raise HTTPException(403, "only admin can manage role permissions")
     with conn() as c:
         cur = c.cursor()
@@ -3082,13 +3083,13 @@ def permissions_patch(role: str, capability: str, body: PermissionPatch) -> dict
                   SET level = EXCLUDED.level,
                       updated_by = EXCLUDED.updated_by,
                       updated_at = now()""",
-            (role, capability, body.level, body.actor_email or "admin"),
+                        (role, capability, body.level, me[0]["email"]),
         )
         cur.execute(
             """INSERT INTO events_log (actor, action, severity, subject_id, payload)
                VALUES ('admin', 'permission.changed', 'info', %s, %s::jsonb)""",
             (f"{role}/{capability}",
-             json.dumps({"level": body.level, "actor": body.actor_email})),
+                             json.dumps({"level": body.level, "actor": me[0]["email"]})),
         )
     return {"ok": True, "role": role, "capability": capability, "level": body.level}
 
