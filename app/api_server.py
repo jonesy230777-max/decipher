@@ -120,11 +120,17 @@ def api_version() -> dict[str, Any]:
 
 
 @app.get("/api/health/scoring")
-def health_scoring() -> dict[str, Any]:
+def health_scoring(request: Request) -> dict[str, Any]:
     """Snapshot of the scoring + report chain. Surfaced in Settings as
     a quick at-a-glance check that taxonomy, narratives, audits, reports
     and email delivery are all wired correctly.
     """
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me or me[0]["role"] != "admin":
+        raise HTTPException(403, "admin only")
     taxonomy = rows(
         """SELECT taxonomy_id, name,
                   (SELECT count(*) FROM archetypes ar WHERE ar.taxonomy_id = t.taxonomy_id)::int AS n_archetypes,
