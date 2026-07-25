@@ -3486,8 +3486,6 @@ class CompanyCreate(BaseModel):
     website:        str | None = None
     country:        str | None = "Australia"
     abn:            str | None = None
-    actor_email:    str | None = None
-    actor_role:     str | None = None
 
 
 class PromoCreate(BaseModel):
@@ -3539,9 +3537,14 @@ def promo_create(body: PromoCreate) -> dict[str, Any]:
 
 
 @app.post("/api/companies")
-def companies_create(body: CompanyCreate) -> dict[str, Any]:
-    caller_role = _resolve_caller_role(body.actor_email, body.actor_role)
-    _require_capability(caller_role, "action.add_company")
+def companies_create(body: CompanyCreate, request: Request) -> dict[str, Any]:
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    _require_capability(me[0]["role"], "action.add_company")
     with conn() as c:
         cur = c.cursor()
         cur.execute(
@@ -3573,14 +3576,17 @@ class TeamCreate(BaseModel):
     contact_name:   str | None = None
     contact_email:  str | None = None
     contact_mobile: str | None = None
-    actor_email:    str | None = None
-    actor_role:     str | None = None
 
 
 @app.post("/api/teams")
-def teams_create(body: TeamCreate) -> dict[str, Any]:
-    caller_role = _resolve_caller_role(body.actor_email, body.actor_role)
-    _require_capability(caller_role, "action.add_team")
+def teams_create(body: TeamCreate, request: Request) -> dict[str, Any]:
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    _require_capability(me[0]["role"], "action.add_team")
     company = rows("SELECT name FROM companies WHERE company_id = %s", (body.company_id,))
     if not company:
         raise HTTPException(404, "company not found")
