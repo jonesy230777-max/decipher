@@ -2496,10 +2496,11 @@ def audit_invite_bulk(body: BulkInviteIn, background_tasks: BackgroundTasks, req
 
 
 @app.post("/api/squarespace/generate")
-def squarespace_generate() -> dict[str, Any]:
+def squarespace_generate(request: Request) -> dict[str, Any]:
     """S060: Generate a new Squarespace export bundle via Claude Haiku.
     Inserts a stub row first, then calls exports.generate_bundle() which
     populates all files, writes the zip to disk, and updates the row."""
+    _require_admin(request)
     from app.exports import generate_bundle
     now = datetime.now(timezone.utc)
     placeholder_summary = f"Generating export {now.strftime('%Y-%m-%d %H:%M')}..."
