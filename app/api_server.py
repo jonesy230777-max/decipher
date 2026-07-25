@@ -1204,24 +1204,37 @@ def cohort_patterns(doubt_only: bool = False) -> dict[str, Any]:
     return {"patterns": data, "count": len(data)}
 
 
+def _require_admin(request: Request) -> dict:
+    """Ensure the authenticated caller is an admin."""
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me or me[0]["role"] != "admin":
+        raise HTTPException(403, "admin only")
+    return me[0]
+
 @app.post("/api/admin/cohort/snapshot")
-def admin_run_snapshot() -> dict[str, Any]:
+def admin_run_snapshot(request: Request) -> dict[str, Any]:
     """Manually trigger a cohort snapshot (admin only)."""
+    _require_admin(request)
     from app.cohort_jobs import run_snapshot
     return run_snapshot()
 
 
 @app.post("/api/admin/cohort/pattern-hunt")
-def admin_run_pattern_hunt(background_tasks: BackgroundTasks) -> dict[str, Any]:
+def admin_run_pattern_hunt(background_tasks: BackgroundTasks, request: Request) -> dict[str, Any]:
     """Manually trigger the pattern hunter in the background (admin only)."""
+    _require_admin(request)
     from app.cohort_jobs import run_pattern_hunt
     background_tasks.add_task(run_pattern_hunt)
     return {"ok": True, "message": "Pattern hunt started in background. Check events log for results."}
 
 
 @app.post("/api/admin/backup")
-def admin_run_backup(background_tasks: BackgroundTasks) -> dict[str, Any]:
+def admin_run_backup(background_tasks: BackgroundTasks, request: Request) -> dict[str, Any]:
     """S092: Manually trigger a Postgres backup (admin only)."""
+    _require_admin(request)
     background_tasks.add_task(_run_backup)
     return {"ok": True, "message": "Backup started in background. Check events log for db.backup_complete."}
 
