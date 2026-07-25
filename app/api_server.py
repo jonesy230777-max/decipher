@@ -521,11 +521,20 @@ def respondent_gap_analysis(respondent_id: int) -> dict[str, Any]:
              FROM audit_scores s
              JOIN audits a USING (audit_id)
              JOIN respondents r ON r.respondent_id = a.respondent_id
-            WHERE r.team_id = %s""",
+                        WHERE r.team_id = %s
+                                      AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                                                                       WHERE aa.respondent_id = r.respondent_id
+                                                                                                        ORDER BY aa.started_at DESC LIMIT 1)"""
         (rec["team_id"],),
     )[0]
     cohort_means = rows(
-        "SELECT avg(cognitive_empathy) AS ce, avg(eq) AS eq, avg(pressure_composure) AS pc, avg(storytelling) AS st FROM audit_scores"
+                    """SELECT avg(s.cognitive_empathy) AS ce, avg(s.eq) AS eq,
+                                  avg(s.pressure_composure) AS pc, avg(s.storytelling) AS st
+                                                FROM audit_scores s
+                                                              JOIN audits a USING (audit_id)
+                                                                            WHERE a.audit_id = (SELECT aa.audit_id FROM audits aa
+                                                                                                               WHERE aa.respondent_id = a.respondent_id
+                                                                                                                                                  ORDER BY aa.started_at DESC LIMIT 1)"""
     )[0]
 
     def band(v):
