@@ -3571,11 +3571,23 @@ class UserCreate(BaseModel):
 
 
 @app.post("/api/users")
-def users_create(body: UserCreate) -> dict[str, Any]:
+def users_create(body: UserCreate, request: Request) -> dict[str, Any]:
     if body.role not in VALID_ROLES:
         raise HTTPException(400, f"invalid role: {body.role}")
-    caller_role = _resolve_caller_role(body.actor_email, body.actor_role)
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    caller_role = me[0]["role"]
     _require_capability(caller_role, "action.add_person")
+    if body.role == "admin" and caller_role != "admin":
+        raise HTTPException(403, "only admin can create an admin account")
+    if caller_role != "admin":
+        body.company_id = me[0]["company_id"]
+        if caller_role == "sales_director":
+            body.team_id = me[0]["team_id"]
     with conn() as c:
         cur = c.cursor()
         cur.execute(
@@ -3592,8 +3604,8 @@ def users_create(body: UserCreate) -> dict[str, Any]:
         rid = cur.fetchone()[0]
         cur.execute(
             """INSERT INTO events_log (actor, action, severity, subject_id, payload)
-               VALUES ('admin', 'user.created', 'info', %s, %s::jsonb)""",
-            (str(rid), json.dumps(body.model_dump())),
+               VALUES (%s, 'user.created', 'info', %s, %s::jsonb)""",
+            (caller_role, str(rid), json.dumps(body.model_dump())),
         )
     return {"ok": True, "respondent_id": rid}
 
