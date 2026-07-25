@@ -2593,9 +2593,12 @@ _BESPOKE_QUESTION_SCHEMA = {
 
 
 @app.post("/api/bespoke")
-def bespoke_create(body: BespokeCreateIn) -> dict[str, Any]:
+def bespoke_create(body: BespokeCreateIn, request: Request) -> dict[str, Any]:
     """S051: Ingest a client brief, use Claude to generate bespoke questions,
     create audit_version + bespoke_client, return the unique_url_slug."""
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
     from app.claude_client import complete_structured, ClaudeCallError
 
     # Resolve industry
