@@ -2129,7 +2129,8 @@ def audit_invite(body: InviteIn, background_tasks: BackgroundTasks, request: Req
         invite_id, sent_at, expires_at = invite
 
     web_port = os.environ.get("DECIPHER_WEB_PORT", "55173")
-    link = f"http://127.0.0.1:{web_port}/audit/start?invite={token}"
+    base_url = os.environ.get("DECIPHER_PUBLIC_URL", f"http://127.0.0.1:{web_port}")
+    link = f"{base_url}/audit/start?invite={token}"
     delivered = True; err = None; background_tasks.add_task(_send_invite_email, body.email, body.first_name, link)
 
     with conn() as c:
@@ -3309,7 +3310,8 @@ def magic_link_request(body: MagicLinkRequestIn) -> dict[str, Any]:
         )
 
     web_port = os.environ.get("DECIPHER_WEB_PORT", "5173")
-    link = f"http://127.0.0.1:{web_port}/auth/magic-link?token={raw_token}"
+    base_url = os.environ.get("DECIPHER_PUBLIC_URL", f"http://127.0.0.1:{web_port}")
+    link = f"{base_url}/auth/magic-link?token={raw_token}"
     try:
         _send_magic_link_email(
             rec["email"],
