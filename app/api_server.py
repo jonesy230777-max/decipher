@@ -679,7 +679,10 @@ def _build_ai_context(page: str, team_id: Any, company_id: Any, audit_id: Any) -
                      FROM audit_scores s
                      JOIN audits a USING (audit_id)
                      JOIN respondents r ON r.respondent_id = a.respondent_id
-                    WHERE r.team_id = %s""",
+                                    WHERE r.team_id = %s
+                                                      AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                                                                                           WHERE aa.respondent_id = r.respondent_id
+                                                                                                                                ORDER BY aa.started_at DESC LIMIT 1)""",
                 (tid,),
             )
             if tm and tm[0]["n"]:
@@ -693,7 +696,10 @@ def _build_ai_context(page: str, team_id: Any, company_id: Any, audit_id: Any) -
                      SELECT bc.audit_id FROM band_classifications bc
                        JOIN audits a USING (audit_id)
                        JOIN respondents r ON r.respondent_id = a.respondent_id
-                      WHERE r.team_id = %s AND bc.band = 'developing'
+                                          WHERE r.team_id = %s AND bc.band = 'developing'
+                                                                AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                                                                                                         WHERE aa.respondent_id = r.respondent_id
+                                                                                                                                                  ORDER BY aa.started_at DESC LIMIT 1)
                       GROUP BY bc.audit_id HAVING count(*) >= 2
                    ) s""",
                 (tid,),
@@ -702,7 +708,10 @@ def _build_ai_context(page: str, team_id: Any, company_id: Any, audit_id: Any) -
                 """SELECT count(*) FROM audit_scores s
                      JOIN audits a USING (audit_id)
                      JOIN respondents r ON r.respondent_id = a.respondent_id
-                    WHERE r.team_id = %s
+                                      WHERE r.team_id = %s
+                                                          AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                                                                                                 WHERE aa.respondent_id = r.respondent_id
+                                                                                                                                        ORDER BY aa.started_at DESC LIMIT 1)
                       AND s.cognitive_empathy >= 0.85 AND s.eq >= 0.85
                       AND s.pressure_composure >= 0.85 AND s.storytelling >= 0.85""",
                 (tid,),
@@ -713,7 +722,10 @@ def _build_ai_context(page: str, team_id: Any, company_id: Any, audit_id: Any) -
                      FROM band_classifications bc
                      JOIN audits a USING (audit_id)
                      JOIN respondents r ON r.respondent_id = a.respondent_id
-                    WHERE r.team_id = %s
+                                    WHERE r.team_id = %s
+                                                      AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                                                                                           WHERE aa.respondent_id = r.respondent_id
+                                                                                                                                ORDER BY aa.started_at DESC LIMIT 1)
                     GROUP BY bc.dimension ORDER BY avg_score LIMIT 1""",
                 (tid,),
             )
