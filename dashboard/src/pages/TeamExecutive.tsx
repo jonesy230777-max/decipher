@@ -306,20 +306,19 @@ function InviteRespondentButton({ teamId }: { teamId: number }) {
     const last  = prompt("Last name (optional):")  || null;
     setBusy(true);
     try {
-      const r = await fetch("/api/audit/invite", {
+      const json = await api<{ delivered: boolean; link?: string; error?: string }>("/api/audit/invite", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, first_name: first, last_name: last, team_id: teamId }),
       });
-      if (!r.ok) {
-        setMsg(`Failed: ${r.status} ${await r.text()}`);
-      } else {
-        const json = await r.json();
-        setMsg(json.delivered
-          ? `Invite delivered to ${email}.`
-          : `Recorded but SMTP failed: ${json.error}`);
-      }
+      setMsg(json.delivered
+        ? `Invite delivered to ${email}.`
+        : `Recorded but SMTP failed: ${json.error}`);
+    } catch (e) {
+      setMsg(`Failed: ${e instanceof Error ? e.message : "unknown error"}`);
+    } finally {
       setTimeout(() => setMsg(null), 6000);
-    } finally { setBusy(false); }
+      setBusy(false);
+    }
   }
   return (
     <>
