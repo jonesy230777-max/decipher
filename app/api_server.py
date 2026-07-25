@@ -3154,7 +3154,8 @@ CAPABILITY_LABELS = {
 
 
 @app.get("/api/permissions")
-def permissions_list() -> dict[str, Any]:
+def permissions_list(request: Request) -> dict[str, Any]:
+    _require_admin(request)
     data = rows("SELECT role, capability, level, relevant FROM role_permissions ORDER BY role, capability")
     # Materialise capabilities list with labels + group
     caps = [
