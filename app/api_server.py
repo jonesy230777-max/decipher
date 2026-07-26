@@ -507,15 +507,32 @@ def team_gap_analysis(team_id: int, request: Request) -> dict[str, Any]:
 
 
 @app.get("/api/respondents/{respondent_id}/gap-analysis")
-def respondent_gap_analysis(respondent_id: int) -> dict[str, Any]:
+def respondent_gap_analysis(respondent_id: int, request: Request) -> dict[str, Any]:
     """Per-respondent gap analysis vs. their team mean and cohort mean."""
     r = rows(
-        "SELECT respondent_id, team_id FROM respondents WHERE respondent_id = %s",
+        "SELECT respondent_id, team_id, company_id FROM respondents WHERE respondent_id = %s",
         (respondent_id,),
     )
     if not r:
         raise HTTPException(404, "respondent not found")
     rec = r[0]
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    caller_role = me[0]["role"]
+    if caller_role == "admin":
+        pass
+    elif int(caller["sub"]) == respondent_id:
+        pass
+    elif caller_role == "sales_director" and me[0]["team_id"] == rec["team_id"]:
+        pass
+    elif caller_role in ("ceo", "hr", "learning_development") and me[0]["company_id"] == rec["company_id"]:
+        pass
+    else:
+        raise HTTPException(403, "forbidden")
     latest = rows(
         """SELECT s.cognitive_empathy, s.eq, s.pressure_composure, s.storytelling,
                   a.completed_at
