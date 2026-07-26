@@ -1264,7 +1264,8 @@ def people_list(request: Request, company_id: int | None = None,
 
 
 @app.get("/api/cohort/patterns")
-def cohort_patterns(doubt_only: bool = False) -> dict[str, Any]:
+def cohort_patterns(request: Request, doubt_only: bool = False) -> dict[str, Any]:
+    _require_admin(request)
     where = "WHERE doubt_passed = TRUE" if doubt_only else ""
     data = rows(
         f"""SELECT pattern_id, name, conditions_json, evidence_json,
@@ -2326,7 +2327,8 @@ def list_invites(request: Request, team_id: int | None = None, company_id: int |
 
 
 @app.get("/api/mission/series")
-def mission_series(days: int = 30) -> dict[str, Any]:
+def mission_series(request: Request, days: int = 30) -> dict[str, Any]:
+    _require_admin(request)
     series = rows(
         """WITH dates AS (
               SELECT generate_series(
@@ -2360,7 +2362,8 @@ def mission_series(days: int = 30) -> dict[str, Any]:
 
 
 @app.get("/api/mission/by-region")
-def mission_by_region() -> dict[str, Any]:
+def mission_by_region(request: Request) -> dict[str, Any]:
+    _require_admin(request)
     data = rows(
         """SELECT COALESCE(t.region, 'Unset') AS region,
                   count(DISTINCT t.team_id)::int AS teams,
@@ -2382,7 +2385,8 @@ def mission_by_region() -> dict[str, Any]:
 
 
 @app.get("/api/mission/top-archetypes")
-def mission_top_archetypes() -> dict[str, Any]:
+def mission_top_archetypes(request: Request) -> dict[str, Any]:
+    _require_admin(request)
     data = rows(
         """SELECT ar.name, count(*)::int AS n
              FROM archetype_assignments aa
@@ -2401,10 +2405,11 @@ def mission_top_archetypes() -> dict[str, Any]:
 
 
 @app.get("/api/mission/dim-means")
-def mission_dim_means(days: int = 30) -> dict[str, Any]:
+def mission_dim_means(request: Request, days: int = 30) -> dict[str, Any]:
     """Mean score per dimension for the requested window. Used by Mission Control
     when the operator selects a time range other than the 30-day bootstrap default.
     """
+    _require_admin(request)
     days = max(1, min(days, 3650))
     r = rows(
         """SELECT round((avg(s.cognitive_empathy)  * 100)::numeric, 1)::float AS cognitive_empathy,
@@ -2434,9 +2439,26 @@ def mission_dim_means(days: int = 30) -> dict[str, Any]:
 
 
 @app.get("/api/funnel")
-def funnel(team_id: int | None = None, company_id: int | None = None,
+def funnel(request: Request, team_id: int | None = None, company_id: int | None = None,
            days: int = 30) -> dict[str, Any]:
     """Pipeline of audit-takers across the funnel stages."""
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    caller_role = me[0]["role"]
+    if caller_role == "admin":
+        pass
+    elif caller_role == "sales_director":
+        team_id = me[0]["team_id"]
+        company_id = None
+    elif caller_role in ("ceo", "hr", "learning_development"):
+        company_id = me[0]["company_id"]
+        team_id = None
+    else:
+        raise HTTPException(403, "forbidden")
     scope_invite: list[str] = ["sent_at > now() - (%s || ' days')::interval"]
     scope_audit:  list[str] = ["a.started_at > now() - (%s || ' days')::interval"]
     params_inv: list[Any] = [str(days)]
@@ -2709,7 +2731,8 @@ def team_audits(team_id: int, request: Request) -> dict[str, Any]:
 
 
 @app.get("/api/bespoke")
-def bespoke_list() -> dict[str, Any]:
+def bespoke_list(request: Request) -> dict[str, Any]:
+    _require_admin(request)
     return {"bespoke": rows(
         """SELECT bespoke_client_id, client_name, unique_url_slug,
                   estimated_value, status, brand_assets_json, created_at
@@ -2777,6 +2800,7 @@ def bespoke_create(body: BespokeCreateIn, request: Request) -> dict[str, Any]:
     caller = _caller_from_request(request)
     if not caller:
         raise HTTPException(401, "not authenticated")
+    _require_admin(request)
     from app.claude_client import complete_structured, ClaudeCallError
 
     # Resolve industry
