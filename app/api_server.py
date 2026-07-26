@@ -3132,7 +3132,8 @@ _SQUARESPACE_FILE_TREE = [
 
 
 @app.get("/api/squarespace/exports")
-def squarespace_exports() -> dict[str, Any]:
+def squarespace_exports(request: Request) -> dict[str, Any]:
+    _require_admin(request)
     data = rows(
         """SELECT export_id, generated_at, bundle_path, file_count,
                   size_bytes, summary, cost_usd
@@ -3142,7 +3143,8 @@ def squarespace_exports() -> dict[str, Any]:
 
 
 @app.get("/api/squarespace/exports/{export_id}")
-def squarespace_export_detail(export_id: int) -> dict[str, Any]:
+def squarespace_export_detail(export_id: int, request: Request) -> dict[str, Any]:
+    _require_admin(request)
     r = rows("SELECT * FROM squarespace_exports WHERE export_id = %s", (export_id,))
     if not r:
         raise HTTPException(404, "export not found")
