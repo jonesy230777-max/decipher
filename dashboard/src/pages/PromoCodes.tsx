@@ -109,7 +109,7 @@ export default function PromoCodes() {
                    placeholder="launch_campaign" />
           </div>
           {error && (
-          <p className="hig-footnote" style={{ color: "#D92D20", marginTop: "var(--space-3)" }}>{error}</p>p>
+          <p className="hig-footnote" style={{ color: "#D92D20", marginTop: "var(--space-3)" }}>{error}</p>
         )}
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "var(--space-2)",
                         marginTop: "var(--space-4)", paddingTop: "var(--space-4)",
