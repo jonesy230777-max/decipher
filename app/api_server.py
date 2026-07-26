@@ -1460,7 +1460,7 @@ def company_teams(company_id: int, request: Request) -> dict[str, Any]:
                   t.contact_name, t.contact_email, t.contact_mobile,
                   (SELECT count(*) FROM respondents r
                      WHERE r.team_id = t.team_id AND r.role='sales_person') AS n_respondents,
-                  (SELECT round(avg((s.cognitive_empathy + s.eq + s.pressure_composure + s.storytelling) / 4.0) * 100, 1)
+                  (SELECT round((avg((s.cognitive_empathy + s.eq + s.pressure_composure + s.storytelling) / 4.0) * 100)::numeric, 1)::float
                      FROM audit_scores s
                      JOIN audits a USING (audit_id)
                      JOIN respondents r2 ON r2.respondent_id = a.respondent_id
