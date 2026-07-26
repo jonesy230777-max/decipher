@@ -373,9 +373,9 @@ class IndustryCreate(BaseModel):
 
 @app.post("/api/industries")
 def industries_create(body: IndustryCreate, request: Request) -> dict[str, Any]:
-        caller = _caller_from_request(request)
-        if not caller:
-                raise HTTPException(401, "not authenticated")
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
     me = rows("SELECT role FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
     if not me or me[0]["role"] != "admin":
         raise HTTPException(403, "only admin can add industries")
