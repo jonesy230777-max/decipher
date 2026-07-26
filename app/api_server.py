@@ -1151,11 +1151,28 @@ def cohort_stats(company_id: int | None = None,
 
 
 @app.get("/api/people")
-def people_list(company_id: int | None = None,
+def people_list(request: Request, company_id: int | None = None,
                 team_id: int | None = None,
                 role: str | None = None,
                 q: str | None = None,
                 limit: int = 200) -> dict[str, Any]:
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    caller_role = me[0]["role"]
+    if caller_role == "admin":
+        pass
+    elif caller_role == "sales_director":
+        team_id = me[0]["team_id"]
+        company_id = None
+    elif caller_role in ("ceo", "hr", "learning_development"):
+        company_id = me[0]["company_id"]
+        team_id = None
+    else:
+        raise HTTPException(403, "forbidden")
     where = ["r.role IN ('sales_person','sales_director','hr','learning_development','ceo')"]
     params: list[Any] = []
     if company_id is not None:
