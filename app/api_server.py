@@ -1038,10 +1038,28 @@ def archetypes() -> dict[str, Any]:
 
 
 @app.get("/api/audits")
-def audits_list(limit: int = 500, status: str | None = None,
-                team_id: int | None = None, version: str | None = None) -> dict[str, Any]:
+def audits_list(request: Request, limit: int = 500, status: str | None = None,
+                team_id: int | None = None, version: str | None = None, company_id: int | None = None) -> dict[str, Any]:
     """Audit list. Optional filter by status, team_id (strict scoping) or
     audit-version code (e.g. media_sales_v1, master_v1)."""
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    caller_role = me[0]["role"]
+    if caller_role == "admin":
+        pass
+    elif caller_role == "sales_director":
+        team_id = me[0]["team_id"]
+        company_id = None
+    elif caller_role in ("ceo", "hr", "learning_development"):
+        company_id = me[0]["company_id"]
+        team_id = None
+    else:
+        raise HTTPException(403, "forbidden")
+
     where_parts: list[str] = []
     params: list[Any] = []
     if status:
@@ -1050,6 +1068,10 @@ def audits_list(limit: int = 500, status: str | None = None,
     if team_id is not None:
         where_parts.append("r.team_id = %s")
         params.append(team_id)
+    if company_id is not None:
+        where_parts.append("r.company_id = %s")
+        params.append(company_id)
+
     if version:
         where_parts.append("av.code = %s")
         params.append(version)
