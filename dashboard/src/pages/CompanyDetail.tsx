@@ -2,19 +2,22 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { api } from "../api";
 import { Card, SectionEyebrow, Button } from "../components/Card";
+import { BandBar } from "../components/BandBar";
+import { SortableTable } from "../components/SortableTable";
 import { useAuth } from "../auth";
 
-const AU_REGIONS = ["NSW","VIC","QLD","WA","SA","TAS","ACT","NT","Overseas"];
+const AU_REGIONS = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT", "Overseas"];
 
 type Company = { company_id: number; name: string; industry: string | null;
-                   contact_name: string | null; contact_email: string | null;
-                   contact_mobile: string | null; website: string | null };
+                 contact_name: string | null; contact_email: string | null;
+                 contact_mobile: string | null; website: string | null };
 type Team = {
   team_id: number;
   name: string;
   role_label: string | null;
   region: string | null;
   n_respondents: number;
+  avg_score_100: number | null;
   director: { respondent_id: number; name: string; email: string; mobile: string | null; role: string } | null;
 };
 type Exec = {
@@ -23,21 +26,46 @@ type Exec = {
 };
 type Payload = { company: Company; teams: Team[]; execs: Exec[] };
 
+type BiggestGap = { trait: string; score_100: number; band: string } | null;
+type Overview = {
+  company: Company;
+  month_label: string;
+  n_teams: number;
+  n_respondents: number;
+  company_average_score_100: number | null;
+  elite_performers: number;
+  at_risk_reps: number;
+  biggest_gap: BiggestGap;
+};
+type DistRow = {
+  dimension: string;
+  dimension_label: string;
+  elite: number;
+  performing: number;
+  practising: number;
+  developing: number;
+};
+type Distribution = { company_id: number; total: number; distribution: DistRow[] };
+
 export default function CompanyDetail() {
   const { companyId } = useParams();
   const id = Number(companyId);
   const [params] = useSearchParams();
   const [data, setData] = useState<Payload | null>(null);
+  const [overview, setOverview] = useState<Overview | null>(null);
+  const [dist, setDist] = useState<Distribution | null>(null);
   const [adding, setAdding] = useState(params.get("add") === "team");
-    const [error, setError] = useState<string | null>(null);
-const [busy, setBusy] = useState(false);
-const { me } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const { me } = useAuth();
   const [t, setT] = useState({ name: "", region: "NSW", role_label: "Sales Director", contact_name: "", contact_email: "", contact_mobile: "" });
 
   function refresh() {
-        setError(null);
+    setError(null);
     api<Payload>(`/api/companies/${id}/teams`).then(setData)
       .catch((err) => setError(err instanceof Error ? err.message : "Failed to load company. Please try again."));
+    api<Overview>(`/api/companies/${id}/overview`).then(setOverview).catch(() => {});
+    api<Distribution>(`/api/companies/${id}/distribution`).then(setDist).catch(() => {});
   }
   useEffect(() => { refresh(); }, [id]);
 
@@ -63,7 +91,7 @@ const { me } = useAuth();
     } finally { setBusy(false); }
   }
 
-    if (error) return (
+  if (error) return (
     <p className="hig-caption-1" style={{ color: "#D92D20" }}>
       {error}
     </p>
@@ -77,7 +105,7 @@ const { me } = useAuth();
         <div className="hig-footnote">
           <Link to="/companies" style={{ color: "var(--colour-accent)" }}>Companies</Link>
           {" · "}
-          <span>{c.industry ?? "·"}</span>
+          <span>{c.industry ?? "-"}</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginTop: "var(--space-1)" }}>
           <h1 className="hig-large-title" style={{ margin: 0, fontWeight: 700 }}>
@@ -92,10 +120,63 @@ const { me } = useAuth();
           )}
         </div>
         <p className="hig-body" style={{ color: "var(--colour-label-secondary)", marginTop: "var(--space-2)" }}>
-          {data.teams.length} teams under this company. Click a team to drop into the
-          director-scoped executive view.
+          {data.teams.length} teams · {overview?.n_respondents ?? data.teams.reduce((n, tm) => n + tm.n_respondents, 0)} reps under this company.
+          Click a team to drop into the director-scoped executive view.
         </p>
       </header>
+
+      {/* KPI strip — 4 equal, mirrors the team executive view */}
+      <section style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "var(--space-4)" }}>
+        <KpiCard
+          label="Company average score"
+          value={overview?.company_average_score_100 ?? "-"}
+          suffix="/100"
+          hint={`across ${overview?.n_teams ?? data.teams.length} teams`}
+        />
+        <KpiCard
+          label="Elite performers"
+          value={overview?.elite_performers ?? "-"}
+          hint="85+ across all 4 traits"
+          tone="elite"
+        />
+        <KpiCard
+          label="At-risk reps"
+          value={overview?.at_risk_reps ?? "-"}
+          hint="Developing in 2+ traits"
+          tone="risk"
+        />
+        <KpiCard
+          label="Biggest gap"
+          value={overview?.biggest_gap?.trait ?? "-"}
+          hint={
+            overview?.biggest_gap
+              ? `${overview.biggest_gap.score_100} /100 · ${overview.biggest_gap.band}`
+              : ""
+          }
+          big={false}
+        />
+      </section>
+
+      {/* Distribution */}
+      <Card>
+        <SectionEyebrow>Score distribution by band</SectionEyebrow>
+        <h2 className="hig-title-3" style={{ margin: "var(--space-1) 0 var(--space-3) 0" }}>
+          How the {overview?.n_respondents ?? "…"} reps split per trait
+        </h2>
+        <p className="hig-callout" style={{ color: "var(--colour-label-secondary)", marginTop: 0, marginBottom: "var(--space-4)" }}>
+          Each bar shows how reps across every team in this company are distributed across the 4 performance bands per trait.
+        </p>
+        {dist?.distribution.map((d) => (
+          <BandBar
+            key={d.dimension}
+            label={d.dimension_label}
+            elite={d.elite}
+            performing={d.performing}
+            practising={d.practising}
+            developing={d.developing}
+          />
+        ))}
+      </Card>
 
       {/* Company main contacts (CEO / HR / L&D / Sales Directors) */}
       <Card title="Executives and Sales Managers">
@@ -109,17 +190,16 @@ const { me } = useAuth();
                         gap: "var(--space-3)" }}>
             {data.execs.map((e) => (
               <Link key={e.respondent_id} to={`/respondents/${e.respondent_id}`}
-                    style={{ background: "var(--colour-bg-system)",
-                             border: "1px solid var(--colour-separator-opaque)",
-                             borderRadius: "var(--radius-md)",
-                             padding: "var(--space-3) var(--space-4)",
-                             textDecoration: "none", color: "var(--colour-label)",
-                             display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
-                <span aria-hidden="true"
-                      style={{ width: 36, height: 36, borderRadius: "50%",
-                               background: roleColour(e.role), color: "#FFFFFF",
-                               display: "inline-flex", alignItems: "center", justifyContent: "center",
-                               fontWeight: 700, fontSize: 14, flexShrink: 0 }}>
+                style={{ background: "var(--colour-bg-system)",
+                         border: "1px solid var(--colour-separator-opaque)",
+                         borderRadius: "var(--radius-md)",
+                         padding: "var(--space-3)",
+                         display: "flex", alignItems: "center", gap: "var(--space-3)",
+                         color: "var(--colour-label)", textDecoration: "none" }}>
+                <span style={{ width: 36, height: 36, borderRadius: "50%",
+                               background: roleColour(e.role), color: "#fff",
+                               display: "flex", alignItems: "center", justifyContent: "center",
+                               fontWeight: 700, fontSize: 14, textTransform: "uppercase" }}>
                   {(e.name ?? e.email).slice(0, 1).toUpperCase()}
                 </span>
                 <div style={{ minWidth: 0, flex: 1 }}>
@@ -127,12 +207,12 @@ const { me } = useAuth();
                     {e.name ?? e.email}
                   </div>
                   <div className="hig-caption-1" style={{ color: "var(--colour-label-secondary)",
-                                                           textTransform: "capitalize" }}>
+                                                            textTransform: "capitalize" }}>
                     {e.role.replace("_", " ")}{e.job_title ? ` · ${e.job_title}` : ""}
                   </div>
                   <div className="hig-caption-1" style={{ color: "var(--colour-label-tertiary)",
-                                                           overflow: "hidden", textOverflow: "ellipsis",
-                                                           whiteSpace: "nowrap" }}>
+                                                            overflow: "hidden", textOverflow: "ellipsis",
+                                                            whiteSpace: "nowrap" }}>
                     {e.email}{e.mobile ? ` · ${e.mobile}` : ""}
                   </div>
                 </div>
@@ -142,19 +222,19 @@ const { me } = useAuth();
         )}
       </Card>
 
+      {/* Teams */}
       <Card title="Teams"
-            action={<Button variant="filled" size="md" onClick={() => setAdding(v => !v)}>
-              {adding ? "Cancel" : "Add team +"}
-            </Button>}>
+        action={
+          <Button variant="filled" size="md" onClick={() => setAdding((v) => !v)}>
+            {adding ? "Cancel" : "Add team +"}
+          </Button>
+        }>
         {adding && (
-          <div style={{ marginBottom: "var(--space-4)",
-                        padding: "var(--space-4)",
+          <div style={{ marginBottom: "var(--space-4)", padding: "var(--space-4)",
                         background: "var(--colour-bg-system)",
                         border: "1px solid var(--colour-separator-opaque)",
                         borderRadius: "var(--radius-md)" }}>
-            <div style={{ display: "grid",
-                          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                          gap: "var(--space-3)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "var(--space-3)" }}>
               <Field label="Team name" value={t.name} onChange={(v) => setT({ ...t, name: v })}
                      placeholder="e.g. Hospital Field Sales" />
               <SelectField label="Region" value={t.region} onChange={(v) => setT({ ...t, region: v })}
@@ -170,41 +250,32 @@ const { me } = useAuth();
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end",
                           gap: "var(--space-2)", marginTop: "var(--space-3)",
-                          paddingTop: "var(--space-3)",
-                          borderTop: "1px solid var(--colour-separator)" }}>
+                          paddingTop: "var(--space-3)", borderTop: "1px solid var(--colour-separator)" }}>
               <Button variant="plain" size="md" onClick={() => setAdding(false)}>Cancel</Button>
               <Button variant="filled" size="md" onClick={create}>{busy ? "Saving..." : "Create team"}</Button>
             </div>
           </div>
         )}
-        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-          {data.teams.map((t, i) => (
-            <li
-              key={t.team_id}
-              style={{
-                padding: "var(--space-3) 0",
-                borderTop: i === 0 ? "none" : "1px solid var(--colour-separator)",
-              }}
-            >
-              <Link
-                to={`/teams/${t.team_id}`}
-                style={{
-                  display: "flex", alignItems: "center", gap: "var(--space-4)",
-                  color: "var(--colour-label)", textDecoration: "none",
-                }}
-              >
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div className="hig-headline">{t.name}</div>
-                  <div className="hig-footnote">{t.role_label} Dashboard</div>
-                </div>
-                <div className="hig-callout hig-numeric" style={{ color: "var(--colour-label-secondary)" }}>
-                  {t.n_respondents} reps
-                </div>
-                <span aria-hidden="true" style={{ color: "var(--colour-label-tertiary)", fontSize: "var(--type-title-3)" }}>›</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <SortableTable<Team>
+          rows={data.teams}
+          rowKey={(tm) => tm.team_id}
+          initialSort={{ key: "avg_score_100", dir: "desc" }}
+          empty={<p className="hig-footnote" style={{ margin: 0 }}>No teams yet — add the first one above.</p>}
+          columns={[
+            { key: "name", label: "Team", format: (tm) => (
+                <Link to={`/teams/${tm.team_id}`} style={{ color: "var(--colour-label)", textDecoration: "none", fontWeight: 600 }}>
+                  {tm.name}
+                </Link>
+              ) },
+            { key: "role_label", label: "Role", format: (tm) => tm.role_label ?? "-" },
+            { key: "region", label: "Region", format: (tm) => tm.region ?? "-" },
+            { key: "n_respondents", label: "Reps", align: "right" },
+            { key: "avg_score_100", label: "Avg score", align: "right",
+              format: (tm) => tm.avg_score_100 != null ? `${tm.avg_score_100}/100` : "-" },
+            { key: "director", label: "Director", sortable: false,
+              format: (tm) => tm.director ? tm.director.name : "-" },
+          ]}
+        />
       </Card>
 
       <Card title="Company-Wide Scoping" data-noop="">
@@ -218,8 +289,55 @@ const { me } = useAuth();
   );
 }
 
-function Field({ label, value, onChange, placeholder }:
-  { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
+function KpiCard({
+  label, value, suffix, hint, tone, big = true,
+}: {
+  label: string;
+  value: string | number;
+  suffix?: string;
+  hint?: string;
+  tone?: "elite" | "risk";
+  big?: boolean;
+}) {
+  const colour =
+    tone === "elite" ? "var(--colour-system-green)"
+    : tone === "risk" ? "var(--colour-system-red)"
+    : "var(--colour-label)";
+  return (
+    <Card>
+      <SectionEyebrow>{label}</SectionEyebrow>
+      <div
+        className={big ? "hig-large-title" : "hig-title-2"}
+        style={{ color: colour, marginTop: "var(--space-1)" }}
+      >
+        {value}
+        {suffix && (
+          <span className="hig-title-3" style={{ color: "var(--colour-label-tertiary)", marginLeft: 2 }}>
+            {suffix}
+          </span>
+        )}
+      </div>
+      {hint && (
+        <div className="hig-caption-1" style={{ marginTop: "var(--space-2)" }}>{hint}</div>
+      )}
+    </Card>
+  );
+}
+
+const inputStyle = {
+  padding: "var(--space-2) var(--space-3)",
+  borderRadius: "var(--radius-md)",
+  border: "1px solid var(--colour-separator-opaque)",
+  background: "var(--colour-bg-system-secondary)",
+  color: "var(--colour-label)",
+  font: "inherit",
+  width: "100%",
+};
+
+function Field(
+  { label, value, onChange, placeholder }:
+  { label: string; value: string; onChange: (v: string) => void; placeholder?: string }
+) {
   return (
     <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <span className="hig-caption-1">{label}</span>
@@ -229,9 +347,11 @@ function Field({ label, value, onChange, placeholder }:
     </label>
   );
 }
-function SelectField({ label, value, onChange, options }:
+function SelectField(
+  { label, value, onChange, options }:
   { label: string; value: string; onChange: (v: string) => void;
-    options: { value: string; label: string }[] }) {
+    options: { value: string; label: string }[] }
+) {
   return (
     <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <span className="hig-caption-1">{label}</span>
@@ -244,19 +364,10 @@ function SelectField({ label, value, onChange, options }:
 }
 function roleColour(role: string): string {
   switch (role) {
-    case "ceo":                  return "var(--colour-system-purple)";
-    case "hr":                   return "var(--colour-system-pink)";
-    case "learning_development": return "var(--colour-system-indigo)";
-    case "sales_director":       return "var(--colour-accent)";
-    default:                     return "var(--colour-label-tertiary)";
+    case "ceo":                   return "var(--colour-system-purple)";
+    case "hr":                    return "var(--colour-system-pink)";
+    case "learning_development":  return "var(--colour-system-indigo)";
+    case "sales_director":        return "var(--colour-accent)";
+    default:                      return "var(--colour-label-tertiary)";
   }
 }
-
-const inputStyle: React.CSSProperties = {
-  height: 32, padding: "0 var(--space-3)",
-  border: "1px solid var(--colour-separator-opaque)",
-  borderRadius: "var(--radius-sm)",
-  background: "var(--colour-bg-system)",
-  color: "var(--colour-label)",
-  fontSize: "var(--type-callout)", fontFamily: "inherit",
-};
