@@ -1616,13 +1616,13 @@ def company_distribution(company_id: int, request: Request) -> dict[str, Any]:
         (company_id,),
     )
     dims = [
-        ("cognitive_empathy", "ce"),
-        ("eq", "eq"),
-        ("pressure_composure", "pc"),
-        ("storytelling", "st"),
+        ("cognitive_empathy", "ce", "Cognitive Empathy"),
+        ("eq", "eq", "EQ"),
+        ("pressure_composure", "pc", "Pressure Composure"),
+        ("storytelling", "st", "Storytelling"),
     ]
-    out: dict[str, Any] = {}
-    for label, key in dims:
+    out: list[dict[str, Any]] = []
+    for dimension, key, dimension_label in dims:
         counts = {"elite": 0, "performing": 0, "practising": 0, "developing": 0}
         for row in latest:
             v = row[key]
@@ -1631,7 +1631,7 @@ def company_distribution(company_id: int, request: Request) -> dict[str, Any]:
             band = _band_for(v).lower()
             if band in counts:
                 counts[band] += 1
-        out[label] = counts
+        out.append({"dimension": dimension, "dimension_label": dimension_label, **counts})
     return {
         "company_id": company_id,
         "total": len(latest),
