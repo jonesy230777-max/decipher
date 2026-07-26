@@ -1460,6 +1460,15 @@ def company_teams(company_id: int, request: Request) -> dict[str, Any]:
                   t.contact_name, t.contact_email, t.contact_mobile,
                   (SELECT count(*) FROM respondents r
                      WHERE r.team_id = t.team_id AND r.role='sales_person') AS n_respondents,
+                  (SELECT round(avg((s.cognitive_empathy + s.eq + s.pressure_composure + s.storytelling) / 4.0) * 100, 1)
+                     FROM audit_scores s
+                     JOIN audits a USING (audit_id)
+                     JOIN respondents r2 ON r2.respondent_id = a.respondent_id
+                    WHERE r2.team_id = t.team_id
+                      AND r2.role = 'sales_person'
+                      AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                                         WHERE aa.respondent_id = r2.respondent_id
+                                         ORDER BY aa.started_at DESC LIMIT 1)) AS avg_score_100,
                   -- Director (if any) of this team
                   (SELECT json_build_object(
                             'respondent_id', sd.respondent_id,
@@ -1491,6 +1500,144 @@ def company_teams(company_id: int, request: Request) -> dict[str, Any]:
         (company_id,),
     )
     return {"company": company[0], "teams": teams, "execs": execs}
+
+@app.get("/api/companies/{company_id}/overview")
+def company_overview(company_id: int, request: Request) -> dict[str, Any]:
+    """Company-wide KPI overview across every sales_person in every team.
+
+    Mirrors team_overview's methodology so the numbers roll up consistently.
+    """
+    _require_company_access(request, company_id)
+    company = rows("SELECT * FROM companies WHERE company_id = %s", (company_id,))
+    if not company:
+        raise HTTPException(404, "company not found")
+    n_teams = scalar(
+        "SELECT count(*) FROM teams WHERE company_id = %s", (company_id,),
+    ) or 0
+    n = scalar(
+        "SELECT count(*) FROM respondents WHERE company_id = %s AND role='sales_person'",
+        (company_id,),
+    ) or 0
+    scores = rows(
+        f"""SELECT avg(cognitive_empathy) AS ce, avg(eq) AS eq,
+                   avg(pressure_composure) AS pc, avg(storytelling) AS st
+              FROM audit_scores s
+              JOIN audits a USING (audit_id)
+              JOIN respondents r ON r.respondent_id = a.respondent_id
+             WHERE r.company_id = %s
+               AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                                  WHERE aa.respondent_id = r.respondent_id
+                                  ORDER BY aa.started_at DESC LIMIT 1)
+               AND r.role = 'sales_person'""",
+        (company_id,),
+    )[0]
+    avg_overall = None
+    if scores["ce"] is not None:
+        avg_overall = (scores["ce"] + scores["eq"] + scores["pc"] + scores["st"]) / 4.0
+    elite_count = scalar(
+        """SELECT count(*) FROM audit_scores s
+             JOIN audits a USING (audit_id)
+             JOIN respondents r ON r.respondent_id = a.respondent_id
+            WHERE r.company_id = %s
+              AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                                 WHERE aa.respondent_id = r.respondent_id
+                                 ORDER BY aa.started_at DESC LIMIT 1)
+              AND r.role = 'sales_person'
+              AND s.cognitive_empathy >= 0.85 AND s.eq >= 0.85
+              AND s.pressure_composure >= 0.85 AND s.storytelling >= 0.85""",
+        (company_id,),
+    ) or 0
+    at_risk = scalar(
+        """SELECT count(DISTINCT audit_id) FROM (
+               SELECT bc.audit_id, count(*) AS n_dev
+                 FROM band_classifications bc
+                 JOIN audits a USING (audit_id)
+                 JOIN respondents r ON r.respondent_id = a.respondent_id
+                WHERE r.company_id = %s AND bc.band = 'developing'
+                  AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                                     WHERE aa.respondent_id = r.respondent_id
+                                     ORDER BY aa.started_at DESC LIMIT 1)
+                  AND r.role = 'sales_person'
+                GROUP BY bc.audit_id
+               HAVING count(*) >= 2
+           ) sub""",
+        (company_id,),
+    ) or 0
+    biggest_gap = None
+    dims = {
+        "Cognitive Empathy": scores["ce"],
+        "EQ": scores["eq"],
+        "Pressure Composure": scores["pc"],
+        "Storytelling": scores["st"],
+    }
+    if any(v is not None for v in dims.values()):
+        biggest_name, biggest_val = min(
+            ((k, v) for k, v in dims.items() if v is not None),
+            key=lambda kv: kv[1],
+        )
+        biggest_band = _band_for(biggest_val)
+        biggest_gap = {
+            "trait": biggest_name,
+            "score_100": round(float(biggest_val) * 100, 1),
+            "band": biggest_band,
+        }
+    return {
+        "company": company[0],
+        "month_label": datetime.utcnow().strftime("%B %Y"),
+        "n_teams": int(n_teams),
+        "n_respondents": int(n),
+        "company_average_score_100": (
+            round(avg_overall * 100, 1) if avg_overall is not None else None
+        ),
+        "elite_performers": int(elite_count),
+        "at_risk_reps": int(at_risk),
+        "biggest_gap": biggest_gap,
+    }
+
+
+@app.get("/api/companies/{company_id}/distribution")
+def company_distribution(company_id: int, request: Request) -> dict[str, Any]:
+    """Company-wide band distribution per dimension (elite/performing/practising/developing)."""
+    _require_company_access(request, company_id)
+    company = rows("SELECT * FROM companies WHERE company_id = %s", (company_id,))
+    if not company:
+        raise HTTPException(404, "company not found")
+    latest = rows(
+        """SELECT s.cognitive_empathy AS ce, s.eq AS eq,
+                  s.pressure_composure AS pc, s.storytelling AS st
+             FROM audit_scores s
+             JOIN audits a USING (audit_id)
+             JOIN respondents r ON r.respondent_id = a.respondent_id
+            WHERE r.company_id = %s
+              AND a.audit_id = (SELECT aa.audit_id FROM audits aa
+                                 WHERE aa.respondent_id = r.respondent_id
+                                 ORDER BY aa.started_at DESC LIMIT 1)
+              AND r.role = 'sales_person'""",
+        (company_id,),
+    )
+    dims = [
+        ("cognitive_empathy", "ce"),
+        ("eq", "eq"),
+        ("pressure_composure", "pc"),
+        ("storytelling", "st"),
+    ]
+    out: dict[str, Any] = {}
+    for label, key in dims:
+        counts = {"elite": 0, "performing": 0, "practising": 0, "developing": 0}
+        for row in latest:
+            v = row[key]
+            if v is None:
+                continue
+            band = _band_for(v).lower()
+            if band in counts:
+                counts[band] += 1
+        out[label] = counts
+    return {
+        "company_id": company_id,
+        "total": len(latest),
+        "distribution": out,
+    }
+
 
 
 @app.get("/api/teams")
