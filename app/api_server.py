@@ -911,8 +911,18 @@ def _expand_query(q: str) -> list[str]:
 
 
 @app.get("/api/search")
-def search(q: str = "", limit: int = 25) -> dict[str, Any]:
+def search(request: Request, q: str = "", limit: int = 25) -> dict[str, Any]:
     """Global search with Australian region-synonym expansion."""
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, team_id, company_id FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    if not me:
+        raise HTTPException(401, "not authenticated")
+    caller_role = me[0]["role"]
+    caller_team_id = me[0]["team_id"]
+    caller_company_id = me[0]["company_id"]
+    is_admin = caller_role == "admin"
     q = (q or "").strip()
     if not q:
         return {"hits": []}
@@ -921,12 +931,24 @@ def search(q: str = "", limit: int = 25) -> dict[str, Any]:
     limit = max(1, min(limit, 100))
     hits: list[dict[str, Any]] = []
     # respondents
+    resp_scope = ""
+    resp_params: list[Any] = [likes, likes, likes]
+    if not is_admin:
+        if caller_role == "sales_director":
+            resp_scope = " AND team_id = %s"
+            resp_params.append(caller_team_id)
+        elif caller_role in ("ceo", "hr", "learning_development"):
+            resp_scope = " AND company_id = %s"
+            resp_params.append(caller_company_id)
+        else:
+            resp_scope = " AND FALSE"
+    resp_params.append(limit)
     for r in rows(
-        """SELECT respondent_id AS id, name, email, role, team_id
+        f"""SELECT respondent_id AS id, name, email, role, team_id
              FROM respondents
-            WHERE email ILIKE ANY(%s) OR name ILIKE ANY(%s) OR company ILIKE ANY(%s)
+            WHERE (email ILIKE ANY(%s) OR name ILIKE ANY(%s) OR company ILIKE ANY(%s)){resp_scope}
             ORDER BY name LIMIT %s""",
-        (likes, likes, likes, limit),
+        tuple(resp_params),
     ):
         hits.append({
             "kind": "respondent",
@@ -936,7 +958,21 @@ def search(q: str = "", limit: int = 25) -> dict[str, Any]:
         })
     # audits by id (numeric)
     if q.isdigit():
-        for r in rows("SELECT audit_id, status FROM audits WHERE audit_id = %s", (int(q),)):
+        if is_admin:
+            _audit_rows = rows("SELECT audit_id, status FROM audits WHERE audit_id = %s", (int(q),))
+        elif caller_role == "sales_director":
+            _audit_rows = rows(
+                "SELECT a.audit_id, a.status FROM audits a JOIN respondents r ON r.respondent_id = a.respondent_id WHERE a.audit_id = %s AND r.team_id = %s",
+                (int(q), caller_team_id),
+            )
+        elif caller_role in ("ceo", "hr", "learning_development"):
+            _audit_rows = rows(
+                "SELECT a.audit_id, a.status FROM audits a JOIN respondents r ON r.respondent_id = a.respondent_id WHERE a.audit_id = %s AND r.company_id = %s",
+                (int(q), caller_company_id),
+            )
+        else:
+            _audit_rows = []
+        for r in _audit_rows:
             hits.append({
                 "kind": "audit",
                 "label": f"Audit #{r['audit_id']}",
@@ -944,11 +980,11 @@ def search(q: str = "", limit: int = 25) -> dict[str, Any]:
                 "href": "/audits",
             })
     # bespoke
-    for r in rows(
+    for r in (rows(
         "SELECT bespoke_client_id, client_name, unique_url_slug FROM bespoke_clients "
         "WHERE client_name ILIKE ANY(%s) OR unique_url_slug ILIKE ANY(%s) ORDER BY client_name LIMIT %s",
         (likes, likes, limit),
-    ):
+    ) if is_admin else []):
         hits.append({
             "kind": "bespoke",
             "label": r["client_name"],
@@ -956,11 +992,11 @@ def search(q: str = "", limit: int = 25) -> dict[str, Any]:
             "href": "/bespoke",
         })
     # promo codes
-    for r in rows(
+    for r in (rows(
         "SELECT code, code_type, source_campaign FROM promo_codes "
         "WHERE code ILIKE ANY(%s) OR source_campaign ILIKE ANY(%s) ORDER BY code LIMIT %s",
         (likes, likes, limit),
-    ):
+    ) if is_admin else []):
         hits.append({
             "kind": "promo",
             "label": r["code"],
@@ -980,10 +1016,22 @@ def search(q: str = "", limit: int = 25) -> dict[str, Any]:
             "href": "/industries",
         })
     # teams
+    team_scope = ""
+    team_params: list[Any] = [likes, likes]
+    if not is_admin:
+        if caller_role == "sales_director":
+            team_scope = " AND team_id = %s"
+            team_params.append(caller_team_id)
+        elif caller_role in ("ceo", "hr", "learning_development"):
+            team_scope = " AND company_id = %s"
+            team_params.append(caller_company_id)
+        else:
+            team_scope = " AND FALSE"
+    team_params.append(limit)
     for r in rows(
-        "SELECT team_id, name, organisation FROM teams "
-        "WHERE name ILIKE ANY(%s) OR organisation ILIKE ANY(%s) ORDER BY name LIMIT %s",
-        (likes, likes, limit),
+        f"SELECT team_id, name, organisation FROM teams "
+        f"WHERE (name ILIKE ANY(%s) OR organisation ILIKE ANY(%s)){team_scope} ORDER BY name LIMIT %s",
+        tuple(team_params),
     ):
         hits.append({
             "kind": "team",
@@ -992,11 +1040,11 @@ def search(q: str = "", limit: int = 25) -> dict[str, Any]:
             "href": f"/teams/{r['team_id']}",
         })
     # patterns
-    for r in rows(
+    for r in (rows(
         "SELECT pattern_id, name, doubt_passed FROM pattern_library "
         "WHERE name ILIKE ANY(%s) ORDER BY name LIMIT %s",
         (likes, limit),
-    ):
+    ) if is_admin else []):
         hits.append({
             "kind": "pattern",
             "label": r["name"],
@@ -1004,12 +1052,12 @@ def search(q: str = "", limit: int = 25) -> dict[str, Any]:
             "href": "/cohort",
         })
     # events (action match)
-    for r in rows(
+    for r in (rows(
         "SELECT id, action, severity FROM events_log "
         "WHERE action ILIKE ANY(%s) OR subject_id ILIKE ANY(%s) "
         "ORDER BY occurred_at DESC LIMIT %s",
         (likes, likes, limit),
-    ):
+    ) if is_admin else []):
         hits.append({
             "kind": "event",
             "label": r["action"],
