@@ -91,7 +91,7 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
     payload = {
         "from": _MAIL_FROM,
         "to": [r["email"]],
-        "subject": "Why this report exists",
+        "subject": "Your Decipher report",
         "text": text_body,
         "html": html_body,
         "attachments": [
