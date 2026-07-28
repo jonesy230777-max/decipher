@@ -766,7 +766,6 @@ def _render_pdf(html: str, audit_id: int) -> bytes:
         f'<div style="font-family:sans-serif;font-size:7px;color:#8E8E93;'
         f'text-align:center;width:100%;padding:0 18mm">'
         f'deciphersales.com.au &nbsp;&middot;&nbsp; Confidential individual report'
-        f' &nbsp;&middot;&nbsp; Audit #{audit_id}'
         f' &nbsp;&middot;&nbsp; Page <span class="pageNumber"></span>'
         f' of <span class="totalPages"></span>'
         f'</div>'
