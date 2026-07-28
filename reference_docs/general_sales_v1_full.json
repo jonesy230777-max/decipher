@@ -1,0 +1,443 @@
+{
+"questions": [
+{
+"id": "Q1",
+"qnum": 1,
+"trait": "cognitive_empathy",
+"prompt": "A prospect gives you a one-word answer after your opening question. Your instinct is to:",
+"options": [
+{"letter": "A", "text": "Ask another question straight away to keep momentum", "score": 1},
+{"letter": "B", "text": "Offer more detail about your product to fill the gap", "score": 1},
+{"letter": "C", "text": "Acknowledge what they said and bridge to your next point", "score": 3},
+{"letter": "D", "text": "Reflect their word back to them as a question", "score": 4},
+{"letter": "E", "text": "Name the flatness in their tone and hold the silence", "score": 5}
+]
+},
+{
+"id": "Q2",
+"qnum": 2,
+"trait": "cognitive_empathy",
+"prompt": "Mid-meeting, a prospect says: \"We tried something like this before and it didn't work.\" You:",
+"options": [
+{"letter": "A", "text": "Jump to reassurance: \"This time will be different, I promise.\"", "score": 1},
+{"letter": "B", "text": "Apologise for their past experience and offer better terms to smooth things over", "score": 1},
+{"letter": "C", "text": "Ask a simple follow-up: \"Can you tell me what happened?\"", "score": 3},
+{"letter": "D", "text": "Reflect it back: \"Didn't work?\" and hold the silence to see what surfaces", "score": 4},
+{"letter": "E", "text": "Name the feeling underneath it: \"That experience left you cautious about trying again.\"", "score": 5}
+]
+},
+{
+"id": "Q3",
+"qnum": 3,
+"trait": "cognitive_empathy",
+"prompt": "There is a 7-second pause after you ask a prospect what's holding the decision up. You:",
+"options": [
+{"letter": "A", "text": "Fill the silence with another angle on your pitch", "score": 1},
+{"letter": "B", "text": "Repeat the question in slightly different words", "score": 2},
+{"letter": "C", "text": "Wait it out and let them arrive at their own answer", "score": 3},
+{"letter": "D", "text": "Offer a guess at what might be holding them up, to give them a starting point", "score": 4},
+{"letter": "E", "text": "Name the pause itself: \"That took a moment. What were you weighing up?\"", "score": 5}
+]
+},
+{
+"id": "Q4",
+"qnum": 4,
+"trait": "cognitive_empathy",
+"prompt": "A prospect says \"let me think about it\" at the end of a strong meeting. Your read is:",
+"options": [
+{"letter": "A", "text": "They're being polite and the answer is probably no", "score": 2},
+{"letter": "B", "text": "They genuinely need time to weigh it up, no need to probe further", "score": 1},
+{"letter": "C", "text": "There's an unspoken concern they haven't raised yet", "score": 4},
+{"letter": "D", "text": "Someone else holds influence over this and hasn't been named", "score": 3},
+{"letter": "E", "text": "Name it directly: \"When people say that, there's usually something specific behind it. What is it for you?\"", "score": 5}
+]
+},
+{
+"id": "Q5",
+"qnum": 5,
+"trait": "cognitive_empathy",
+"prompt": "Mid-pitch, a prospect crosses their arms and leans back. You:",
+"options": [
+{"letter": "A", "text": "Carry on. Body language is often misread", "score": 1},
+{"letter": "B", "text": "Pivot to a different angle to try to re-engage them", "score": 2},
+{"letter": "C", "text": "Slow your pace and check in: \"Am I tracking with what matters to you?\"", "score": 3},
+{"letter": "D", "text": "Recalibrate based on what topic seemed to shift their posture", "score": 4},
+{"letter": "E", "text": "Name what you're noticing: \"I get the sense something just landed differently than I intended.\"", "score": 5}
+]
+},
+{
+"id": "Q6",
+"qnum": 6,
+"trait": "cognitive_empathy",
+"prompt": "A prospect tells you they have \"no budget\" for what you're proposing. Most often this signals:",
+"options": [
+{"letter": "A", "text": "Exactly what they said. The budget doesn't exist", "score": 1},
+{"letter": "B", "text": "They want to see how you respond under financial pressure", "score": 2},
+{"letter": "C", "text": "Budget exists, but they haven't yet bought into the value", "score": 3},
+{"letter": "D", "text": "Budget could be found if the priority were higher", "score": 4},
+{"letter": "E", "text": "Budget exists somewhere, but they don't have the authority to release it", "score": 5}
+]
+},
+{
+"id": "Q7",
+"qnum": 7,
+"trait": "eq",
+"prompt": "You're in a meeting with three stakeholders. The most senior person says nothing the entire time. You read this as:",
+"options": [
+{"letter": "A", "text": "A sign their role here is mainly to listen and observe", "score": 1},
+{"letter": "B", "text": "Trust in their team to lead the conversation", "score": 2},
+{"letter": "C", "text": "Active assessment of how their team interacts with you", "score": 3},
+{"letter": "D", "text": "Possible disengagement worth checking on later", "score": 2},
+{"letter": "E", "text": "They're the real decision-maker, and the room is performing for them", "score": 5}
+]
+},
+{
+"id": "Q8",
+"qnum": 8,
+"trait": "eq",
+"prompt": "A normally warm contact is noticeably curt with you today. Your approach for the rest of the call:",
+"options": [
+{"letter": "A", "text": "Match their energy so you're not thrown off your agenda", "score": 1},
+{"letter": "B", "text": "Push through your planned agenda as normal", "score": 1},
+{"letter": "C", "text": "Soften your tone and go gently for the rest of the call", "score": 3},
+{"letter": "D", "text": "Ask a light, low-pressure check-in before continuing", "score": 4},
+{"letter": "E", "text": "Name it plainly: \"You seem a bit different today, everything okay on your end?\"", "score": 5}
+]
+},
+{
+"id": "Q9",
+"qnum": 9,
+"trait": "eq",
+"prompt": "You're presenting to a technical buyer and a commercial buyer at once. The technical buyer is nodding; the commercial buyer looks unconvinced. You:",
+"options": [
+{"letter": "A", "text": "Keep the pitch as planned since one of them is clearly on side", "score": 1},
+{"letter": "B", "text": "Address the commercial buyer's likely concerns generically before moving on", "score": 2},
+{"letter": "C", "text": "Ask the commercial buyer directly what would need to be true for this to work for them", "score": 4},
+{"letter": "D", "text": "Split your attention evenly between both for the rest of the meeting", "score": 3},
+{"letter": "E", "text": "Name the gap: \"I can see this is landing differently for each of you. Let's talk about that.\"", "score": 5}
+]
+},
+{
+"id": "Q10",
+"qnum": 10,
+"trait": "eq",
+"prompt": "A prospect says they're \"excited\" about your proposal but their body language and pace say otherwise. You:",
+"options": [
+{"letter": "A", "text": "Take the word at face value and move to next steps", "score": 1},
+{"letter": "B", "text": "Slow down and ask a broader open question about their priorities", "score": 3},
+{"letter": "C", "text": "Repeat the benefits in case they missed something", "score": 1},
+{"letter": "D", "text": "Ask what would need to happen internally for this to move forward", "score": 4},
+{"letter": "E", "text": "Name the mismatch gently: \"You say excited, but something in the room feels more cautious. What's the caution about?\"", "score": 5}
+]
+},
+{
+"id": "Q11",
+"qnum": 11,
+"trait": "eq",
+"prompt": "A buyer you're negotiating with keeps deferring to a colleague who isn't in the room. You:",
+"options": [
+{"letter": "A", "text": "Keep negotiating with the person in front of you as if they hold full authority", "score": 1},
+{"letter": "B", "text": "Ask general questions about their internal process", "score": 2},
+{"letter": "C", "text": "Suggest getting the colleague on a call before going further", "score": 3},
+{"letter": "D", "text": "Ask what that colleague would need to see to be comfortable", "score": 4},
+{"letter": "E", "text": "Name the pattern: \"You've mentioned them a few times now. What's their actual stake in this decision?\"", "score": 5}
+]
+},
+{
+"id": "Q12",
+"qnum": 12,
+"trait": "eq",
+"prompt": "In a group demo, one attendee keeps checking their phone while others are engaged. You:",
+"options": [
+{"letter": "A", "text": "Ignore it and keep presenting to the engaged majority", "score": 1},
+{"letter": "B", "text": "Raise your energy to try to win their attention back", "score": 2},
+{"letter": "C", "text": "Direct a specific, easy question their way to re-engage them", "score": 4},
+{"letter": "D", "text": "Pause briefly and ask the group if this is still a good use of everyone's time", "score": 3},
+{"letter": "E", "text": "Note it, and follow up with them individually after to find out what pulled their focus", "score": 5}
+]
+},
+{
+"id": "Q13",
+"qnum": 13,
+"trait": "eq_bonus",
+"prompt": "Your manager delivers blunt critical feedback in a one-to-one. Your first internal reaction:",
+"options": [
+{"letter": "A", "text": "Defensive. You start building counter-arguments in your head", "score": 1},
+{"letter": "B", "text": "Direct. You push back on the spot to test the reasoning", "score": 2},
+{"letter": "C", "text": "Measured. You absorb it and decide how to respond later", "score": 3},
+{"letter": "D", "text": "Curious. You ask questions to understand the concern underneath it", "score": 4},
+{"letter": "E", "text": "Open. You name what you're feeling: \"That stings a bit, give me a second to sit with it.\"", "score": 5}
+]
+},
+{
+"id": "Q14",
+"qnum": 14,
+"trait": "eq_bonus",
+"prompt": "A prospect raises their voice at you on a call. You:",
+"options": [
+{"letter": "A", "text": "Match their energy to show you're not intimidated", "score": 1},
+{"letter": "B", "text": "De-escalate by immediately agreeing with whatever they're upset about", "score": 2},
+{"letter": "C", "text": "Stay quiet, let them finish, then respond calmly", "score": 3},
+{"letter": "D", "text": "Hold steady and ask a calibrated question to slow the moment down", "score": 4},
+{"letter": "E", "text": "Name what's happening: \"Something's clearly hit a nerve here. Talk me through it.\"", "score": 5}
+]
+},
+{
+"id": "Q15",
+"qnum": 15,
+"trait": "eq_bonus",
+"prompt": "A colleague takes public credit for an idea you brought to the team. You:",
+"options": [
+{"letter": "A", "text": "Let it slide. The work matters more than the credit", "score": 1},
+{"letter": "B", "text": "Note it privately and watch for a pattern over time", "score": 2},
+{"letter": "C", "text": "Raise it with them one-to-one after the meeting", "score": 3},
+{"letter": "D", "text": "Raise it cleanly in the moment without making it personal", "score": 4},
+{"letter": "E", "text": "Name it directly: \"That was actually my idea. I'd like the next one to land properly.\"", "score": 5}
+]
+},
+{
+"id": "Q16",
+"qnum": 16,
+"trait": "eq_bonus",
+"prompt": "A client has cancelled on you three times in a row. Internally you feel:",
+"options": [
+{"letter": "A", "text": "Anxious that the deal is slipping away", "score": 1},
+{"letter": "B", "text": "Frustrated, and you start to question whether they're worth chasing", "score": 2},
+{"letter": "C", "text": "Curious about what's actually going on for them", "score": 3},
+{"letter": "D", "text": "Pragmatic. The pattern itself is data worth acting on", "score": 4},
+{"letter": "E", "text": "Direct. Time to name the pattern openly rather than reschedule again", "score": 5}
+]
+},
+{
+"id": "Q17",
+"qnum": 17,
+"trait": "eq_bonus",
+"prompt": "You're three weeks into a slump with no closes. Your dominant self-talk is:",
+"options": [
+{"letter": "A", "text": "\"Push harder. More activity will fix this.\"", "score": 1},
+{"letter": "B", "text": "\"Slumps end. Just keep showing up.\"", "score": 2},
+{"letter": "C", "text": "\"Time to ask for a fresh set of eyes on my pipeline.\"", "score": 3},
+{"letter": "D", "text": "\"What am I missing? What's the pattern in the losses?\"", "score": 4},
+{"letter": "E", "text": "\"The pressure I'm under is itself changing how I'm showing up right now.\"", "score": 5}
+]
+},
+{
+"id": "Q18",
+"qnum": 18,
+"trait": "eq_bonus",
+"prompt": "Your manager hands you a difficult account known for burning out reps. You:",
+"options": [
+{"letter": "A", "text": "Accept it and quietly wonder if you're being set up to fail", "score": 1},
+{"letter": "B", "text": "Take it as a chance to prove yourself", "score": 2},
+{"letter": "C", "text": "Approach it as a learning opportunity regardless of outcome", "score": 3},
+{"letter": "D", "text": "Spend time understanding what previous reps got wrong first", "score": 4},
+{"letter": "E", "text": "Ask your manager directly what success looks like and what support is on offer", "score": 5}
+]
+},
+{
+"id": "Q19",
+"qnum": 19,
+"trait": "eq_bonus",
+"prompt": "A client who was warm has gone completely quiet for over a week. Your gut says:",
+"options": [
+{"letter": "A", "text": "They're probably just busy, keep following up on a normal schedule", "score": 1},
+{"letter": "B", "text": "They have some hesitation but aren't ready to raise it yet", "score": 2},
+{"letter": "C", "text": "Something changed internally, worth reaching out to find out what", "score": 4},
+{"letter": "D", "text": "Someone else may hold sway and hasn't been convinced yet", "score": 3},
+{"letter": "E", "text": "Name it directly in your next message: \"I sense something's shifted, what's changed since we last spoke?\"", "score": 5}
+]
+},
+{
+"id": "Q20",
+"qnum": 20,
+"trait": "pressure_composure",
+"prompt": "It's three days from the end of the period and you're well short of target. Your default move:",
+"options": [
+{"letter": "A", "text": "High activity. More calls, more emails, work the pipe hard", "score": 2},
+{"letter": "B", "text": "Step back for an hour to think strategically before acting", "score": 3},
+{"letter": "C", "text": "Triage the pipeline and focus only on what can realistically close", "score": 4},
+{"letter": "D", "text": "Lean on your strongest relationships with a direct, honest ask", "score": 3},
+{"letter": "E", "text": "Pick up the phone to your best contacts and ask plainly for the business", "score": 5}
+]
+},
+{
+"id": "Q21",
+"qnum": 21,
+"trait": "pressure_composure",
+"prompt": "A procurement contact says: \"Match this price or we go with the other vendor.\" You:",
+"options": [
+{"letter": "A", "text": "Match the price straight away to protect the relationship", "score": 1},
+{"letter": "B", "text": "Defend your price firmly using feature and value comparisons", "score": 2},
+{"letter": "C", "text": "Ask for time to consult your manager before responding", "score": 2},
+{"letter": "D", "text": "Acknowledge the pressure they're under and ask what outcome they're really trying to protect", "score": 4},
+{"letter": "E", "text": "Name the pressure directly and ask what success actually looks like for them here", "score": 5}
+]
+},
+{
+"id": "Q22",
+"qnum": 22,
+"trait": "pressure_composure",
+"prompt": "Mid-demo, the software crashes in front of the whole buying committee. You:",
+"options": [
+{"letter": "A", "text": "Apologise and try to reboot as quickly as possible", "score": 1},
+{"letter": "B", "text": "Acknowledge the failure, lighten the room, and switch to a backup explanation", "score": 3},
+{"letter": "C", "text": "Stay composed and suggest reconvening once it's working again", "score": 3},
+{"letter": "D", "text": "Use the dead time to deepen discovery instead", "score": 4},
+{"letter": "E", "text": "Name it openly: \"Not the demo gods' finest hour. Here's exactly what you would have seen.\"", "score": 5}
+]
+},
+{
+"id": "Q23",
+"qnum": 23,
+"trait": "pressure_composure",
+"prompt": "A prospect blindsides you with a technical question you genuinely can't answer. You:",
+"options": [
+{"letter": "A", "text": "Attempt an answer and risk being wrong", "score": 1},
+{"letter": "B", "text": "Buy time with \"great question\" while you think of something", "score": 1},
+{"letter": "C", "text": "Redirect: \"Before I answer, help me understand why that matters for you.\"", "score": 4},
+{"letter": "D", "text": "Commit to a precise answer within a clear timeframe", "score": 3},
+{"letter": "E", "text": "Say honestly: \"I don't know. I'll find out and have it to you today.\"", "score": 5}
+]
+},
+{
+"id": "Q24",
+"qnum": 24,
+"trait": "pressure_composure",
+"prompt": "A senior person is openly sceptical in a meeting and the rest of the room goes quiet. You:",
+"options": [
+{"letter": "A", "text": "Try to win them over by agreeing with their concerns", "score": 1},
+{"letter": "B", "text": "Push back directly: \"I think we see this differently, can we work through it?\"", "score": 3},
+{"letter": "C", "text": "Hold your position politely and let the evidence speak", "score": 2},
+{"letter": "D", "text": "Slow the conversation down and ask what's actually behind the concern", "score": 4},
+{"letter": "E", "text": "Name it: \"This isn't landing the way I'd hoped. What would be useful to dig into?\"", "score": 5}
+]
+},
+{
+"id": "Q25",
+"qnum": 25,
+"trait": "pressure_composure",
+"prompt": "A senior buyer sets a hard deadline: \"Final answer by Friday, or we go with someone else.\" You:",
+"options": [
+{"letter": "A", "text": "Move quickly to accommodate the deadline and secure the deal", "score": 1},
+{"letter": "B", "text": "Confirm the deadline and adjust your process to meet it", "score": 2},
+{"letter": "C", "text": "Hold steady, explain your process, and propose a realistic counter-timeline", "score": 4},
+{"letter": "D", "text": "Acknowledge the timeline and ask what's actually driving the urgency", "score": 3},
+{"letter": "E", "text": "Name what's underneath it: \"Before I respond to the deadline, help me understand what's actually changed since we last spoke.\"", "score": 5}
+]
+},
+{
+"id": "Q26",
+"qnum": 26,
+"trait": "narrative_persuasion",
+"prompt": "The most effective opening in the first 60 seconds with a brand new prospect:",
+"options": [
+{"letter": "A", "text": "A clear summary of who you are and what you do", "score": 1},
+{"letter": "B", "text": "A provocative question that challenges their current thinking", "score": 3},
+{"letter": "C", "text": "A specific story about a similar client and the problem you solved for them", "score": 4},
+{"letter": "D", "text": "A direct question about a pressure point you already suspect they're feeling", "score": 3},
+{"letter": "E", "text": "A relevant insight about their situation that earns you the next five minutes", "score": 5}
+]
+},
+{
+"id": "Q27",
+"qnum": 27,
+"trait": "narrative_persuasion",
+"prompt": "Explaining a technically complex feature to a non-technical buyer, you:",
+"options": [
+{"letter": "A", "text": "Walk them through it step by step at a simplified level", "score": 2},
+{"letter": "B", "text": "Hand it to a technical colleague and stay focused on the commercial picture", "score": 1},
+{"letter": "C", "text": "Skip the mechanics and focus only on the business outcome", "score": 3},
+{"letter": "D", "text": "Use an analogy from a world they already understand", "score": 4},
+{"letter": "E", "text": "Tell a short story about a customer who had the same gap and what changed for them", "score": 5}
+]
+},
+{
+"id": "Q28",
+"qnum": 28,
+"trait": "narrative_persuasion",
+"prompt": "The strongest follow-up message after receiving a no:",
+"options": [
+{"letter": "A", "text": "A polite thank-you and a request to stay in touch", "score": 1},
+{"letter": "B", "text": "An article or insight relevant to the reason they declined", "score": 3},
+{"letter": "C", "text": "A direct question: \"Help me understand what would need to be different next time.\"", "score": 4},
+{"letter": "D", "text": "A reflection of what you've learned that might be useful to them regardless", "score": 3},
+{"letter": "E", "text": "A short story about a buyer who once said no, came back later, and what changed", "score": 5}
+]
+},
+{
+"id": "Q29",
+"qnum": 29,
+"trait": "narrative_persuasion",
+"prompt": "You're the third vendor the prospect has spoken to this month, and they've heard versions of your pitch twice already. You:",
+"options": [
+{"letter": "A", "text": "Differentiate on price or commercial terms", "score": 1},
+{"letter": "B", "text": "Differentiate on service, support, or relationship", "score": 2},
+{"letter": "C", "text": "Reframe the actual problem you think you're solving", "score": 4},
+{"letter": "D", "text": "Lead with a story or insight the other two are unlikely to have shared", "score": 3},
+{"letter": "E", "text": "Name the situation: \"You've heard versions of this twice already. Here's what I think the others missed.\"", "score": 5}
+]
+},
+{
+"id": "Q30",
+"qnum": 30,
+"trait": "narrative_persuasion",
+"prompt": "A prospect pushes back hard on your pricing. The strongest response:",
+"options": [
+{"letter": "A", "text": "Hold the price and explain that quality has a cost", "score": 2},
+{"letter": "B", "text": "Walk them through the value calculation logically", "score": 2},
+{"letter": "C", "text": "Ask what they're comparing it to, and explore the gap", "score": 3},
+{"letter": "D", "text": "Tell the story of a buyer who picked the cheaper option and what that choice cost them", "score": 4},
+{"letter": "E", "text": "Reframe what's actually being decided: \"This isn't really about price, is it?\"", "score": 5}
+]
+},
+{
+"id": "Q31",
+"qnum": 31,
+"trait": "narrative_persuasion",
+"prompt": "The most powerful version of a customer case study in a pitch centres on:",
+"options": [
+{"letter": "A", "text": "The numbers and metrics: percentage improvements, dollar impact", "score": 1},
+{"letter": "B", "text": "The specific moment the customer realised they had the problem", "score": 3},
+{"letter": "C", "text": "The before-and-after transformation of the customer's situation", "score": 3},
+{"letter": "D", "text": "The decision moment when the customer chose to act", "score": 4},
+{"letter": "E", "text": "The human behind the result: who they were, what they feared, what changed", "score": 5}
+]
+},
+{
+"id": "Q32",
+"qnum": 32,
+"trait": "eq_identity",
+"prompt": "EQ Identity EQ1",
+"options": [
+{"letter": "EQ-A", "text": "When a prospect is emotional, my strength is staying calm and not reacting", "identity": "regulator"},
+{"letter": "EQ-B", "text": "My strength is using their emotion as information that tells me what to do next", "identity": "edge_builder"},
+{"letter": "EQ-C", "text": "My strength is noticing the emotion before they've said anything about it", "identity": "observer"},
+{"letter": "EQ-D", "text": "My strength is naming the emotion out loud, even when it's uncomfortable", "identity": "namer"}
+]
+},
+{
+"id": "Q33",
+"qnum": 33,
+"trait": "eq_identity",
+"prompt": "EQ Identity EQ2",
+"options": [
+{"letter": "EQ-A", "text": "In a tense negotiation, I'm the one who keeps the room steady", "identity": "regulator"},
+{"letter": "EQ-B", "text": "I'm quick to sense a shift in energy and move before anyone else reacts", "identity": "edge_builder"},
+{"letter": "EQ-C", "text": "I pick up on what's not being said faster than most people in the room", "identity": "observer"},
+{"letter": "EQ-D", "text": "I'll say the thing everyone else is thinking but avoiding out loud", "identity": "namer"}
+]
+},
+{
+"id": "Q34",
+"qnum": 34,
+"trait": "eq_identity",
+"prompt": "EQ Identity EQ3",
+"options": [
+{"letter": "EQ-A", "text": "My default under pressure is composure. I don't let the moment rattle me", "identity": "regulator"},
+{"letter": "EQ-B", "text": "My default under pressure is momentum. I use the tension to move things forward", "identity": "edge_builder"},
+{"letter": "EQ-C", "text": "My default under pressure is attention. I slow down and watch closely before acting", "identity": "observer"},
+{"letter": "EQ-D", "text": "My default under pressure is honesty. I say plainly what I think is happening", "identity": "namer"}
+]
+}
+]
+}
