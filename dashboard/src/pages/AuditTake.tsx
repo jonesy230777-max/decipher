@@ -30,6 +30,8 @@ type VersionPayload = {
   questions: Question[];
 };
 
+type VersionSummary = { audit_version_id: number; code: string; name: string };
+
 type Step = "intro" | "question" | "done";
 
 type CompleteResult = {
@@ -112,10 +114,19 @@ export default function AuditTake() {
 
   const [startedAt, setStartedAt] = useState<number>(Date.now());
 
+  const [versionList, setVersionList] = useState<VersionSummary[] | null>(null);
+  const [selectedVersionCode, setSelectedVersionCode] = useState<string>(
+    () => new URLSearchParams(window.location.search).get("v") || "media_sales_v1"
+  );
   useEffect(() => {
-    api<VersionPayload>("/api/audit/versions/media_sales_v1/questions")
-      .then(setVersion);
+    api<{ versions: VersionSummary[] }>("/api/audit/versions")
+      .then((d) => setVersionList(d.versions));
   }, []);
+
+  useEffect(() => {
+    api<VersionPayload>(`/api/audit/versions/${selectedVersionCode}/questions`)
+      .then(setVersion);
+  }, [selectedVersionCode]);
 
   const questions = useMemo(
     () => (version?.questions ?? []).filter((q) => q.response_type === "choice"),
@@ -154,10 +165,10 @@ export default function AuditTake() {
         name: name.trim(),
         job_title: jobTitle.trim() || null,
         company: company.trim() || null,
-        version_code: "media_sales_v1", team_id: (() => { const t = new URLSearchParams(window.location.search).get("team"); return t ? Number(t) : null; })(),
+        version_code: selectedVersionCode, team_id: (() => { const t = new URLSearchParams(window.location.search).get("team"); return t ? Number(t) : null; })(),
         token: new URLSearchParams(window.location.search).get("invite"),
       };
-      const s = await fetch("/api/audit/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); const sd = await s.json(); if (!s.ok) { alert(sd.detail || "Something went wrong. Please try again."); return; } setAuditId(sd.audit_id); setStep("question"); setStartedAt(Date.now()); nav(`/audit/${sd.audit_id}`, { replace: true }); } finally {
+      const s = await fetch("/api/audit/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); const sd = await s.json(); if (!s.ok) { alert(sd.detail || "Something went wrong. Please try again."); return; } setAuditId(sd.audit_id); setStep("question"); setStartedAt(Date.now()); nav(`/audit/${sd.audit_id}?v=${selectedVersionCode}`, { replace: true }); } finally {
       setBusy(false);
     }
   }
@@ -240,6 +251,31 @@ export default function AuditTake() {
               This assessment is confidential. Answer honestly. There are no right
               or wrong answers. {questions.length} questions, roughly 15 minutes.
             </p>
+            {versionList && versionList.length > 1 && (
+              <div style={{ marginTop: "var(--space-4)" }}>
+                <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <span className="hig-caption-1" style={{ color: "var(--colour-label)" }}>Audit type</span>
+                  <select
+                    value={selectedVersionCode}
+                    onChange={(e) => setSelectedVersionCode(e.target.value)}
+                    style={{
+                      height: 40,
+                      padding: "0 var(--space-3)",
+                      border: "1px solid var(--colour-separator-opaque)",
+                      borderRadius: "var(--radius-sm)",
+                      background: "#ffffff",
+                      color: "var(--colour-label)",
+                      fontSize: "var(--type-body)",
+                      fontFamily: "inherit",
+                    }}
+                  >
+                    {versionList.map((v) => (
+                      <option key={v.code} value={v.code}>{v.name}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            )}
             <div style={{ display: "grid", gap: "var(--space-3)", marginTop: "var(--space-5)" }}>
               <Field label="Full name" value={name} onChange={setName} placeholder="Your name" />
               <Field label="Work email" value={email} onChange={setEmail} placeholder="you@company.com" type="email" />
