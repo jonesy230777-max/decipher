@@ -1360,6 +1360,33 @@ def admin_run_backup(background_tasks: BackgroundTasks, request: Request) -> dic
     background_tasks.add_task(_run_backup)
     return {"ok": True, "message": "Backup started in background. Check events log for db.backup_complete."}
 
+class _DeleteRespondentsBody(BaseModel):
+    respondent_ids: list[int]
+
+
+@app.post("/api/admin/respondents/delete")
+def admin_delete_respondents(body: _DeleteRespondentsBody, request: Request) -> dict[str, Any]:
+    """Remove respondents and everything tied to them (admin only): their
+    audits cascade to responses/scores/bands/archetypes/vectors/reports/jobs,
+    then invite and magic-link references are cleared, then the respondent
+    rows themselves. Teams and companies are never touched."""
+    _require_admin(request)
+    ids = body.respondent_ids
+    if not ids:
+        return {"ok": True, "deleted": 0}
+    with conn() as cdb, cdb.cursor() as cur:
+        cur.execute(
+            "UPDATE audit_invites SET audit_id = NULL WHERE audit_id IN "
+            "(SELECT audit_id FROM audits WHERE respondent_id = ANY(%s))",
+            (ids,),
+        )
+        cur.execute("UPDATE audit_invites SET respondent_id = NULL WHERE respondent_id = ANY(%s)", (ids,))
+        cur.execute("DELETE FROM magic_link_tokens WHERE respondent_id = ANY(%s)", (ids,))
+        cur.execute("DELETE FROM audits WHERE respondent_id = ANY(%s)", (ids,))
+        cur.execute("DELETE FROM respondents WHERE respondent_id = ANY(%s)", (ids,))
+        deleted = cur.rowcount
+    return {"ok": True, "deleted": deleted}
+
 
 # ---------------------------------------------------------------------------
 # Teams (executive dashboard data)
