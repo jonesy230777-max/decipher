@@ -765,7 +765,7 @@ def _render_pdf(html: str, audit_id: int) -> bytes:
     footer = (
         f'<div style="font-family:sans-serif;font-size:7px;color:#8E8E93;'
         f'text-align:center;width:100%;padding:0 18mm">'
-        f'decipher.com.au &nbsp;&middot;&nbsp; Confidential individual report'
+        f'deciphersales.com.au &nbsp;&middot;&nbsp; Confidential individual report'
         f' &nbsp;&middot;&nbsp; Audit #{audit_id}'
         f' &nbsp;&middot;&nbsp; Page <span class="pageNumber"></span>'
         f' of <span class="totalPages"></span>'
@@ -777,8 +777,8 @@ def _render_pdf(html: str, audit_id: int) -> bytes:
             page = browser.new_page()
             page.set_content(html, wait_until="domcontentloaded")
             pdf_bytes = page.pdf(
-                format="A4", print_background=True, display_header_footer=False,
-                header_template="<span></span>", footer_template="",
+                format="A4", print_background=True, display_header_footer=True,
+                header_template="<span></span>", footer_template=footer,
                 margin={"top": "15mm", "bottom": "15mm", "left": "18mm", "right": "18mm"},
             )
         finally:
