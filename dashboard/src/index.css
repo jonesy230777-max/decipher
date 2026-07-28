@@ -44,4 +44,4 @@ button:focus-visible, a:focus-visible {
 .hig-footnote  { font: var(--weight-regular)  var(--type-footnote)/var(--lead-footnote) inherit; color: var(--colour-label-secondary); }
 .hig-caption-1 { font: var(--weight-regular)  var(--type-caption-1)/var(--lead-caption-1) inherit; color: var(--colour-label-tertiary); }
 .hig-caption-2 { font: var(--weight-regular)  var(--type-caption-2)/var(--lead-caption-2) inherit; color: var(--colour-label-tertiary); }
-.hig-numeric   { font-variant-numeric: tabular-nums; }
+.audit-option-btn:active { background: var(--colour-accent-tint-bg); border-color: var(--colour-accent); } @media (hover: hover) and (pointer: fine) { .audit-option-btn:hover { background: var(--colour-accent-tint-bg); border-color: var(--colour-accent); } } .hig-numeric   { font-variant-numeric: tabular-nums; }
