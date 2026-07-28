@@ -127,7 +127,7 @@ def _synthesis_user_turn(ctx: dict) -> str:
     bands = ctx["bands"]
     lines = [
         f"Respondent: {name}",
-        f"Industry: {ctx.get('industry_name') or 'Media'} sales",
+        f"Industry: {ctx.get('industry_name') or 'General'} sales",
         f"Role: {r.get('job_title') or 'sales professional'}",
         "",
         "Scores:",
@@ -161,7 +161,7 @@ def _get_synthesis(ctx: dict) -> dict:
     }
     try:
         raw = complete_narrative(
-            _SYNTHESIS_SYSTEM_PROMPT.format(industry=(ctx.get("industry_name") or "media").lower()),
+            _SYNTHESIS_SYSTEM_PROMPT.format(industry=(ctx.get("industry_name") or "general").lower()),
             _synthesis_user_turn(ctx),
         )
         data = json.loads(raw)
