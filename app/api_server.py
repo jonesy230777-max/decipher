@@ -4138,6 +4138,17 @@ def team_roster(team_id: int, request: Request) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
+@app.get("/api/audit/versions")
+def audit_versions_list() -> dict[str, Any]:
+    """Active, non-bespoke audit versions for the take-audit dropdown."""
+    vs = rows(
+        """SELECT audit_version_id, code, name FROM audit_versions
+            WHERE is_active AND bespoke_client_id IS NULL
+            ORDER BY audit_version_id"""
+    )
+    return {"versions": vs}
+
+
 @app.get("/api/audit/versions/{code}/questions")
 def audit_version_questions(code: str) -> dict[str, Any]:
     v = rows("SELECT audit_version_id, code, name FROM audit_versions WHERE code = %s", (code,))
