@@ -299,8 +299,8 @@ export default function AuditTake() {
               {displayOrder.map((canonicalIdx, i) => (
                 <button
                   key={canonicalIdx}
-                  disabled={busy}
-                  onClick={() => answer(canonicalIdx)} className="audit-option-btn"
+                  disabled={busy} onClick={() => answer(canonicalIdx)} className="audit-option-btn"
+                  
                   style={{
                     textAlign: "left",
                     padding: "var(--space-3) var(--space-4)",
@@ -313,8 +313,8 @@ export default function AuditTake() {
                     color: "var(--colour-label)",
                     transition: "background var(--duration-fast), border-color var(--duration-fast)",
                   }}
-                  onClick={() => answer(canonicalIdx)} className="audit-option-btn"
-                  onClick={() => answer(canonicalIdx)} className="audit-option-btn"
+                  
+                  
                 >
                   <span style={{ color: "var(--colour-label-tertiary)", marginRight: "var(--space-3)", fontWeight: 700 }}>
                     {String.fromCharCode(65 + i)}.
@@ -455,7 +455,7 @@ function Field({
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder} onClick={() => answer(canonicalIdx)} className="audit-option-btn" onClick={() => answer(canonicalIdx)} className="audit-option-btn" onFocus={(e) => { e.currentTarget.style.background = "var(--colour-accent-tint-bg)"; e.currentTarget.style.borderColor = "var(--colour-accent)"; }} onBlur={(e) => { e.currentTarget.style.background = "#ffffff"; e.currentTarget.style.borderColor = "var(--colour-separator-opaque)"; }}
+        placeholder={placeholder}   onFocus={(e) => { e.currentTarget.style.background = "var(--colour-accent-tint-bg)"; e.currentTarget.style.borderColor = "var(--colour-accent)"; }} onBlur={(e) => { e.currentTarget.style.background = "#ffffff"; e.currentTarget.style.borderColor = "var(--colour-separator-opaque)"; }}
         style={{
           height: 40,
           padding: "0 var(--space-3)",
