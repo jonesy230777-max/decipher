@@ -39,6 +39,7 @@ export default function People() {
   const [teamFilter, setTeamFilter]       = useState<string>("");
   const [roleFilter, setRoleFilter]       = useState<string>("");
   const [q, setQ] = useState<string>("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     api<{ teams: Team[] }>("/api/teams").then((d) => setTeams(d.teams));
@@ -53,6 +54,30 @@ export default function People() {
     if (q.trim())      p.set("q", q.trim());
     api<{ people: Person[] }>(`/api/people?${p}`).then((d) => setPeople(d.people));
   }, [companyFilter, teamFilter, roleFilter, q]);
+
+  async function handleDeleteShown() {
+    if (!people || people.length === 0) return;
+    const filtered = Boolean(companyFilter || teamFilter || roleFilter || q.trim());
+    const msg = `Delete ${people.length} ${filtered ? "people shown here (matching your current filters)" : "people"}? This removes them and every audit/report tied to them, permanently.`;
+    if (!window.confirm(msg)) return;
+    setDeleting(true);
+    try {
+      await api("/api/admin/respondents/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ respondent_ids: people.map((p) => p.respondent_id) }),
+      });
+      const params = new URLSearchParams();
+      if (companyFilter) params.set("company_id", companyFilter);
+      if (teamFilter) params.set("team_id", teamFilter);
+      if (roleFilter) params.set("role", roleFilter);
+      if (q.trim()) params.set("q", q.trim());
+      const d = await api<{ people: Person[] }>(`/api/people?${params}`);
+      setPeople(d.people);
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   const teamsForCompany = useMemo(() => {
     if (!companyFilter) return teams;
@@ -123,7 +148,12 @@ export default function People() {
             Every person across every company and team. {people?.length ?? "…"} shown. Click a name to drill into their profile and audit history.
           </p>
         </div>
-        <Button variant="filled" size="md" href="/settings">Add Person +</Button>
+        <div style={{ display: "flex", gap: "var(--space-3)" }}>
+          <Button variant="destructive" size="md" onClick={handleDeleteShown} disabled={deleting || !people || people.length === 0}>
+            {deleting ? "Deleting…" : `Delete ${people?.length ?? 0} Shown`}
+          </Button>
+          <Button variant="filled" size="md" href="/settings">Add Person +</Button>
+        </div>
       </header>
 
       <Card>
