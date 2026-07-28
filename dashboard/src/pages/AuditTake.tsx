@@ -251,7 +251,7 @@ export default function AuditTake() {
               This assessment is confidential. Answer honestly. There are no right
               or wrong answers. {questions.length} questions, roughly 15 minutes.
             </p>
-            {versionList && false && (
+            {versionList && versionList.length > 99999 && (
               <div style={{ marginTop: "var(--space-4)" }}>
                 <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                   <span className="hig-caption-1" style={{ color: "var(--colour-label)" }}>Audit type</span>
