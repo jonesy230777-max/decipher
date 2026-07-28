@@ -340,7 +340,7 @@ function MagicLinkConsume() {
 }
 
 export default function App() {
-  const { me, loading } = useAuth();
+  const { me, loading, logout } = useAuth();
   const loc = useLocation();
   const [boot, setBoot] = useState<Bootstrap | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -353,7 +353,7 @@ export default function App() {
         const data = await api<Bootstrap>("/api/bootstrap");
         if (alive) { setBoot(data); setErr(null); }
       } catch (e) {
-        if (alive) setErr(String(e));
+        if (alive) { if (String(e).includes("401")) { logout(); return; } setErr(String(e)); }
       }
     };
     tick();
