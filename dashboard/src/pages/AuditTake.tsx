@@ -248,8 +248,17 @@ export default function AuditTake() {
           <Card>
             <h1 className="hig-large-title" style={{ margin: 0 }}>{version.version.name}</h1>
             <p className="hig-body" style={{ color: "var(--colour-label)", marginTop: "var(--space-3)" }}>
-              This assessment is confidential. Answer honestly. There are no right
-              or wrong answers. {questions.length} questions, roughly 15 minutes.
+                        Before you begin, a few quick notes.
+                        <br /><br />
+                        This audit takes about 10 to 15 minutes. There are {questions.length} questions, each describing a real sales situation.
+                        <br /><br />
+                        Choose one answer per question: the one that best reflects what you'd actually do, not what sounds most correct or impressive. There are no right answers here, only honest ones.
+                        <br /><br />
+                        If more than one option feels true, go with your first instinct: the response that's most automatic for you under normal pressure. That instinct is exactly what this audit is designed to measure.
+                        <br /><br />
+                        Your results will generate a personalised Sales DNA profile, showing your strengths across four key trait areas and where your biggest development opportunity lies.
+                        <br /><br />
+                        Ready? Let's begin.
             </p>
             {versionList && versionList.length > 99999 && (
               <div style={{ marginTop: "var(--space-4)" }}>
@@ -323,6 +332,7 @@ export default function AuditTake() {
                 </button>
               ))}
             </div>
+            <p className="hig-footnote" style={{ color: "var(--colour-label)", marginTop: "var(--space-4)", textAlign: "center" }}>Choose one, go with your first instinct.</p>
           </Card>
         )}
 
