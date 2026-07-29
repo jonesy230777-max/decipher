@@ -238,7 +238,7 @@ export default function AuditTake() {
                 }}
               />
             </div>
-            <div className="hig-caption-1" style={{ marginTop: 6, textAlign: "right" }}>
+            <div className="hig-caption-1" style={{ marginTop: 6, color: "var(--colour-accent)", textAlign: "right" }}>
               Question {idx + 1} of {shuffledQuestions.length}
             </div>
           </div>
