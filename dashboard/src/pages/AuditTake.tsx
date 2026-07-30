@@ -7,8 +7,7 @@
  */
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { api } from "../api";
-import { Logo } from "../components/Logo";
+import { api, downloadFile } from "../api";
 import { Card, Button } from "../components/Card";
 
 type Question = {
