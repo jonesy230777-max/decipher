@@ -21,6 +21,24 @@ export async function api<T = unknown>(path: string, init?: RequestInit): Promis
   return res.json() as Promise<T>;
 }
 
+export async function downloadFile(path: string, filename: string): Promise<void> 
+{
+    const token = getToken();
+    const headers: Record<string, string> = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    const res = await fetch(path, { headers });
+    if (!res.ok) throw new Error(`${path} → ${res.status}`);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+}
+
 export type Role =
   | "admin"
   | "ceo"
