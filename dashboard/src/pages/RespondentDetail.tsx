@@ -6,7 +6,7 @@
  */
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { api } from "../api";
+import { api, downloadFile } from "../api";
 import { useAuth } from "../auth";
 import { Card, SectionEyebrow, Button, Separator } from "../components/Card";
 import { GapAnalysis } from "../components/GapAnalysis";
@@ -125,7 +125,7 @@ export default function RespondentDetail() {
           <InviteButton respondent={r} />
           {latest && <RescoreButton auditId={latest.audit_id} onDone={() => location.reload()} />}
           {latest?.report_id && (
-            <Button href={`/api/reports/${latest.report_id}/download`} variant="filled" size="md">
+            <Button onClick={() => downloadFile(`/api/reports/${latest.report_id}/download`, `report-${latest.report_id}.pdf`)} variant="filled" size="md">
               Download report ↓
             </Button>
           )}
