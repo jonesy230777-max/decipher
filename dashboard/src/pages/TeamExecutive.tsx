@@ -5,7 +5,7 @@
  */
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { api } from "../api";
+import { api, downloadFile } from "../api";
 import { Card, SectionEyebrow, Button } from "../components/Card";
 import { BandBar } from "../components/BandBar";
 import { GapAnalysis } from "../components/GapAnalysis";
@@ -94,7 +94,7 @@ export default function TeamExecutive() {
         </div>
         <div style={{ display: "flex", gap: "var(--space-2)" }}>
           <InviteRespondentButton teamId={id} />
-          <Button href={`/api/teams/${id}/export.pdf`} download variant="filled" size="lg">
+          <Button onClick={() => downloadFile(`/api/teams/${id}/export.pdf`, `team-${id}-executive-summary.pdf`)} variant="filled" size="lg">
             Download Executive Summary (PDF) ↓
           </Button>
         </div>

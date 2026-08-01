@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api, downloadFile } from "../api";
 import { Card, Button } from "../components/Card";
+import { Logo } from "../components/Logo";
 
 type Question = {
   question_id: number;
@@ -439,7 +440,7 @@ function DoneCard({ auditId, result }: { auditId: number | null; result: Complet
 
       {result.report && (
         <div style={{ marginTop: "var(--space-5)", display: "flex", justifyContent: "flex-end" }}>
-          <Button href={`/api/reports/${result.report.report_id}/download`} variant="filled" size="lg">
+          <Button onClick={() => downloadFile(`/api/reports/${result.report!.report_id}/download`, `report-${result.report!.report_id}.pdf`)} variant="filled" size="lg">
             Download full report (PDF) ↓
           </Button>
         </div>
