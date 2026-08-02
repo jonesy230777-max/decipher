@@ -168,6 +168,18 @@ def score_audit(audit_id: int) -> dict:
                     identity_votes[ident] = identity_votes.get(ident, 0) + 1
                 continue
 
+            # A "scored" question's matched option can *also* carry an
+            # "identity" tag (Generic Sales DNA Audit v2: every answer is
+            # simultaneously a 1-5 trait score AND an archetype-letter vote,
+            # unlike media_sales_v1 where the 3 identity questions are a
+            # separate, non-scored set). Additive only: options_meta entries
+            # with no "identity" key resolve to None here, so this is a
+            # no-op for existing content (media_sales_v1, general_sales_v1,
+            # bespoke) and does not change any existing score.
+            ident = _identity_from_response(ans_val, ans_text, options_meta)
+            if ident:
+                identity_votes[ident] = identity_votes.get(ident, 0) + 1
+
             score_1_5 = _score_from_response(ans_val, ans_text, options_meta)
             if score_1_5 is None:
                 continue
