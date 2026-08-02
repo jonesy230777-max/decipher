@@ -4409,11 +4409,21 @@ def audit_complete(audit_id: int, background_tasks: BackgroundTasks) -> dict[str
     # Enqueue scoring + report generation as a background task.
     # The client receives the response immediately; status transitions to
     # 'scored' -> 'reported' in the background thread.
-    audit_version_id = a[0]["audit_version_id"]
-    if audit_version_id == 3:
-        background_tasks.add_task(_score_and_report, audit_id)
-        return {"ok": True, "audit_id": audit_id, "status": "processing"}
-    return {"ok": True, "audit_id": audit_id, "status": "completed"}
+    #
+    # dna_scoring.score_audit() is version-agnostic (joins purely on
+    # audit_version_id; see its module docstring and
+    # scripts/seed_general_sales_v1.py / seed_generic_sales_v2.py). This used
+    # to only fire for audit_version_id == 3 (media_sales_v1), which meant
+    # every other version -- general_sales_v1, generic_sales_v2, and every
+    # bespoke client audit -- completed with status "completed" but was
+    # never scored, reported, or emailed. Removed 2026-08-02: run for all
+    # versions. A version with no seeded questions (e.g. the master_v1
+    # placeholder) raises ValueError inside score_audit(), which
+    # _score_and_report() already catches and logs to events_log rather
+    # than raising, so this is safe for audits that were never meant to
+    # be auto-scored.
+    background_tasks.add_task(_score_and_report, audit_id)
+    return {"ok": True, "audit_id": audit_id, "status": "processing"}
 
 
 @app.post("/api/audit/{audit_id}/score")
@@ -4428,8 +4438,10 @@ def audit_score(audit_id: int, request: Request) -> dict[str, Any]:
     a = rows("SELECT audit_version_id FROM audits WHERE audit_id = %s", (audit_id,))
     if not a:
         raise HTTPException(404, "audit not found")
-    if a[0]["audit_version_id"] != 3:
-        raise HTTPException(400, "scoring engine only supports media_sales_v1 (version 3)")
+    # Was hardcoded to reject every audit_version_id except 3 (media_sales_v1).
+    # Removed 2026-08-02 alongside the same change in /api/audit/{id}/complete --
+    # score_audit() is version-agnostic and this endpoint exists specifically
+    # for backfills, so it should work for any seeded version.
     from app.dna_scoring import score_audit
     from app.dna_report  import generate_report
     score  = score_audit(audit_id)
