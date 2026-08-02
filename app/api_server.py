@@ -3015,6 +3015,43 @@ _BESPOKE_QUESTION_SCHEMA = {
 }
 
 
+def _bespoke_response_meta(q: dict) -> dict:
+    """Build response_meta in the shape dna_scoring.py expects (kind /
+    canonical_trait / options_meta with per-option "score" 1-5) from a
+    bespoke question's raw Claude-generated shape (dimension + options
+    with a 0.0-1.0 "value"). See scripts/seed_general_sales_v1.py for
+    the reference contract this follows -- without it, score_audit()
+    silently drops every response and every bespoke respondent scores
+    0 on all four traits.
+    """
+    dim_to_canonical = {
+        "cognitive_empathy": "cognitive_empathy",
+        "eq": "eq",
+        "pressure_composure": "pressure_composure",
+        "storytelling": "narrative_persuasion",
+    }
+    canonical_trait = dim_to_canonical.get(q["dimension"], q["dimension"])
+    letters = "ABCDEFGH"
+    options_meta, option_texts, scoring = [], [], []
+    for i, opt in enumerate(q["options"]):
+        score_1_5 = max(1, min(5, round(1 + float(opt["value"]) * 4)))
+        options_meta.append({
+            "letter": letters[i] if i < len(letters) else None,
+            "text": opt["label"],
+            "score": score_1_5,
+        })
+        option_texts.append(opt["label"])
+        scoring.append(score_1_5)
+    return {
+        "options": option_texts,
+        "kind": "scored",
+        "canonical_trait": canonical_trait,
+        "options_meta": options_meta,
+        "scoring": scoring,
+        "source_form": "bespoke",
+    }
+
+
 @app.post("/api/bespoke")
 def bespoke_create(body: BespokeCreateIn, request: Request) -> dict[str, Any]:
     """S051: Ingest a client brief, use Claude to generate bespoke questions,
@@ -3114,7 +3151,7 @@ def bespoke_create(body: BespokeCreateIn, request: Request) -> dict[str, Any]:
                     q.get("archetype_signal"),
                     q.get("weight", 1.0),
                     q["prompt"],
-                    json.dumps({"options": q["options"]}),
+                    json.dumps(_bespoke_response_meta(q)),
                 ),
             )
         c.commit()
