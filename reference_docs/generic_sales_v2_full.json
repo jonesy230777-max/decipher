@@ -1,128 +1,386 @@
-/**
- * Public landing / home page for Decipher. Shown when a visitor is not
- * logged in. Pitches the audit, surfaces a CTA to take the audit, and a
- * second CTA to sign in (for facilitators / directors).
- */
-import { Link } from "react-router-dom";
-import { Logo } from "../components/Logo";
-
-export default function Landing() {
-  return (
-    <div style={{
-      minHeight: "100vh",
-      display: "flex", flexDirection: "column",
-      background: "var(--colour-bg-system)",
-      color: "var(--colour-label)",
-    }}>
-      {/* Top nav */}
-      <header style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "var(--space-4) var(--space-7)",
-        borderBottom: "1px solid var(--colour-separator)",
-        background: "var(--colour-toolbar-bg)",
-        backdropFilter: "saturate(180%) blur(20px)",
-      }}>
-        <Logo height={40} />
-        <nav style={{ display: "flex", gap: "var(--space-3)", alignItems: "center" }}>
-          <Link to="/login"
-            style={{ color: "var(--colour-label-secondary)",
-              textDecoration: "none", fontWeight: 600 }}>
-            Sign in
-          </Link>
-          <Link to="/audit/start"
-            style={{ background: "var(--colour-accent)", color: "#FFFFFF",
-              padding: "10px 18px", borderRadius: "var(--radius-sm)",
-              textDecoration: "none", fontWeight: 600 }}>
-            Take the audit
-          </Link>
-        </nav>
-      </header>
-
-      {/* Hero */}
-      <section style={{
-        flex: 1,
-        display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "var(--space-7)",
-        padding: "var(--space-7) var(--space-7)", maxWidth: 1400, margin: "0 auto",
-        alignItems: "center",
-      }}>
-        <div>
-          <p className="hig-caption-1" style={{
-            display: "inline-block",
-            background: "var(--colour-accent-tint-bg)",
-            color: "var(--colour-accent)", padding: "4px 10px",
-            borderRadius: 999, fontWeight: 700, margin: 0,
-          }}>For media sales teams</p>
-          <h1 className="hig-large-title" style={{ fontSize: 56, lineHeight: 1.05,
-            margin: "var(--space-3) 0 var(--space-3) 0" }}>
-            The Decipher DNA Audit. <br/>
-            Not a test. A clear picture of your strengths, and what to develop to close more and earn more.
-          </h1>
-          <p className="hig-body" style={{ color: "var(--colour-label-secondary)",
-            fontSize: 19, maxWidth: 560 }}>
-            34 behaviourally-anchored questions. 7-10 minutes. No pass or
-            fail — just a personalised Sales DNA report covering Cognitive
-            Empathy, Emotional Intelligence, Pressure Composure and
-            Narrative Persuasion. Bands from Developing through to Elite,
-            an EQ Identity type, and your two-trait archetype.
-          </p>
-          <div style={{ display: "flex", gap: "var(--space-3)",
-            marginTop: "var(--space-5)" }}>
-            <Link to="/audit/start"
-              style={{ background: "var(--colour-accent)", color: "#FFFFFF",
-                padding: "14px 22px", borderRadius: "var(--radius-md)",
-                textDecoration: "none", fontWeight: 700, fontSize: 17 }}>
-              Take the audit →
-            </Link>
-            <Link to="/login"
-              style={{ background: "transparent",
-                border: "1px solid var(--colour-separator-opaque)",
-                color: "var(--colour-label)",
-                padding: "14px 22px", borderRadius: "var(--radius-md)",
-                textDecoration: "none", fontWeight: 600, fontSize: 17 }}>
-              Client sign-in
-            </Link>
-          </div>
-        </div>
-
-        <div style={{
-          background: "var(--colour-bg-system-secondary)",
-          border: "1px solid var(--colour-separator-opaque)",
-          borderRadius: "var(--radius-lg)",
-          padding: "var(--space-6)",
-        }}>
-          <h2 className="hig-title-3" style={{ marginTop: 0 }}>What gets measured</h2>
-          <ul style={{ listStyle: "none", padding: 0, margin: "var(--space-3) 0",
-            display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
-            {[
-              ["Cognitive Empathy", "Reading what the buyer is actually feeling, beyond what they say."],
-              ["Emotional Intelligence", "Reading the room, regulating self, naming what matters."],
-              ["Pressure Composure", "Holding steady under price pressure, objections, silence."],
-              ["Narrative Persuasion", "Telling stories buyers remember and decision-makers retell."],
-            ].map(([t, d]) => (
-              <li key={t} style={{ display: "flex", gap: "var(--space-3)" }}>
-                <span style={{ width: 8, height: 8, borderRadius: "50%",
-                  background: "var(--colour-accent)", marginTop: 8,
-                  flexShrink: 0 }} />
-                <div>
-                  <div className="hig-headline">{t}</div>
-                  <div className="hig-callout" style={{ color: "var(--colour-label)" }}>{d}</div>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <p className="hig-footnote" style={{ color: "var(--colour-label)", margin: 0 }}>
-            One of 8 named archetypes (e.g. Trust Architect, Calm Diagnostician,
-            Confident Storyteller) is assigned from your top two traits.
-          </p>
-        </div>
-      </section>
-
-      <footer style={{
-        borderTop: "1px solid var(--colour-separator)",
-        padding: "var(--space-4) var(--space-7)", textAlign: "center",
-      }} className="hig-footnote">
-        deciphersales.com.au · Made in Sydney · © Decipher 2026
-      </footer>
-    </div>
-  );
+{
+  "questions": [
+    {
+      "id": "Q1",
+      "qnum": 1,
+      "trait": "cognitive_empathy",
+      "prompt": "You cold-call a prospect and they pick up sounding rushed, one-word answers immediately. You:",
+      "options": [
+        {"letter": "A", "text": "Push through your opener exactly as planned.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Speed up your pitch to get the key point in before they hang up.", "score": 2, "identity": "edge_builder"},
+        {"letter": "C", "text": "Ask if now's a bad time and offer to catch them at a better one.", "score": 4, "identity": "observer"},
+        {"letter": "D", "text": "Name it: \"Sounds like I've caught you mid-something — better time to call back?\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q2", "qnum": 2, "trait": "cognitive_empathy",
+      "prompt": "A gatekeeper says the decision-maker \"isn't available\" for the third call in a row. What's really going on is usually:",
+      "options": [
+        {"letter": "A", "text": "They genuinely have a packed calendar.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "You need a different angle to get past the gatekeeper next time.", "score": 2, "identity": "edge_builder"},
+        {"letter": "C", "text": "You haven't yet given the gatekeeper a reason to let you through.", "score": 4, "identity": "observer"},
+        {"letter": "D", "text": "Ask the gatekeeper directly what would make this worth passing on.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q3", "qnum": 3, "trait": "cognitive_empathy",
+      "prompt": "You're 15 minutes into a first meeting with a senior prospect. They've been checking their phone repeatedly. What do you do?",
+      "options": [
+        {"letter": "A", "text": "Keep going, faster, before you lose them.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Stop and ask if there's something urgent they need to handle.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "Call it out lightly: \"I can come back another time if this isn't working.\"", "score": 2, "identity": "edge_builder"},
+        {"letter": "D", "text": "Name what you're seeing: \"Looks like something else is pulling at you, what's going on?\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q4", "qnum": 4, "trait": "cognitive_empathy",
+      "prompt": "Your champion has gone quiet for 10 days after a strong meeting. Most likely explanation?",
+      "options": [
+        {"letter": "A", "text": "They're busy, they'll come back when ready.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Something internal has shifted: priorities, politics, or budget.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "They've gone cold, time to escalate to their manager.", "score": 2, "identity": "edge_builder"},
+        {"letter": "D", "text": "They didn't have the authority they implied, and the real decision-maker said no.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q5", "qnum": 5, "trait": "cognitive_empathy",
+      "prompt": "A prospect says, \"Let me think about it.\" What does that usually mean?",
+      "options": [
+        {"letter": "A", "text": "They need more time to weigh it up.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "They have an unspoken objection they don't want to raise here.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "They're being polite and the answer is no.", "score": 2, "identity": "edge_builder"},
+        {"letter": "D", "text": "Someone else in the room has veto power and hasn't said so yet.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q6", "qnum": 6, "trait": "cognitive_empathy",
+      "prompt": "You're in a meeting with three stakeholders. The most senior person is silent the whole time. What's your read?",
+      "options": [
+        {"letter": "A", "text": "They're delegating, they trust their team.", "score": 2, "identity": "regulator"},
+        {"letter": "B", "text": "They're watching how their team interacts with you.", "score": 5, "identity": "observer"},
+        {"letter": "C", "text": "They're disengaged and the deal is in trouble.", "score": 2, "identity": "edge_builder"},
+        {"letter": "D", "text": "They're the actual decision-maker and the team is performing for them.", "score": 4, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q7", "qnum": 7, "trait": "cognitive_empathy",
+      "prompt": "Mid-pitch, a prospect crosses their arms and leans back. You:",
+      "options": [
+        {"letter": "A", "text": "Carry on, body language doesn't always mean what people think.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Slow down and check in: \"Am I tracking with what matters to you?\"", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "Switch to a different angle to re-engage them.", "score": 2, "identity": "edge_builder"},
+        {"letter": "D", "text": "Name it: \"I get the sense something I just said landed differently than I intended.\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q8", "qnum": 8, "trait": "cognitive_empathy",
+      "prompt": "You're prepping for a meeting with a CFO. What do you focus on understanding before you walk in?",
+      "options": [
+        {"letter": "A", "text": "The product features most relevant to finance.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "The CFO's current pressures: board reporting, cost discipline, cash position.", "score": 5, "identity": "observer"},
+        {"letter": "C", "text": "What ammunition the CFO needs to push back on the project internally.", "score": 4, "identity": "edge_builder"},
+        {"letter": "D", "text": "Where the CFO sits politically: ally, blocker, or neutral.", "score": 4, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q9", "qnum": 9, "trait": "cognitive_empathy",
+      "prompt": "Which of these best describes how you read a buyer's true priority?",
+      "options": [
+        {"letter": "A", "text": "Ask them directly what's most important.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Listen for what they keep returning to, even when the conversation moves on.", "score": 5, "identity": "observer"},
+        {"letter": "C", "text": "Watch what they push back on hardest, that's usually closest to the truth.", "score": 4, "identity": "edge_builder"},
+        {"letter": "D", "text": "Notice what they say versus how they say it, and where the two don't match.", "score": 4, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q10", "qnum": 10, "trait": "cognitive_empathy",
+      "prompt": "A prospect tells you they have \"no budget.\" Most experienced sellers know this usually means:",
+      "options": [
+        {"letter": "A", "text": "Exactly what they said, the budget doesn't exist.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Budget exists, but this isn't a priority yet.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "Budget exists, but they don't yet trust the ROI.", "score": 4, "identity": "edge_builder"},
+        {"letter": "D", "text": "Budget exists somewhere, but they don't have the authority to release it.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q11", "qnum": 11, "trait": "eq",
+      "prompt": "You've made nine dials this morning and had four hang-ups. Dial ten, your internal state is:",
+      "options": [
+        {"letter": "A", "text": "Numb to it now — you stopped feeling the rejections a while back.", "score": 2, "identity": "regulator"},
+        {"letter": "B", "text": "You push the next dial out faster, trying to outrun the feeling.", "score": 1, "identity": "edge_builder"},
+        {"letter": "C", "text": "Curious about what's different about the calls that don't hang up.", "score": 4, "identity": "observer"},
+        {"letter": "D", "text": "Aware your energy has dropped, and you consciously reset before dialing.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q12", "qnum": 12, "trait": "eq",
+      "prompt": "A prospect hangs up on you mid-sentence. Your first internal reaction is:",
+      "options": [
+        {"letter": "A", "text": "You shrug it off completely, zero reflection, straight to the next number.", "score": 2, "identity": "regulator"},
+        {"letter": "B", "text": "You call straight back to finish your point.", "score": 2, "identity": "edge_builder"},
+        {"letter": "C", "text": "You wonder whether timing, not your pitch, was the real issue.", "score": 4, "identity": "observer"},
+        {"letter": "D", "text": "You name it honestly to yourself — \"that stung\" — then dial again, clear-headed.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q13", "qnum": 13, "trait": "eq",
+      "prompt": "Your manager gives you blunt critical feedback in a 1:1. Your first internal reaction:",
+      "options": [
+        {"letter": "A", "text": "Defensive, you start mentally building counter-arguments.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "You take it in quietly and process it later.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "You push back on the spot to test their reasoning.", "score": 2, "identity": "edge_builder"},
+        {"letter": "D", "text": "You name what you're feeling: \"That stings, give me a second.\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q14", "qnum": 14, "trait": "eq",
+      "prompt": "A prospect raises their voice at you in a meeting. You:",
+      "options": [
+        {"letter": "A", "text": "Match their energy to show you're not intimidated.", "score": 1, "identity": "edge_builder"},
+        {"letter": "B", "text": "Stay quiet and let them finish, then respond calmly.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "Apologise to de-escalate, even if you don't fully agree.", "score": 2, "identity": "regulator"},
+        {"letter": "D", "text": "Name it: \"Something's clearly hit a nerve, talk me through it.\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q15", "qnum": 15, "trait": "eq",
+      "prompt": "You can feel yourself getting defensive mid-negotiation. The most useful move is:",
+      "options": [
+        {"letter": "A", "text": "Push through, don't show weakness.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Ask a question to buy yourself thinking time.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "Acknowledge it openly: \"I notice I'm pushing back hard, let me slow down.\"", "score": 5, "identity": "namer"},
+        {"letter": "D", "text": "Reframe the conversation back to their goals.", "score": 4, "identity": "edge_builder"}
+      ]
+    },
+    {
+      "id": "Q16", "qnum": 16, "trait": "eq",
+      "prompt": "Your biggest deal of the quarter just went to a competitor. The first 24 hours you:",
+      "options": [
+        {"letter": "A", "text": "Get straight back on the phones, momentum is everything.", "score": 2, "identity": "edge_builder"},
+        {"letter": "B", "text": "Take some quiet time to process before reaching out to anyone.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "Run a structured post-mortem: what could you have done differently.", "score": 4, "identity": "regulator"},
+        {"letter": "D", "text": "Sit with the disappointment, then debrief honestly with your manager.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q17", "qnum": 17, "trait": "eq",
+      "prompt": "A colleague takes credit for an idea you brought to the team. You:",
+      "options": [
+        {"letter": "A", "text": "Let it slide, the work matters more than the credit.", "score": 2, "identity": "regulator"},
+        {"letter": "B", "text": "Note it, watch the pattern, decide what to do next time.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "Confront them directly after the meeting.", "score": 4, "identity": "edge_builder"},
+        {"letter": "D", "text": "Raise it cleanly: \"Hey, that was actually my idea, I'd like the next one to land properly.\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q18", "qnum": 18, "trait": "eq",
+      "prompt": "A client has cancelled on you three times in a row. Internally you feel:",
+      "options": [
+        {"letter": "A", "text": "Frustrated, you start considering whether they're worth chasing.", "score": 2, "identity": "edge_builder"},
+        {"letter": "B", "text": "Curious about what's really going on for them.", "score": 5, "identity": "observer"},
+        {"letter": "C", "text": "Anxious, worried the deal is slipping.", "score": 1, "identity": "regulator"},
+        {"letter": "D", "text": "Aware that the pattern itself is the data, time to address it.", "score": 4, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q19", "qnum": 19, "trait": "eq",
+      "prompt": "You're in a slump. Three weeks, no closes. Your dominant self-talk is:",
+      "options": [
+        {"letter": "A", "text": "\"Push harder, more activity will fix this.\"", "score": 2, "identity": "regulator"},
+        {"letter": "B", "text": "\"What am I missing? What's the pattern in the losses?\"", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "\"I'll come good, slumps end.\"", "score": 2, "identity": "edge_builder"},
+        {"letter": "D", "text": "\"I'm feeling the pressure, that itself is affecting how I'm showing up.\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q20", "qnum": 20, "trait": "eq",
+      "prompt": "Your manager assigns you a difficult account with a reputation for chewing up reps. You:",
+      "options": [
+        {"letter": "A", "text": "Accept it and quietly worry whether you're being set up to fail.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Take it as a chance to learn something hard.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "See it as a chance to prove yourself.", "score": 2, "identity": "edge_builder"},
+        {"letter": "D", "text": "Ask your manager directly what success looks like and what support is available.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q21", "qnum": 21, "trait": "pressure_composure",
+      "prompt": "A prospect says \"we're all set, not interested\" within your first five seconds on the phone. You:",
+      "options": [
+        {"letter": "A", "text": "Say thanks for your time and hang up — respect the no.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Jump straight into your value proposition to change their mind.", "score": 2, "identity": "edge_builder"},
+        {"letter": "C", "text": "Ask one short question before you let them go.", "score": 4, "identity": "observer"},
+        {"letter": "D", "text": "Name it: \"Totally fair — most people say that before they've heard why I called. Thirty seconds?\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q22", "qnum": 22, "trait": "pressure_composure",
+      "prompt": "A prospect answers, hears three words, and snaps \"Take us off this list\" before hanging up. On your very next dial, you:",
+      "options": [
+        {"letter": "A", "text": "Soften your opener defensively, bracing for another rejection.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Dial faster and push harder to make up the momentum.", "score": 2, "identity": "edge_builder"},
+        {"letter": "C", "text": "Take a breath and open exactly as planned, unchanged.", "score": 4, "identity": "observer"},
+        {"letter": "D", "text": "Notice the flinch, name it internally, and reset your tone on purpose before the next hello.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q23", "qnum": 23, "trait": "pressure_composure",
+      "prompt": "It's 3 days from quarter-end and you're 40% short of target. Your default move:",
+      "options": [
+        {"letter": "A", "text": "Activity, activity, activity. More calls, more emails, hammer the pipe.", "score": 2, "identity": "edge_builder"},
+        {"letter": "B", "text": "Triage the pipeline ruthlessly, focus only on what can actually close.", "score": 4, "identity": "regulator"},
+        {"letter": "C", "text": "Pick up the phone to your strongest relationships and ask plainly.", "score": 5, "identity": "namer"},
+        {"letter": "D", "text": "Step back for an hour to think before acting.", "score": 4, "identity": "observer"}
+      ]
+    },
+    {
+      "id": "Q24", "qnum": 24, "trait": "pressure_composure",
+      "prompt": "Mid-demo, the platform crashes. In front of the buying committee. You:",
+      "options": [
+        {"letter": "A", "text": "Apologise profusely and try to reboot.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Acknowledge it, make a light joke, switch to a backup explanation.", "score": 4, "identity": "edge_builder"},
+        {"letter": "C", "text": "Name it: \"Not the demo gods today, here's what you would have seen.\"", "score": 5, "identity": "namer"},
+        {"letter": "D", "text": "Stay calm, suggest a follow-up demo, and use the time to ask more discovery questions.", "score": 5, "identity": "observer"}
+      ]
+    },
+    {
+      "id": "Q25", "qnum": 25, "trait": "pressure_composure",
+      "prompt": "A prospect blindsides you with a technical question you genuinely can't answer. You:",
+      "options": [
+        {"letter": "A", "text": "Try to answer it anyway and risk being wrong.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "\"That's a great question\" while you stall.", "score": 1, "identity": "edge_builder"},
+        {"letter": "C", "text": "Say honestly: \"I don't know, but I'll find out and come back to you today.\"", "score": 5, "identity": "namer"},
+        {"letter": "D", "text": "Redirect: \"Before I answer that, help me understand why it matters in your context.\"", "score": 4, "identity": "observer"}
+      ]
+    },
+    {
+      "id": "Q26", "qnum": 26, "trait": "pressure_composure",
+      "prompt": "A deal you thought was locked has gone silent after a verbal yes. Three days. You:",
+      "options": [
+        {"letter": "A", "text": "Send a chase email asking for an update.", "score": 2, "identity": "regulator"},
+        {"letter": "B", "text": "Wait it out a few more days, don't seem desperate.", "score": 2, "identity": "observer"},
+        {"letter": "C", "text": "Pick up the phone and call directly, no more email.", "score": 4, "identity": "edge_builder"},
+        {"letter": "D", "text": "Call and name it: \"I sense something's shifted, what's changed since we last spoke?\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q27", "qnum": 27, "trait": "pressure_composure",
+      "prompt": "You're in a meeting and the most senior person is openly hostile. The other attendees go silent. You:",
+      "options": [
+        {"letter": "A", "text": "Try to win the senior person over by agreeing with their concerns.", "score": 2, "identity": "regulator"},
+        {"letter": "B", "text": "Hold your position politely and let the data speak.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "Push back directly: \"I think we see this differently, can we work through it?\"", "score": 4, "identity": "edge_builder"},
+        {"letter": "D", "text": "Name it: \"I can see this isn't landing the way I'd hoped, what would be useful to dig into?\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q28", "qnum": 28, "trait": "pressure_composure",
+      "prompt": "It's Monday morning. Your first 10 cold calls have been brutal. Call 11, you:",
+      "options": [
+        {"letter": "A", "text": "Take a 5-minute break, reset, then dial.", "score": 4, "identity": "observer"},
+        {"letter": "B", "text": "Dial with exactly the same energy as call 1.", "score": 4, "identity": "regulator"},
+        {"letter": "C", "text": "Push through, the law of averages will turn.", "score": 2, "identity": "edge_builder"},
+        {"letter": "D", "text": "Notice your tone has slipped, recalibrate consciously, then dial.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q29", "qnum": 29, "trait": "pressure_composure",
+      "prompt": "Your boss tells you a key account is moving to a competitor. Effective immediately. Your first reaction:",
+      "options": [
+        {"letter": "A", "text": "Argue the decision, push to keep the account.", "score": 2, "identity": "edge_builder"},
+        {"letter": "B", "text": "Accept it cleanly and ask what you can learn from the loss.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "Ask to do a final exit conversation with the client.", "score": 4, "identity": "regulator"},
+        {"letter": "D", "text": "Sit with the hit, then debrief with your boss properly.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q30", "qnum": 30, "trait": "narrative_persuasion",
+      "prompt": "You have roughly seven seconds after \"hello\" before a cold prospect decides whether to keep listening. You use them to:",
+      "options": [
+        {"letter": "A", "text": "State your name and company clearly.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Ask if they have a minute to talk.", "score": 2, "identity": "edge_builder"},
+        {"letter": "C", "text": "Reference something specific about their business to earn the right to continue.", "score": 4, "identity": "observer"},
+        {"letter": "D", "text": "Open with one line tied to something specific happening in their world right now — not your pitch.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q31", "qnum": 31, "trait": "narrative_persuasion",
+      "prompt": "First 60 seconds with a brand-new prospect. The most effective opening is:",
+      "options": [
+        {"letter": "A", "text": "A clear summary of who you are and what you do.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "A relevant insight about their industry that earns the next 5 minutes.", "score": 5, "identity": "observer"},
+        {"letter": "C", "text": "A provocative question that challenges their assumptions.", "score": 4, "identity": "edge_builder"},
+        {"letter": "D", "text": "A short, specific story about a similar client and the problem you solved.", "score": 4, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q32", "qnum": 32, "trait": "narrative_persuasion",
+      "prompt": "You need to explain a technically complex feature to a non-technical buyer. You:",
+      "options": [
+        {"letter": "A", "text": "Walk them through it step by step at a simplified level.", "score": 2, "identity": "regulator"},
+        {"letter": "B", "text": "Use an analogy from a world they already understand.", "score": 5, "identity": "observer"},
+        {"letter": "C", "text": "Skip the how and focus only on the business outcome.", "score": 4, "identity": "edge_builder"},
+        {"letter": "D", "text": "Tell a story about a customer who had the same gap and what changed.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q33", "qnum": 33, "trait": "narrative_persuasion",
+      "prompt": "Following up after a no. The best message is:",
+      "options": [
+        {"letter": "A", "text": "A polite thank-you and a request to stay in touch.", "score": 2, "identity": "regulator"},
+        {"letter": "B", "text": "An article or insight relevant to the reason they declined.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "A direct question: \"Help me understand what would need to be different next time.\"", "score": 4, "identity": "edge_builder"},
+        {"letter": "D", "text": "A short story about a buyer who said no, then came back 6 months later, and what changed.", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q34", "qnum": 34, "trait": "narrative_persuasion",
+      "prompt": "You're the third quote on the prospect's desk. They've heard the same pitch twice already. You:",
+      "options": [
+        {"letter": "A", "text": "Differentiate on price or terms.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Differentiate on service, support, or relationship.", "score": 2, "identity": "edge_builder"},
+        {"letter": "C", "text": "Lead with a story or insight the other two won't have shared.", "score": 5, "identity": "observer"},
+        {"letter": "D", "text": "Name the situation: \"You've probably heard versions of this twice already, here's what I think the other two will have missed.\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q35", "qnum": 35, "trait": "narrative_persuasion",
+      "prompt": "A prospect pushes back hard on your pricing. The strongest response is:",
+      "options": [
+        {"letter": "A", "text": "Walk them through the value calculation logically.", "score": 2, "identity": "regulator"},
+        {"letter": "B", "text": "Hold the price, explain that quality has a cost.", "score": 2, "identity": "edge_builder"},
+        {"letter": "C", "text": "Tell the story of a buyer who picked the cheaper option and the cost of that choice.", "score": 5, "identity": "namer"},
+        {"letter": "D", "text": "Ask what they're comparing it to, and explore the gap.", "score": 4, "identity": "observer"}
+      ]
+    },
+    {
+      "id": "Q36", "qnum": 36, "trait": "narrative_persuasion",
+      "prompt": "You stumble mid-pitch. Lose your thread completely in front of the prospect. You:",
+      "options": [
+        {"letter": "A", "text": "Push through and hope they didn't notice.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "Pause, apologise, restart the section.", "score": 2, "identity": "observer"},
+        {"letter": "C", "text": "Make a light joke, acknowledge it, keep going.", "score": 4, "identity": "edge_builder"},
+        {"letter": "D", "text": "Name it cleanly: \"I just lost my thread, let me come back to the point that actually matters.\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q37", "qnum": 37, "trait": "narrative_persuasion",
+      "prompt": "The single most important moment in a closing conversation is:",
+      "options": [
+        {"letter": "A", "text": "The pricing reveal.", "score": 1, "identity": "regulator"},
+        {"letter": "B", "text": "The silence after you've asked for the business.", "score": 5, "identity": "observer"},
+        {"letter": "C", "text": "The handling of the final objection.", "score": 4, "identity": "edge_builder"},
+        {"letter": "D", "text": "The moment you name what's actually being decided: \"This isn't really about X, is it.\"", "score": 5, "identity": "namer"}
+      ]
+    },
+    {
+      "id": "Q38", "qnum": 38, "trait": "narrative_persuasion",
+      "prompt": "You're using a customer case study in a pitch. The most powerful version of it:",
+      "options": [
+        {"letter": "A", "text": "Numbers and metrics: percentage improvements, dollar value.", "score": 2, "identity": "regulator"},
+        {"letter": "B", "text": "The before/after transformation of the customer's situation.", "score": 4, "identity": "observer"},
+        {"letter": "C", "text": "The specific moment the customer realised they had the problem.", "score": 4, "identity": "edge_builder"},
+        {"letter": "D", "text": "The human behind the result: who they were, what they were afraid of, what changed.", "score": 5, "identity": "namer"}
+      ]
+    }
+  ]
 }
