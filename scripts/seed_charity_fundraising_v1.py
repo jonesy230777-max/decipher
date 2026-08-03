@@ -15,6 +15,13 @@ narrative_persuasion, eq_identity), same 31 scored + 3 eq_identity shape.
 Registers as a new, fourth audit_versions row. Does not touch media_sales_v1,
 generic_sales_v2, or general_sales_v1.
 
+Also upserts a new industries row (code 'charity_nfp') and links it via
+audit_versions.industry_id, same pattern as the industries upsert in
+app/api_server.py. Without this, app/dna_report.py and dna_report_v2.py's
+industry_name lookup (JOIN industries ON industry_id) returns NULL and the
+Claude narrative prompt silently defaults to "Media" for every charity
+respondent, per _narrative_system_prompt's `industry_name or "media"` fallback.
+
 Idempotent. Re-running replaces this version's questions in place.
 """
 from __future__ import annotations
@@ -67,11 +74,32 @@ def main() -> None:
     os.environ.setdefault("DECIPHER_DB_PORT", "55432")
 
     with conn() as c, c.cursor() as cur:
+        # Same upsert pattern as the /api/industries admin endpoint in
+        # app/api_server.py. code is the stable key; name/description are
+        # kept in sync on re-run.
         cur.execute(
-            """INSERT INTO audit_versions (code, name, is_active)
-               VALUES ('charity_fundraising_v1', 'Charity & NFP Fundraising DNA Audit', TRUE)
-               ON CONFLICT (code) DO UPDATE SET name = EXCLUDED.name
-               RETURNING audit_version_id"""
+            """INSERT INTO industries (code, name, description)
+               VALUES (%s, %s, %s)
+               ON CONFLICT (code) DO UPDATE SET
+                  name = EXCLUDED.name,
+                  description = EXCLUDED.description
+               RETURNING industry_id""",
+            (
+                "charity_nfp",
+                "Charity & NFP",
+                "Registered charities and not-for-profit fundraising, phone donor calls.",
+            ),
+        )
+        industry_id = cur.fetchone()[0]
+
+        cur.execute(
+            """INSERT INTO audit_versions (code, name, is_active, industry_id)
+               VALUES ('charity_fundraising_v1', 'Charity & NFP Fundraising DNA Audit', TRUE, %s)
+               ON CONFLICT (code) DO UPDATE SET
+                  name = EXCLUDED.name,
+                  industry_id = EXCLUDED.industry_id
+               RETURNING audit_version_id""",
+            (industry_id,),
         )
         version_id = cur.fetchone()[0]
 
@@ -102,6 +130,7 @@ def main() -> None:
             )
 
         print(f"Seeded charity_fundraising_v1 (audit_version_id={version_id}) with {len(QUESTIONS)} questions.")
+        print(f"  Linked industry_id={industry_id} (charity_nfp / Charity & NFP)")
         print(f"  EQ Identity questions: {eq_identity_count}")
         print(f"  Scored questions: {len(QUESTIONS) - eq_identity_count}")
 
