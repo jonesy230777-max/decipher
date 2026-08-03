@@ -83,7 +83,7 @@ PAGE_ASSERTIONS: dict[str, list[tuple[str, str]]] = {
                       ("body", "Field Sales Team")],
     "respondent": [("h1", "Grant Smith"), ("body", "Metro Sales Team"),
                    ("body", "Edge-Builder")],
-    "audit_take": [("h1", "Decipher Sales DNA Audit"),
+    "audit_take": [("h1", "Media Sales DNA Audit"),
                    ("body", "Confidential"), ("body", "Continue to payment")],
     "people":     [("h1", "People"), ("body", "Search"),
                    ("body", "Atlas Media Group")],
