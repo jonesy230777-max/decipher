@@ -256,11 +256,11 @@ export default function AuditTake() {
                         <br /><br />
                         If more than one option feels true, go with your first instinct: the response that's most automatic for you under normal pressure. That instinct is exactly what this audit is designed to measure.
                         <br /><br />
-                        Your results will generate a personalised Sales DNA profile, showing your strengths across four key trait areas and where your biggest development opportunity lies.<br /><br />This audit comes in two versions, built for different sales motions. Choose the one that matches your role below.<br /><br /><strong>Media Sales:</strong> for sales professionals managing existing client relationships, pitching campaigns, renewing accounts, and growing revenue with warm, ongoing contacts.<br /><br /><strong>The Hunter:</strong> for sales professionals who generate their own pipeline. They cold call to book meetings, then present and close the sale online or face to face.
+                        Your results will generate a personalised Sales DNA profile, showing your strengths across four key trait areas and where your biggest development opportunity lies.<br /><br />This audit comes in three versions, built for different sales motions. Choose the one that matches your role below.<br /><br /><strong>Media Sales:</strong> for sales professionals managing existing client relationships, pitching campaigns, renewing accounts, and growing revenue with warm, ongoing contacts.<br /><br /><strong>The Hunter:</strong> for sales professionals who generate their own pipeline. They cold call to book meetings, then present and close the sale online or face to face.<br /><br /><strong>Charity & NFP Fundraising:</strong> for phone fundraisers calling potential donors on behalf of a charity, covering the donor call from opener through to the ask and objection handling.
                         <br /><br />
                         Ready? Let's begin.
             </p>
-            {versionList && versionList.filter((v) => v.code === "media_sales_v1" || v.code === "generic_sales_v2").length > 1 && (
+            {versionList && versionList.filter((v) => v.code === "media_sales_v1" || v.code === "generic_sales_v2" || v.code === "charity_fundraising_v1").length > 1 && (
               <div style={{ marginTop: "var(--space-4)" }}>
                 <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                   <span className="hig-caption-1" style={{ color: "var(--colour-label)" }}>Audit type</span>
@@ -278,8 +278,8 @@ export default function AuditTake() {
                       fontFamily: "inherit",
                     }}
                   >
-                    {versionList.filter((v) => v.code === "media_sales_v1" || v.code === "generic_sales_v2").map((v) => (
-                      <option key={v.code} value={v.code}>{v.code === "media_sales_v1" ? "Media Sales" : v.code === "generic_sales_v2" ? "The Hunter" : v.name}</option>
+                    {versionList.filter((v) => v.code === "media_sales_v1" || v.code === "generic_sales_v2" || v.code === "charity_fundraising_v1").map((v) => (
+                      <option key={v.code} value={v.code}>{v.code === "media_sales_v1" ? "Media Sales" : v.code === "generic_sales_v2" ? "The Hunter" : v.code === "charity_fundraising_v1" ? "Charity & NFP Fundraising" : v.name}</option>
                     ))}
                   </select>
                 </label>
@@ -309,7 +309,7 @@ export default function AuditTake() {
                 <button
                   key={canonicalIdx}
                   disabled={busy} onClick={() => answer(canonicalIdx)} className="audit-option-btn"
-                  
+
                   style={{
                     textAlign: "left",
                     padding: "var(--space-3) var(--space-4)",
@@ -322,8 +322,8 @@ export default function AuditTake() {
                     color: "var(--colour-label)",
                     transition: "background var(--duration-fast), border-color var(--duration-fast)",
                   }}
-                  
-                  
+
+
                 >
                   <span style={{ color: "var(--colour-label-tertiary)", marginRight: "var(--space-3)", fontWeight: 700 }}>
                     {String.fromCharCode(65 + i)}.
