@@ -63,7 +63,7 @@ def main() -> None:
     with conn() as c, c.cursor() as cur:
         cur.execute(
             """INSERT INTO audit_versions (code, name, is_active)
-               VALUES ('media_sales_v1', 'Decipher Sales DNA Audit', TRUE)
+               VALUES ('media_sales_v1', 'Media Sales DNA Audit', TRUE)
                ON CONFLICT (code) DO UPDATE SET name = EXCLUDED.name
                RETURNING audit_version_id"""
         )
