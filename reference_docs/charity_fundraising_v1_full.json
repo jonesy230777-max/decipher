@@ -1,0 +1,1115 @@
+{
+  "industry": "charity_fundraising_v1",
+  "trait_labels": {
+    "cognitive_empathy": "Cognitive Empathy",
+    "eq": "EQ",
+    "pressure_composure": "Pressure Composure",
+    "narrative_persuasion": "Narrative Persuasion"
+  },
+  "questions": [
+    {
+      "id": "Q1",
+      "qnum": 1,
+      "trait": "cognitive_empathy",
+      "prompt": "You've just introduced yourself and the charity. The person who picked up says a flat 'yeah, go on.' You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Launch straight into the mission and the ask, since they said to go on",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Speed up slightly so you don't lose them before you get to the point",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask if now is actually a good time before you continue",
+          "score": 4
+        },
+        {
+          "letter": "D",
+          "text": "Say 'sounds like now's not great, is it a bad time?' and wait for a real answer",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Thank them for staying on the line and continue at the same pace",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "id": "Q2",
+      "qnum": 2,
+      "trait": "cognitive_empathy",
+      "prompt": "A donor says, in a clipped tone, 'I already give to a couple of charities.' You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Explain why your cause is more urgent right now than most",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Ask which charities, so you can compare your cause to theirs",
+          "score": 2
+        },
+        {
+          "letter": "C",
+          "text": "Say 'you're already doing your bit then' and pause to see where they take it",
+          "score": 4
+        },
+        {
+          "letter": "D",
+          "text": "Thank them for giving and move straight to a smaller, easier ask",
+          "score": 1
+        },
+        {
+          "letter": "E",
+          "text": "Reflect it back: 'a couple of charities already?' and hold the silence",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q3",
+      "qnum": 3,
+      "trait": "cognitive_empathy",
+      "prompt": "You state the suggested monthly amount and the line goes quiet for a few seconds. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Fill the gap straight away with a cheaper option",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Repeat the amount in case they didn't hear it clearly",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask 'what's on your mind?' and let them answer in their own time",
+          "score": 4
+        },
+        {
+          "letter": "D",
+          "text": "Stay quiet and let the silence sit until they speak first",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Explain the tax-deductible receipt to make the number feel smaller",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "id": "Q4",
+      "qnum": 4,
+      "trait": "cognitive_empathy",
+      "prompt": "Unprompted, a donor says 'my dad went through this a few years back.' You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Say 'sorry to hear that' and move straight back to the pitch",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Note it as a good sign and go for the ask while they're engaged",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask a gentle follow-up: 'how's he doing now?'",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Slow right down and let them tell you as much or as little as they want",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name it: 'that sounds like it's still close to home for you' and wait",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q5",
+      "qnum": 5,
+      "trait": "cognitive_empathy",
+      "prompt": "The donor sounds warm when you open, then goes flat the moment you mention cost. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Push on with the pitch since they were friendly a second ago",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Jump to a lower amount before they can say no",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask directly if the amount is a problem for them",
+          "score": 2
+        },
+        {
+          "letter": "D",
+          "text": "Name the shift: 'you went a bit quiet there, is it the amount?'",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Slow down and ask what would feel more comfortable",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "Q6",
+      "qnum": 6,
+      "trait": "cognitive_empathy",
+      "prompt": "You can hear kids in the background and the donor's answers are getting shorter. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Talk faster to get through the pitch before they hang up",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Keep going at the same pace, it's not your problem if it's a bad moment",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask if it's a houseful right now and offer to call back",
+          "score": 4
+        },
+        {
+          "letter": "D",
+          "text": "Notice it out loud and offer a better time, no pressure either way",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Wrap the pitch up quickly and ask for a decision now",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "id": "Q7",
+      "qnum": 7,
+      "trait": "eq",
+      "prompt": "A donor starts venting about cost-of-living pressure, nothing to do with your call. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Let them finish, then redirect straight back to the ask",
+          "score": 2
+        },
+        {
+          "letter": "B",
+          "text": "Say 'I hear you' quickly and move on",
+          "score": 2
+        },
+        {
+          "letter": "C",
+          "text": "Ask a question that connects what they said to a smaller, easier gift",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Fully listen, reflect back what you heard, then let them decide what happens next",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name what they're feeling and ask them to say more before mentioning the charity again",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q8",
+      "qnum": 8,
+      "trait": "eq",
+      "prompt": "The donor keeps saying 'yeah, sure, sure' but sounds miles away. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Repeat the impact stats in a different way to try to land it",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Ask them straight out if they're still keen to keep talking",
+          "score": 2
+        },
+        {
+          "letter": "C",
+          "text": "Ask an open question: 'what matters most to you when you think about giving?'",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Name it: 'you've gone quiet on me, has something changed?'",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Ease off and give them space to come back into the conversation",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "Q9",
+      "qnum": 9,
+      "trait": "eq",
+      "prompt": "The donor's tone turns sharp: 'How did you even get this number?' You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Defend the call straight away by explaining your legal right to call",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Apologise repeatedly and rush to end the call",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Explain plainly where the number came from and why you're calling",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Acknowledge the sharpness first: 'fair question, let me explain', then answer it straight",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name it: 'that's caught you off guard' and then explain calmly",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q10",
+      "qnum": 10,
+      "trait": "eq",
+      "prompt": "A donor asks, half-joking, half-serious: 'Do you actually care about this, or is it just a job?' You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Laugh it off and steer straight back to the script",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Recite the mission statement as proof that you care",
+          "score": 2
+        },
+        {
+          "letter": "C",
+          "text": "Give a short, honest answer about why you took the job",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Answer honestly and ask what made them ask that",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name what's under the question: 'sounds like you've been burned by a call like this before'",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q11",
+      "qnum": 11,
+      "trait": "eq",
+      "prompt": "A donor's voice catches as they explain why the cause matters to them. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Keep the pitch moving so it doesn't get awkward",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Say 'that's so sad' and change the subject",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Say 'take your time' and wait quietly",
+          "score": 4
+        },
+        {
+          "letter": "D",
+          "text": "Ask a soft follow-up question about what they said",
+          "score": 3
+        },
+        {
+          "letter": "E",
+          "text": "Name it gently: 'that clearly still means a lot to you' and let them lead",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q12",
+      "qnum": 12,
+      "trait": "eq",
+      "prompt": "An elderly donor is enjoying the chat and keeps drifting off-topic. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Cut in and steer firmly back to the ask, you're on the clock",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Let the call run long and never get to the ask at all",
+          "score": 2
+        },
+        {
+          "letter": "C",
+          "text": "Enjoy a minute of it, then warmly bridge back: 'I'd love to keep chatting, and I also want to tell you about...'",
+          "score": 4
+        },
+        {
+          "letter": "D",
+          "text": "Name the enjoyment: 'you're easy to talk to' and steer back gently after",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Politely mention you have other calls waiting",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "id": "Q13",
+      "qnum": 13,
+      "trait": "pressure_composure",
+      "prompt": "A donor demands: 'How much of my money actually goes to admin and wages?' You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Get defensive and list reasons the overhead is justified",
+          "score": 2
+        },
+        {
+          "letter": "B",
+          "text": "Dodge the number and pivot straight back to the cause",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Give the honest figure plainly, no spin",
+          "score": 4
+        },
+        {
+          "letter": "D",
+          "text": "Give the honest figure, then ask what prompted the question",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Say you don't have that figure and offer to send it later",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "Q14",
+      "qnum": 14,
+      "trait": "pressure_composure",
+      "prompt": "A donor snaps: 'Take me off your list, I'm on the Do Not Call Register.' You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Explain that registered charities are exempt from that register",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Try one more time for a smaller, one-off gift before you let it go",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Apologise and end the call without confirming anything further",
+          "score": 2
+        },
+        {
+          "letter": "D",
+          "text": "Confirm you'll remove them, ask for the best way to action it, and thank them",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Confirm you'll remove them and end the call there",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "Q15",
+      "qnum": 15,
+      "trait": "pressure_composure",
+      "prompt": "Three hang-ups in a row this hour. The next call is about to connect. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Carry the last call's tone into this one and rush the opener",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Take a breath, reset, and open this call exactly as if it's the first of the day",
+          "score": 5
+        },
+        {
+          "letter": "C",
+          "text": "Skim through the pitch faster to get through more calls",
+          "score": 1
+        },
+        {
+          "letter": "D",
+          "text": "Mentally brace for another knock-back before they've even answered",
+          "score": 2
+        },
+        {
+          "letter": "E",
+          "text": "Take a short break before dialling again",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "Q16",
+      "qnum": 16,
+      "trait": "pressure_composure",
+      "prompt": "A donor says: 'Are you even a real charity, or is this a scam?' You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Get defensive: 'I can assure you this is completely legitimate'",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Laugh it off, it's an odd thing to ask",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Give the charity's ABN or registration and offer to let them call the charity direct to confirm",
+          "score": 5
+        },
+        {
+          "letter": "D",
+          "text": "Explain the charity's registration status",
+          "score": 3
+        },
+        {
+          "letter": "E",
+          "text": "Say you understand the concern and explain calmly how they can verify it",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "Q17",
+      "qnum": 17,
+      "trait": "pressure_composure",
+      "prompt": "Mid-pitch, the donor says 'I have to go.' You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Talk faster to squeeze the ask in before they hang up",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Ask for thirty more seconds to finish the point",
+          "score": 2
+        },
+        {
+          "letter": "C",
+          "text": "Let them go straight away and offer to call back another time",
+          "score": 4
+        },
+        {
+          "letter": "D",
+          "text": "Let them go, thank them for their time, no strings attached",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Ask if you can at least send some information by email",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "Q18",
+      "qnum": 18,
+      "trait": "pressure_composure",
+      "prompt": "You've just named the monthly amount. Five full seconds of silence follow. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Jump in with a cheaper alternative before they can say no",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Repeat the amount, maybe it didn't land",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask 'what are you thinking?' and let them answer",
+          "score": 4
+        },
+        {
+          "letter": "D",
+          "text": "Hold the silence and let them be the one to speak next",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Fill the gap by listing more of the charity's programs",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "id": "Q19",
+      "qnum": 19,
+      "trait": "narrative_persuasion",
+      "prompt": "You've got about twenty seconds before most people decide whether to keep listening. You open with:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "The charity's full name and how long it's been operating",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "A general statistic about how many Australians the cause affects",
+          "score": 2
+        },
+        {
+          "letter": "C",
+          "text": "A one-line question about whether they've heard of the charity",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "A short, specific line about what one gift actually changes: 'twenty dollars covers a week of meals for a family like the Turners'",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "A broad statement about the importance of generosity in Australia",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "Q20",
+      "qnum": 20,
+      "trait": "narrative_persuasion",
+      "prompt": "A donor asks: 'What does my fifty dollars actually do?' You respond with:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "A rundown of the charity's total annual budget",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "A general line about how every dollar helps",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "A concrete example: what fifty dollars specifically funds, in real terms",
+          "score": 4
+        },
+        {
+          "letter": "D",
+          "text": "A short story about one person it helped, ending on what changed for them",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "A comparison to what fifty dollars buys elsewhere, like two coffees a week",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "Q21",
+      "qnum": 21,
+      "trait": "narrative_persuasion",
+      "prompt": "A donor says: 'I usually just give to [a bigger, more famous charity].' You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Point out flaws in the bigger charity to make yours look better",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Argue that your charity needs the money more",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask what they like about giving to that charity",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Agree that's a great cause, then tell one specific story that shows what makes this one different",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "List your charity's achievements compared to theirs",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "id": "Q22",
+      "qnum": 22,
+      "trait": "narrative_persuasion",
+      "prompt": "A donor asks you to explain the mission in one line. You say:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "A line straight from the website's About page",
+          "score": 2
+        },
+        {
+          "letter": "B",
+          "text": "A long explanation covering every program the charity runs",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "One plain sentence about who it helps and how",
+          "score": 4
+        },
+        {
+          "letter": "D",
+          "text": "One plain sentence, then a real example that brings it to life",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "The charity's official slogan",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "Q23",
+      "qnum": 23,
+      "trait": "narrative_persuasion",
+      "prompt": "You're ready to make the ask itself. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Ask an open-ended 'would you consider supporting us?'",
+          "score": 2
+        },
+        {
+          "letter": "B",
+          "text": "List three possible amounts and ask them to pick",
+          "score": 3
+        },
+        {
+          "letter": "C",
+          "text": "Suggest a specific monthly amount tied directly to the impact story you just told",
+          "score": 5
+        },
+        {
+          "letter": "D",
+          "text": "Ask for the biggest amount first to leave room to negotiate down",
+          "score": 1
+        },
+        {
+          "letter": "E",
+          "text": "Ask if they can give 'whatever they're comfortable with'",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "Q24",
+      "qnum": 24,
+      "trait": "narrative_persuasion",
+      "prompt": "The donor gives a soft 'maybe, send me something to look at.' You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Push for a firm yes before you let the call end",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Agree straight away and end the call there",
+          "score": 2
+        },
+        {
+          "letter": "C",
+          "text": "Agree, confirm exactly what you'll send and when, and set a real follow-up time",
+          "score": 5
+        },
+        {
+          "letter": "D",
+          "text": "Agree and mention you'll try calling again in a few weeks",
+          "score": 3
+        },
+        {
+          "letter": "E",
+          "text": "Try a smaller, cheaper ask instead before giving up",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "Q25",
+      "qnum": 25,
+      "trait": "eq_bonus",
+      "prompt": "A donor goes quiet mid-sentence, like they started to say something and stopped. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Carry on talking to cover the awkward gap",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Assume they got distracted and repeat your last point",
+          "score": 2
+        },
+        {
+          "letter": "C",
+          "text": "Wait a beat, then ask 'what were you going to say?'",
+          "score": 4
+        },
+        {
+          "letter": "D",
+          "text": "Name it: 'sounds like something crossed your mind there'",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Move straight to the next part of the pitch",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "Q26",
+      "qnum": 26,
+      "trait": "eq_bonus",
+      "prompt": "Five seconds of dead air follow right after you ask for the gift. Your gut says:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Fill it immediately with reassurance about the cause",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Repeat the ask in slightly different words",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "They're processing, so you hold the silence",
+          "score": 5
+        },
+        {
+          "letter": "D",
+          "text": "Ask if they have any questions before deciding",
+          "score": 3
+        },
+        {
+          "letter": "E",
+          "text": "Summarise the impact points again in case they forgot",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "id": "Q27",
+      "qnum": 27,
+      "trait": "eq_bonus",
+      "prompt": "The donor's tone shifts from friendly to clipped partway through the call. Your gut says:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "They're just busy, keep the pitch moving at the same pace",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Something changed, so you slow down and check in before continuing",
+          "score": 5
+        },
+        {
+          "letter": "C",
+          "text": "They've decided no already, so you rush to wrap up",
+          "score": 2
+        },
+        {
+          "letter": "D",
+          "text": "Push through to the ask before it gets worse",
+          "score": 1
+        },
+        {
+          "letter": "E",
+          "text": "Soften your tone and ask if it's still an alright time",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "Q28",
+      "qnum": 28,
+      "trait": "eq_bonus",
+      "prompt": "You get voicemail instead of a person. Your instinct is to:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Leave the full pitch, amount and all, in case they don't call back",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Hang up without a message and try again straight away",
+          "score": 2
+        },
+        {
+          "letter": "C",
+          "text": "Leave a short, warm message with a reason to call back, and note it for a later attempt",
+          "score": 5
+        },
+        {
+          "letter": "D",
+          "text": "Leave a message reading from the script word for word",
+          "score": 3
+        },
+        {
+          "letter": "E",
+          "text": "Text the number immediately after, uninvited",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "id": "Q29",
+      "qnum": 29,
+      "trait": "eq_bonus",
+      "prompt": "A donor says 'let me think about it.' Your gut read is:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "That's a polite no, so you push once more before hanging up",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "That's genuine, so you ask what would help them decide and agree a real follow-up",
+          "score": 5
+        },
+        {
+          "letter": "C",
+          "text": "That's a stall, so you offer a discount on the ask to close it now",
+          "score": 1
+        },
+        {
+          "letter": "D",
+          "text": "That's fine, you thank them and end the call with no follow-up planned",
+          "score": 2
+        },
+        {
+          "letter": "E",
+          "text": "You ask directly whether it's really a no",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "Q30",
+      "qnum": 30,
+      "trait": "eq_bonus",
+      "prompt": "The donor's answers turn one-word partway through what had been an easy chat. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Assume it's nothing and keep going as planned",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Speed up to get to the ask before they lose interest completely",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask directly if they need to go",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Name the change and hand them the option to stop or continue",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Lower your energy to match theirs and see what happens",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "Q31",
+      "qnum": 31,
+      "trait": "eq_bonus",
+      "prompt": "You name the monthly amount and the donor gives a short, nervous laugh. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Laugh along and immediately suggest a smaller number",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Ignore it and wait for their answer",
+          "score": 2
+        },
+        {
+          "letter": "C",
+          "text": "Name it lightly: 'that got a laugh, was it more than you expected?'",
+          "score": 5
+        },
+        {
+          "letter": "D",
+          "text": "Explain the reasoning behind the suggested amount",
+          "score": 3
+        },
+        {
+          "letter": "E",
+          "text": "Ask if a different amount would suit them better",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "EQ1",
+      "trait": "eq_identity",
+      "prompt": "EQ Identity EQ1",
+      "options": [
+        {
+          "letter": "EQ-A",
+          "identity": "regulator",
+          "text": "When a donor gets emotional, my strength is staying calm and not reacting"
+        },
+        {
+          "letter": "EQ-B",
+          "identity": "edge_builder",
+          "text": "My strength is using their emotion as information to guide what I say next"
+        },
+        {
+          "letter": "EQ-C",
+          "identity": "observer",
+          "text": "My strength is noticing the emotion before they've said anything"
+        },
+        {
+          "letter": "EQ-D",
+          "identity": "namer",
+          "text": "My strength is naming the emotion out loud, even when it's uncomfortable"
+        }
+      ]
+    },
+    {
+      "id": "EQ2",
+      "trait": "eq_identity",
+      "prompt": "EQ Identity EQ2",
+      "options": [
+        {
+          "letter": "EQ-A",
+          "identity": "regulator",
+          "text": "Under pressure on a call, I stay logical and don't let the knock-backs get to me"
+        },
+        {
+          "letter": "EQ-B",
+          "identity": "edge_builder",
+          "text": "Under pressure on a call, I look for the emotional opening the donor hasn't noticed yet"
+        },
+        {
+          "letter": "EQ-C",
+          "identity": "observer",
+          "text": "Under pressure on a call, I watch and wait, reading their tone before I act"
+        },
+        {
+          "letter": "EQ-D",
+          "identity": "namer",
+          "text": "Under pressure on a call, I call out what's really happening, even if it's awkward"
+        }
+      ]
+    },
+    {
+      "id": "EQ3",
+      "trait": "eq_identity",
+      "prompt": "EQ Identity EQ3",
+      "options": [
+        {
+          "letter": "EQ-A",
+          "identity": "regulator",
+          "text": "After a tough call, I debrief by reviewing what I said and whether it was accurate"
+        },
+        {
+          "letter": "EQ-B",
+          "identity": "edge_builder",
+          "text": "After a tough call, I think about what emotional opening I did or didn't use"
+        },
+        {
+          "letter": "EQ-C",
+          "identity": "observer",
+          "text": "After a tough call, I replay what I noticed: tone, pauses, energy"
+        },
+        {
+          "letter": "EQ-D",
+          "identity": "namer",
+          "text": "After a tough call, I think about whether I named the hard thing or talked around it"
+        }
+      ]
+    }
+  ]
+}
