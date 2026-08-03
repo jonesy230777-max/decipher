@@ -256,7 +256,7 @@ export default function AuditTake() {
                         <br /><br />
                         If more than one option feels true, go with your first instinct: the response that's most automatic for you under normal pressure. That instinct is exactly what this audit is designed to measure.
                         <br /><br />
-                        Your results will generate a personalised Sales DNA profile, showing your strengths across four key trait areas and where your biggest development opportunity lies.
+                        Your results will generate a personalised Sales DNA profile, showing your strengths across four key trait areas and where your biggest development opportunity lies.<br /><br />This audit comes in two versions, built for different sales motions. Choose the one that matches your role below.<br /><br /><strong>Media Sales:</strong> for sales professionals managing existing client relationships, pitching campaigns, renewing accounts, and growing revenue with warm, ongoing contacts.<br /><br /><strong>The Hunter:</strong> for sales professionals who generate their own pipeline. They cold call to book meetings, then present and close the sale online or face to face.
                         <br /><br />
                         Ready? Let's begin.
             </p>
@@ -279,7 +279,7 @@ export default function AuditTake() {
                     }}
                   >
                     {versionList.filter((v) => v.code === "media_sales_v1" || v.code === "generic_sales_v2").map((v) => (
-                      <option key={v.code} value={v.code}>{v.name}</option>
+                      <option key={v.code} value={v.code}>{v.code === "media_sales_v1" ? "Media Sales" : v.code === "generic_sales_v2" ? "The Hunter" : v.name}</option>
                     ))}
                   </select>
                 </label>
