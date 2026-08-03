@@ -1,4 +1,4 @@
-"""Seed the Generic Sales DNA Audit v2 questions (38-question hunter-cycle
+"""Seed the Hunter Sales DNA Audit v2 questions (38-question hunter-cycle
 audit: cold call -> gatekeeper/discovery -> pressure/objections -> pitch/close).
 
 Source of truth: reference_docs/generic_sales_v2_full.json, built from the
@@ -88,7 +88,7 @@ def main() -> None:
     with conn() as c, c.cursor() as cur:
         cur.execute(
             """INSERT INTO audit_versions (code, name, is_active)
-               VALUES ('generic_sales_v2', 'Generic Sales DNA Audit', TRUE)
+               VALUES ('generic_sales_v2', 'Hunter Sales DNA Audit', TRUE)
                ON CONFLICT (code) DO UPDATE SET name = EXCLUDED.name
                RETURNING audit_version_id"""
         )
