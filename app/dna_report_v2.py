@@ -255,7 +255,7 @@ def _load_context(audit_id: int) -> dict:
         "archetype_description": audit.get("archetype_description"),
         "archetype_code": audit.get("archetype_code"),
         "confidence": audit.get("confidence") or 0.0,
-        "history": history,
+        "history": history, "question_count": scalar("SELECT count(*) FROM questions WHERE audit_version_id = %s", (audit["audit_version_id"],)),
     }
 
 
@@ -488,7 +488,7 @@ def _page1(ctx: dict, synthesis: dict) -> str:
     <div class="meta-row">
       <div class="meta-block"><div class="meta-label">Prepared for</div><div class="meta-value">{_esc(name)}</div><div style="font-size:7.6pt;color:#636366;margin-top:2pt">{_esc(subtitle)}</div></div>
       <div class="meta-block"><div class="meta-label">Audit date</div><div class="meta-value">{_esc(date_str)}</div></div>
-      <div class="meta-block"><div class="meta-label">Assessment</div><div class="meta-value">DNA Audit</div><div style="font-size:7.6pt;color:#636366;margin-top:2pt">34-question diagnostic</div></div>
+      <div class="meta-block"><div class="meta-label">Assessment</div><div class="meta-value">DNA Audit</div><div style="font-size:7.6pt;color:#636366;margin-top:2pt">{ctx['question_count']}-question diagnostic</div></div>
     </div>
   </div>
 
@@ -708,7 +708,7 @@ def _roadmap_page(ctx: dict) -> str:
 
 
 _GLOSSARY_TERMS = [
-    ("DNA Audit", "Decipher's diagnostic assessment. A 34-question instrument that measures the four communication traits shaping every sales conversation, and places you within four performance bands."),
+    ("DNA Audit", "Decipher's diagnostic assessment. A structured instrument that measures the four communication traits shaping every sales conversation, and places you within four performance bands."),
     ("Overall DNA Score", "Your composite score across all four traits, out of 100. It reflects your all-round communication effectiveness rather than any single skill, and sets your overall performance band."),
     ("Cognitive Empathy", "The ability to read what a buyer is thinking and feeling, including what they leave unsaid, and to diagnose the source of their hesitation rather than only sensing it."),
     ("Emotional Intelligence", "The ability to read the emotional climate of a room and shape it, distinguishing what a buyer says they need from what they privately fear, and adjusting in response."),
