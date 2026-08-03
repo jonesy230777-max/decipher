@@ -9,7 +9,7 @@
         {"letter": "A", "text": "Push through your opener exactly as planned.", "score": 1, "identity": "regulator"},
         {"letter": "B", "text": "Speed up your pitch to get the key point in before they hang up.", "score": 2, "identity": "edge_builder"},
         {"letter": "C", "text": "Ask if now's a bad time and offer to catch them at a better one.", "score": 4, "identity": "observer"},
-        {"letter": "D", "text": "Name it: \"Sounds like I've caught you mid-something — better time to call back?\"", "score": 5, "identity": "namer"}
+        {"letter": "D", "text": "Name it: \"Sounds like I've caught you mid-something. Better time to call back?\"", "score": 5, "identity": "namer"}
       ]
     },
     {
@@ -106,7 +106,7 @@
       "id": "Q11", "qnum": 11, "trait": "eq",
       "prompt": "You've made nine dials this morning and had four hang-ups. Dial ten, your internal state is:",
       "options": [
-        {"letter": "A", "text": "Numb to it now — you stopped feeling the rejections a while back.", "score": 2, "identity": "regulator"},
+        {"letter": "A", "text": "Numb to it now: you stopped feeling the rejections a while back.", "score": 2, "identity": "regulator"},
         {"letter": "B", "text": "You push the next dial out faster, trying to outrun the feeling.", "score": 1, "identity": "edge_builder"},
         {"letter": "C", "text": "Curious about what's different about the calls that don't hang up.", "score": 4, "identity": "observer"},
         {"letter": "D", "text": "Aware your energy has dropped, and you consciously reset before dialing.", "score": 5, "identity": "namer"}
@@ -119,7 +119,7 @@
         {"letter": "A", "text": "You shrug it off completely, zero reflection, straight to the next number.", "score": 2, "identity": "regulator"},
         {"letter": "B", "text": "You call straight back to finish your point.", "score": 2, "identity": "edge_builder"},
         {"letter": "C", "text": "You wonder whether timing, not your pitch, was the real issue.", "score": 4, "identity": "observer"},
-        {"letter": "D", "text": "You name it honestly to yourself — \"that stung\" — then dial again, clear-headed.", "score": 5, "identity": "namer"}
+        {"letter": "D", "text": "You name it honestly to yourself, \"that stung,\" then dial again, clear-headed.", "score": 5, "identity": "namer"}
       ]
     },
     {
@@ -206,10 +206,10 @@
       "id": "Q21", "qnum": 21, "trait": "pressure_composure",
       "prompt": "A prospect says \"we're all set, not interested\" within your first five seconds on the phone. You:",
       "options": [
-        {"letter": "A", "text": "Say thanks for your time and hang up — respect the no.", "score": 1, "identity": "regulator"},
+        {"letter": "A", "text": "Say thanks for your time and hang up. Respect the no.", "score": 1, "identity": "regulator"},
         {"letter": "B", "text": "Jump straight into your value proposition to change their mind.", "score": 2, "identity": "edge_builder"},
         {"letter": "C", "text": "Ask one short question before you let them go.", "score": 4, "identity": "observer"},
-        {"letter": "D", "text": "Name it: \"Totally fair — most people say that before they've heard why I called. Thirty seconds?\"", "score": 5, "identity": "namer"}
+        {"letter": "D", "text": "Name it: \"Totally fair, most people say that before they've heard why I called. Thirty seconds?\"", "score": 5, "identity": "namer"}
       ]
     },
     {
@@ -299,7 +299,7 @@
         {"letter": "A", "text": "State your name and company clearly.", "score": 1, "identity": "regulator"},
         {"letter": "B", "text": "Ask if they have a minute to talk.", "score": 2, "identity": "edge_builder"},
         {"letter": "C", "text": "Reference something specific about their business to earn the right to continue.", "score": 4, "identity": "observer"},
-        {"letter": "D", "text": "Open with one line tied to something specific happening in their world right now — not your pitch.", "score": 5, "identity": "namer"}
+        {"letter": "D", "text": "Open with one line tied to something specific happening in their world right now, not your pitch.", "score": 5, "identity": "namer"}
       ]
     },
     {
