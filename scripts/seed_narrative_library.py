@@ -87,8 +87,8 @@ def _generate_via_haiku(dimension: str, band: str) -> dict[str, str]:
 
     dim_label = DIM_LABELS.get(dimension, dimension.replace("_", " ").title())
     prompt = (
-        f"You are writing coaching narratives for a media sales DNA audit platform.\n\n"
-        f"Write a strength observation and a specific coaching action for a media salesperson "
+        f"You are writing coaching narratives for a sales DNA audit platform.\n\n"
+        f"Write a strength observation and a specific coaching action for a salesperson "
         f"whose {dim_label} score is in the '{band}' band.\n\n"
         f"Band definitions:\n"
         f"  developing: score < 40 (early stage, needs foundational habits)\n"
