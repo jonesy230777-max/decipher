@@ -9,6 +9,7 @@ type Company = {
   company_id: number;
   name: string;
   industry: string | null;
+  industry_id: number | null;
   n_teams: number;
   n_respondents: number;
   avg_score_100: number;
@@ -20,18 +21,26 @@ type Company = {
   band_developing: number;
 };
 
+type Industry = {
+  industry_id: number;
+  code: string;
+  name: string;
+  description: string | null;
+};
+
 export default function Companies() {
   const { me } = useAuth();
   const [rows, setRows] = useState<Company[] | null>(null);
   const [adding, setAdding] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [n, setN] = useState({ name: "", industry: "", contact_name: "", contact_email: "", contact_mobile: "", website: "" });
-
+  const [n, setN] = useState({ name: "", industry_id: "", contact_name: "", contact_email: "", contact_mobile: "", website: "" });
+  const [industries, setIndustries] = useState<Industry[]>([]);
   function refresh() {
     api<{ companies: Company[] }>("/api/companies").then((d) => setRows(d.companies));
   }
   useEffect(() => { refresh(); }, []);
+  useEffect(() => { api<{ industries: Industry[] }>("/api/industries").then((d) => setIndustries(d.industries)); }, []);
 
   async function create() {
     if (!n.name.trim()) return;
@@ -41,13 +50,13 @@ export default function Companies() {
       await api("/api/companies", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: n.name.trim(), industry: n.industry || null,
+          name: n.name.trim(), industry_id: n.industry_id ? Number(n.industry_id) : null,
           contact_name: n.contact_name || null, contact_email: n.contact_email || null,
           contact_mobile: n.contact_mobile || null, website: n.website || null,
         }),
       });
       setAdding(false);
-      setN({ name: "", industry: "", contact_name: "", contact_email: "", contact_mobile: "", website: "" });
+      setN({ name: "", industry_id: "", contact_name: "", contact_email: "", contact_mobile: "", website: "" });
       refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create company. Please try again.");
@@ -76,7 +85,6 @@ export default function Companies() {
             gap: "var(--space-3)",
           }}>
             {([["Company name","name","e.g. Atlas Media Group"],
-               ["Industry","industry","media / pharma / tech"],
                ["Contact name","contact_name","Primary contact"],
                ["Contact email","contact_email","contact@company.com"],
                ["Mobile","contact_mobile","04xx xxx xxx"],
@@ -95,6 +103,23 @@ export default function Companies() {
                     width: "100%", boxSizing: "border-box" }} />
               </label>
             ))}
+          <label key="industry_id" style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
+            <span className="hig-caption-1">Industry</span>
+            <select value={n.industry_id}
+              onChange={(e) => setN({ ...n, industry_id: e.target.value })}
+              style={{ height: 36, padding: "0 var(--space-3)",
+                border: "1px solid var(--colour-separator-opaque)",
+                borderRadius: "var(--radius-sm)",
+                background: "var(--colour-bg-system)",
+                color: "var(--colour-label)",
+                fontSize: "var(--type-callout)", fontFamily: "inherit",
+                width: "100%", boxSizing: "border-box" }}>
+              <option value="">Select industry...</option>
+              {industries.map((ind) => (
+                <option key={ind.industry_id} value={ind.industry_id}>{ind.name}</option>
+              ))}
+            </select>
+          </label>
           </div>
           {error && (
             <div className="hig-caption-1" style={{ color: "#D92D20", marginTop: "var(--space-3)" }}>
