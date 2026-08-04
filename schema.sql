@@ -382,4 +382,5 @@ ALTER TABLE companies
     ADD COLUMN IF NOT EXISTS contact_mobile TEXT,
     ADD COLUMN IF NOT EXISTS website        TEXT,
     ADD COLUMN IF NOT EXISTS country        TEXT,
-    ADD COLUMN IF NOT EXISTS abn            TEXT;
+    ADD COLUMN IF NOT EXISTS abn             TEXT,
+    ADD COLUMN IF NOT EXISTS industry_id     BIGINT REFERENCES industries(industry_id);
