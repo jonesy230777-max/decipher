@@ -1396,7 +1396,7 @@ def admin_delete_respondents(body: _DeleteRespondentsBody, request: Request) -> 
 @app.get("/api/companies")
 def companies_list(request: Request) -> dict[str, Any]:
     """All companies with rolled-up aggregates across their teams."""
-    base = rows("SELECT company_id, name, industry FROM companies ORDER BY name")
+    base = rows("SELECT company_id, name, industry, industry_id FROM companies ORDER BY name")
     caller = _caller_from_request(request)
     if not caller:
         raise HTTPException(401, "not authenticated")
@@ -2359,7 +2359,7 @@ class InviteIn(BaseModel):
     team_id:    int | None = None
     company_id: int | None = None
     notes:      str | None = None
-    audit_version_code: str = "media_sales_v1"
+    audit_version_code: str | None = None
 
 
 def _resolve_caller_role(invited_by_email: str | None, invited_by_role: str | None) -> str:
@@ -2469,6 +2469,16 @@ def audit_invite(body: InviteIn, background_tasks: BackgroundTasks, request: Req
             rid = cur.fetchone()[0]
 
     token = secrets.token_urlsafe(32)
+    version_code, cid = body.audit_version_code, body.company_id
+    if not cid and body.team_id:
+        t = rows("SELECT company_id FROM teams WHERE team_id = %s", (body.team_id,))
+        cid = t[0]["company_id"] if t else None
+    if not version_code and cid:
+        m = rows("SELECT av.code FROM companies co JOIN audit_versions av ON av.industry_id = co.industry_id WHERE co.company_id = %s AND av.is_active = TRUE ORDER BY av.audit_version_id LIMIT 1", (cid,))
+        version_code = m[0]["code"] if m else None
+    if not version_code:
+        version_code = "media_sales_v1"
+        event("invite.version_defaulted", severity="warning", actor="system", payload={"company_id": body.company_id, "team_id": body.team_id})
     with conn() as c:
         cur = c.cursor()
         cur.execute(
@@ -2479,7 +2489,7 @@ def audit_invite(body: InviteIn, background_tasks: BackgroundTasks, request: Req
                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                RETURNING invite_id, sent_at, expires_at""",
             (rid, body.email, body.first_name, body.last_name, body.mobile,
-         body.team_id, body.company_id, body.audit_version_code,
+             body.team_id, body.company_id, version_code,
                           token, me[0]["email"], body.notes),
         )
         invite = cur.fetchone()
@@ -2751,7 +2761,7 @@ def funnel(request: Request, team_id: int | None = None, company_id: int | None 
 class BulkInviteIn(BaseModel):
     team_id:          int | None = None
     company_id:       int | None = None
-    audit_version_code: str = "media_sales_v1"
+    audit_version_code: str | None = None
     only_unaudited:   bool = True
 
 
@@ -4002,6 +4012,7 @@ class CompanyCreate(BaseModel):
     website:        str | None = None
     country:        str | None = "Australia"
     abn:            str | None = None
+    industry_id: int | None = None
 
 
 class PromoCreate(BaseModel):
@@ -4071,8 +4082,8 @@ def companies_create(body: CompanyCreate, request: Request) -> dict[str, Any]:
         cur = c.cursor()
         cur.execute(
             """INSERT INTO companies (name, industry, contact_name, contact_email,
-                                      contact_mobile, website, country, abn)
-               VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+                    contact_mobile, website, country, abn, industry_id)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
                ON CONFLICT (name) DO UPDATE SET
                   industry = EXCLUDED.industry,
                   contact_name = EXCLUDED.contact_name,
@@ -4080,10 +4091,11 @@ def companies_create(body: CompanyCreate, request: Request) -> dict[str, Any]:
                   contact_mobile = EXCLUDED.contact_mobile,
                   website = EXCLUDED.website,
                   country = EXCLUDED.country,
-                  abn = EXCLUDED.abn
+                abn = EXCLUDED.abn,
+                industry_id = EXCLUDED.industry_id
                RETURNING company_id""",
             (body.name, body.industry, body.contact_name, body.contact_email,
-             body.contact_mobile, body.website, body.country, body.abn),
+             body.contact_mobile, body.website, body.country, body.abn, body.industry_id),
         )
         cid = cur.fetchone()[0]
     return {"ok": True, "company_id": cid}
