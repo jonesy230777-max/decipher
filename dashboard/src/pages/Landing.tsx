@@ -46,13 +46,7 @@ export default function Landing() {
         alignItems: "center",
       }}>
         <div>
-          <p className="hig-caption-1" style={{
-            display: "inline-block",
-            background: "var(--colour-accent-tint-bg)",
-            color: "var(--colour-accent)", padding: "4px 10px",
-            borderRadius: 999, fontWeight: 700, margin: 0,
-          }}>For media sales teams</p>
-          <h1 className="hig-large-title" style={{ fontSize: 56, lineHeight: 1.05,
+                    <h1 className="hig-large-title" style={{ fontSize: 56, lineHeight: 1.05,
             margin: "var(--space-3) 0 var(--space-3) 0" }}>
             The Decipher DNA Audit. <br/>
             Not a test. A clear picture of your strengths, and what to develop to close more and earn more.
