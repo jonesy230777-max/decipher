@@ -41,7 +41,7 @@ export default function Landing() {
       {/* Hero */}
       <section style={{
         flex: 1,
-        display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "var(--space-7)",
+             display: "grid", gridTemplateColumns: "1fr", gap: "var(--space-7)",
         padding: "var(--space-7) var(--space-7)", maxWidth: 1400, margin: "0 auto",
         alignItems: "center",
       }}>
@@ -75,39 +75,7 @@ export default function Landing() {
             </Link>
           </div>
         </div>
-
-        <div style={{
-          background: "var(--colour-bg-system-secondary)",
-          border: "1px solid var(--colour-separator-opaque)",
-          borderRadius: "var(--radius-lg)",
-          padding: "var(--space-6)",
-        }}>
-          <h2 className="hig-title-3" style={{ marginTop: 0 }}>What gets measured</h2>
-          <ul style={{ listStyle: "none", padding: 0, margin: "var(--space-3) 0",
-            display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
-            {[
-              ["Cognitive Empathy", "Reading what the buyer is actually feeling, beyond what they say."],
-              ["Emotional Intelligence", "Reading the room, regulating self, naming what matters."],
-              ["Pressure Composure", "Holding steady under price pressure, objections, silence."],
-              ["Narrative Persuasion", "Telling stories buyers remember and decision-makers retell."],
-            ].map(([t, d]) => (
-              <li key={t} style={{ display: "flex", gap: "var(--space-3)" }}>
-                <span style={{ width: 8, height: 8, borderRadius: "50%",
-                  background: "var(--colour-accent)", marginTop: 8,
-                  flexShrink: 0 }} />
-                <div>
-                  <div className="hig-headline">{t}</div>
-                  <div className="hig-callout" style={{ color: "var(--colour-label)" }}>{d}</div>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <p className="hig-footnote" style={{ color: "var(--colour-label)", margin: 0 }}>
-            One of 8 named archetypes (e.g. Trust Architect, Calm Diagnostician,
-            Confident Storyteller) is assigned from your top two traits.
-          </p>
-        </div>
-      </section>
+</section>
 
       <footer style={{
         borderTop: "1px solid var(--colour-separator)",
