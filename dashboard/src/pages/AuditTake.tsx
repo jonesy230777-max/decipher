@@ -213,7 +213,7 @@ export default function AuditTake() {
     >
       <div style={{ width: "100%", maxWidth: 760, display: "flex", flexDirection: "column", gap: "var(--space-5)" }}>
         {/* Header */}
-        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-4)" }}>
+        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-4)", marginTop: 30 }}>
           <Logo height={32} /><span className="hig-headline" style={{ color: "var(--colour-label)", fontWeight: 700 }}>Sales DNA Audit</span>
 
         </header>
