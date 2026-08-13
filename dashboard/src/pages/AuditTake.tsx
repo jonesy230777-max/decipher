@@ -178,6 +178,10 @@ export default function AuditTake() {
   const [answeredIds, setAnsweredIds] = useState<Set<number> | null>(null);
   const [resumeInfo, setResumeInfo] = useState<{ versionName: string; answeredCount: number } | null>(null);
   const [resumeChecked, setResumeChecked] = useState(false);
+  // True when a /audit/{id} link was opened for an audit that is no
+  // longer in_progress -- the link is still valid to click, it just
+  // does not reopen the questions. See DoneCard render below.
+  const [alreadyCompleted, setAlreadyCompleted] = useState(false);
 
   useEffect(() => {
     const saved = loadResumeState();
@@ -190,8 +194,17 @@ export default function AuditTake() {
       .then((s) => {
         if (s.status !== "in_progress") {
           // Already finished (maybe on another device/tab) or not
-          // resumable -- nothing to restore, forget it and move on.
+          // resumable -- nothing to restore.
           clearResumeState();
+          if (paramAuditId) {
+            // They followed an actual /audit/{id} link (e.g. the emailed
+            // resume link) straight to a completed audit -- say so
+            // plainly instead of dropping them into a dead question
+            // screen. A locally-remembered id with no link, by
+            // contrast, just quietly falls back to a fresh intro.
+            setAlreadyCompleted(true);
+            setStep("done");
+          }
           setResumeChecked(true);
           return;
         }
@@ -475,7 +488,11 @@ export default function AuditTake() {
           </Card>
         )}
 
-        {step === "done" && <DoneCard auditId={auditId} result={result} />}
+        {step === "done" && (
+          alreadyCompleted
+            ? <AlreadyCompletedCard />
+            : <DoneCard auditId={auditId} result={result} />
+        )}
 
         <footer className="hig-footnote" style={{ textAlign: "center", color: "var(--colour-label)", padding: "var(--space-5) 0" }}>
           deciphersales.com.au · {version.version.name}
@@ -502,6 +519,19 @@ const EQ_IDENTITY_LABEL: Record<string, string> = {
   regulator: "Regulator", edge_builder: "Edge Builder",
   observer: "Observer", namer: "Namer",
 };
+
+function AlreadyCompletedCard() {
+  return (
+    <Card>
+      <h1 className="hig-large-title" style={{ margin: 0 }}>Already completed</h1>
+      <p className="hig-body" style={{ color: "var(--colour-label)", marginTop: "var(--space-3)" }}>
+        This audit has already been submitted, so this link will not reopen it.
+        Your results were sent by email -- check your inbox (and spam folder) if
+        you have not seen them yet.
+      </p>
+    </Card>
+  );
+}
 
 function DoneCard({ auditId, result }: { auditId: number | null; result: CompleteResult | null }) {
   if (!result || !result.score) {

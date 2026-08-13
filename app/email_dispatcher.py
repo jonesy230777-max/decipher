@@ -127,6 +127,92 @@ def send_report_email(audit_id: int, report_id: int, pdf_path: str) -> None:
         )
 
 
+def send_resume_link_email(audit_id: int, resume_url: str) -> None:
+    """Email the respondent a link back into their in-progress audit.
+
+    Fired from audit_start() as soon as an audit is created, so they can
+    pick up where they left off on any device even if they never come
+    back to the original browser tab. The link is only good for as long
+    as the audit is still 'in_progress' -- app/api_server.py's
+    GET /api/audit/{id}/state (and AuditTake.tsx's handling of it) turns
+    it into a plain "already completed" message the moment the audit is
+    submitted, so this email does not need its own expiry logic.
+    """
+    rec = rows(
+        """SELECT r.email, r.first_name, r.name, av.name AS version_name
+             FROM audits a
+             JOIN respondents r ON r.respondent_id = a.respondent_id
+             JOIN audit_versions av ON av.audit_version_id = a.audit_version_id
+            WHERE a.audit_id = %s""",
+        (audit_id,),
+    )
+    if not rec or not rec[0].get("email"):
+        raise RuntimeError("recipient_missing")
+    r = rec[0]
+    first = r.get("first_name") or (r.get("name") or "there").split()[0]
+    version_name = r.get("version_name") or "Sales DNA Audit"
+
+    if not _RESEND_API_KEY:
+        raise RuntimeError("RESEND_API_KEY not configured")
+
+    text_body = (
+        f"Hi {first},\n\n"
+        f"Here is your link to the {version_name}:\n{resume_url}\n\n"
+        f"If you do not finish in one sitting, this same link brings you back "
+        f"to exactly where you left off, on this device or any other. Once "
+        f"you have completed and submitted the audit, this link stops doing "
+        f"anything -- your results are on their way separately.\n\n"
+        f"Steve\n\n"
+        f"--\n"
+        f"Steve Jones\n"
+        f"Trainer & Founder\n"
+        f"e: steve@deciphersales.com.au"
+    )
+    html_body = (
+        "<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>"
+        f"<p>Hi {first},</p>"
+        f"<p>Here is your link to the <strong>{version_name}</strong>:</p>"
+        f"<p><a href='{resume_url}' style='color:#1A57C7'>{resume_url}</a></p>"
+        "<p>If you do not finish in one sitting, this same link brings you back "
+        "to exactly where you left off, on this device or any other. Once you "
+        "have completed and submitted the audit, this link stops doing "
+        "anything -- your results are on their way separately.</p>"
+        "<p>Steve</p>"
+        "<hr style='border:0;border-top:1px solid #e5e5ea;margin:20px 0 12px'>"
+        "<p style='font-size:13px;line-height:1.5;color:#1c1c1e;margin:0'>"
+        "Steve Jones<br>"
+        "<span style='color:#2FA84F;font-weight:600'>Trainer &amp; Founder</span><br>"
+        "e: <a href='mailto:steve@deciphersales.com.au' style='color:#1A57C7;text-decoration:none'>steve@deciphersales.com.au</a>"
+        "</p>"
+        "</body></html>"
+    )
+
+    payload = {
+        "from": _MAIL_FROM,
+        "to": [r["email"]],
+        "subject": f"Your {version_name} link",
+        "text": text_body,
+        "html": html_body,
+    }
+
+    req = urllib.request.Request(
+        _RESEND_API_URL,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {_RESEND_API_KEY}",
+            "Content-Type": "application/json",
+            "User-Agent": "decipher-app/1.0",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            resp.read()
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", "replace")
+        raise RuntimeError(f"resend_error:{exc.code}:{body[:300]}")
+
+
 def dispatch_one() -> bool:
     """Claim and execute one queued email job.
 

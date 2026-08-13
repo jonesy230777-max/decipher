@@ -4258,8 +4258,23 @@ def _split_name(full: str | None) -> tuple[str | None, str | None]:
     return (parts[0], " ".join(parts[1:]))
 
 
+def _send_resume_link_email_safe(audit_id: int, resume_url: str) -> None:
+    """Background task: email the respondent a link back into their audit.
+
+    Best-effort -- failures are logged to events_log rather than raised,
+    since this runs after the /start response has already gone out and
+    there is no HTTP context left to report an error to.
+    """
+    try:
+        from app.email_dispatcher import send_resume_link_email
+        send_resume_link_email(audit_id, resume_url)
+    except Exception as exc:
+        event("audit.resume_email_error", severity="warning", subject_id=str(audit_id),
+              payload={"error": str(exc)})
+
+
 @app.post("/api/audit/start")
-def audit_start(body: AuditStartIn) -> dict[str, Any]:
+def audit_start(body: AuditStartIn, background_tasks: BackgroundTasks) -> dict[str, Any]:
     email = body.email
     team_id = body.team_id
     version_code = body.version_code
@@ -4333,6 +4348,13 @@ def audit_start(body: AuditStartIn) -> dict[str, Any]:
                 "UPDATE audit_invites SET accepted_at = now(), audit_id = %s WHERE invite_id = %s",
                 (audit_id, invite_row["invite_id"]),
             )
+
+    resolved_code = rows("SELECT code FROM audit_versions WHERE audit_version_id = %s", (version_id,))[0]["code"]
+    web_port = os.environ.get("DECIPHER_WEB_PORT", "55173")
+    base_url = os.environ.get("DECIPHER_PUBLIC_URL", f"http://127.0.0.1:{web_port}")
+    resume_url = f"{base_url}/audit/{audit_id}?v={resolved_code}"
+    background_tasks.add_task(_send_resume_link_email_safe, audit_id, resume_url)
+
     return {"audit_id": audit_id, "respondent_id": rid}
 
 
