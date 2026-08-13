@@ -63,7 +63,7 @@ export default function Landing() {
         borderTop: "1px solid var(--colour-separator)",
         padding: "var(--space-4) var(--space-7)", textAlign: "center",
       }} className="hig-footnote">
-        deciphersales.com.au · Made in Sydney · © Decipher 2026
+        deciphersales.com.au · © Decipher 2026
       </footer>
     </div>
   );
