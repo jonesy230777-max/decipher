@@ -4342,6 +4342,38 @@ class AuditAnswerIn(BaseModel):
     elapsed_ms:   int | None = None
 
 
+@app.get("/api/audit/{audit_id}/state")
+def audit_state(audit_id: int) -> dict[str, Any]:
+    """Resume support: report progress for an in-progress (or completed)
+    audit so the client can restore the respondent to the correct
+    question instead of restarting at question 1.
+
+    Used by AuditTake.tsx on load, either from a direct /audit/{id} URL
+    or from a locally-saved audit_id, so a respondent who closes the tab
+    partway through does not have to start over.
+    """
+    a = rows(
+        """SELECT a.audit_id, a.status, av.code AS version_code, av.name AS version_name,
+                  r.name AS respondent_name
+             FROM audits a
+             JOIN audit_versions av ON av.audit_version_id = a.audit_version_id
+             JOIN respondents r ON r.respondent_id = a.respondent_id
+            WHERE a.audit_id = %s""",
+        (audit_id,),
+    )
+    if not a:
+        raise HTTPException(404, "audit not found")
+    answered = rows("SELECT question_id FROM responses WHERE audit_id = %s", (audit_id,))
+    return {
+        "audit_id": audit_id,
+        "status": a[0]["status"],
+        "version_code": a[0]["version_code"],
+        "version_name": a[0]["version_name"],
+        "respondent_name": a[0]["respondent_name"],
+        "answered_question_ids": [int(r["question_id"]) for r in answered],
+    }
+
+
 @app.post("/api/audit/{audit_id}/answer")
 def audit_answer(audit_id: int, body: AuditAnswerIn) -> dict[str, Any]:
     a = rows("SELECT audit_id, status FROM audits WHERE audit_id = %s", (audit_id,))
@@ -4353,7 +4385,11 @@ def audit_answer(audit_id: int, body: AuditAnswerIn) -> dict[str, Any]:
         cur = c.cursor()
         cur.execute(
             """INSERT INTO responses (audit_id, question_id, answer_value, response_ms)
-               VALUES (%s,%s,%s,%s)""",
+               VALUES (%s,%s,%s,%s)
+               ON CONFLICT (audit_id, question_id)
+               DO UPDATE SET answer_value = EXCLUDED.answer_value,
+                             response_ms  = EXCLUDED.response_ms,
+                             answered_at  = now()""",
             (audit_id, body.question_id, body.value, body.elapsed_ms or 0),
         )
     return {"ok": True}

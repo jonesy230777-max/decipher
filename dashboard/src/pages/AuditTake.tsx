@@ -32,7 +32,59 @@ type VersionPayload = {
 
 type VersionSummary = { audit_version_id: number; code: string; name: string };
 
-type Step = "intro" | "question" | "done";
+type AuditStateResponse = {
+  audit_id: number;
+  status: string;
+  version_code: string;
+  version_name: string;
+  respondent_name: string | null;
+  answered_question_ids: number[];
+};
+
+/**
+ * Client-side memory of an in-progress audit, so a respondent who closes
+ * the tab (or never had the /audit/{id} URL to begin with) can still be
+ * offered their unfinished audit next time they land on /audit/start.
+ * The server (`/api/audit/{id}/state`) remains the source of truth for
+ * what was actually answered; this is just enough to find the audit_id
+ * again and is discarded once the audit is completed or once it's stale.
+ */
+const RESUME_KEY = "decipher.audit.inProgress";
+const RESUME_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+type ResumeState = { auditId: number; versionCode: string; savedAt: number };
+
+function saveResumeState(auditId: number, versionCode: string): void {
+  try {
+    const state: ResumeState = { auditId, versionCode, savedAt: Date.now() };
+    localStorage.setItem(RESUME_KEY, JSON.stringify(state));
+  } catch {
+    // Private browsing / storage disabled: resume just degrades to "off".
+  }
+}
+
+function loadResumeState(): ResumeState | null {
+  try {
+    const raw = localStorage.getItem(RESUME_KEY);
+    if (!raw) return null;
+    const state = JSON.parse(raw) as ResumeState;
+    if (!state?.auditId || !state?.versionCode || !state?.savedAt) return null;
+    if (Date.now() - state.savedAt > RESUME_MAX_AGE_MS) return null;
+    return state;
+  } catch {
+    return null;
+  }
+}
+
+function clearResumeState(): void {
+  try {
+    localStorage.removeItem(RESUME_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+type Step = "intro" | "resume_prompt" | "question" | "done";
 
 type CompleteResult = {
   ok: boolean;
@@ -118,6 +170,49 @@ export default function AuditTake() {
   const [selectedVersionCode, setSelectedVersionCode] = useState<string>(
     () => new URLSearchParams(window.location.search).get("v") || "media_sales_v1"
   );
+  // Resume support ---------------------------------------------------
+  // audit_id we're resuming into, the questions already answered for it
+  // (consumed once to seed `idx`, see effect below), and enough info to
+  // show a "welcome back" prompt when we found it via localStorage rather
+  // than an explicit /audit/{id} URL.
+  const [answeredIds, setAnsweredIds] = useState<Set<number> | null>(null);
+  const [resumeInfo, setResumeInfo] = useState<{ versionName: string; answeredCount: number } | null>(null);
+  const [resumeChecked, setResumeChecked] = useState(false);
+
+  useEffect(() => {
+    const saved = loadResumeState();
+    const candidateId = paramAuditId ? Number(paramAuditId) : saved?.auditId ?? null;
+    if (!candidateId) {
+      setResumeChecked(true);
+      return;
+    }
+    api<AuditStateResponse>(`/api/audit/${candidateId}/state`)
+      .then((s) => {
+        if (s.status !== "in_progress") {
+          // Already finished (maybe on another device/tab) or not
+          // resumable -- nothing to restore, forget it and move on.
+          clearResumeState();
+          setResumeChecked(true);
+          return;
+        }
+        setAuditId(s.audit_id);
+        setSelectedVersionCode(s.version_code);
+        setAnsweredIds(new Set(s.answered_question_ids));
+        setResumeInfo({ versionName: s.version_name, answeredCount: s.answered_question_ids.length });
+        // A direct /audit/{id} link goes straight back into the questions;
+        // a locally-remembered audit (no id in the URL) gets an explicit
+        // "welcome back" choice instead of silently dropping them mid-way.
+        setStep(paramAuditId ? "question" : "resume_prompt");
+        setResumeChecked(true);
+      })
+      .catch(() => {
+        clearResumeState();
+        setResumeChecked(true);
+      });
+    // Runs once on mount only -- deliberately not re-checking after that.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     api<{ versions: VersionSummary[] }>("/api/audit/versions")
       .then((d) => setVersionList(d.versions));
@@ -144,6 +239,20 @@ export default function AuditTake() {
     const order = seededShuffleIndices(hashSeed(auditId, 8675309), questions.length);
     return order.map((i) => questions[i]);
   }, [questions, auditId]);
+
+  // Once we know which questions were already answered (from /state) and
+  // have the shuffled order to lay them out in, jump straight to the
+  // first unanswered one instead of restarting at question 1.
+  useEffect(() => {
+    if (step !== "question" || !answeredIds || !shuffledQuestions.length) return;
+    let resumeIdx = 0;
+    while (resumeIdx < shuffledQuestions.length && answeredIds.has(shuffledQuestions[resumeIdx].question_id)) {
+      resumeIdx++;
+    }
+    setIdx(resumeIdx);
+    setAnsweredIds(null); // consumed -- don't let this fight manual navigation later
+  }, [step, answeredIds, shuffledQuestions]);
+
   const q = shuffledQuestions[idx];
   const progress = shuffledQuestions.length ? (idx / shuffledQuestions.length) : 0;
 
@@ -168,7 +277,7 @@ export default function AuditTake() {
         version_code: selectedVersionCode, team_id: (() => { const t = new URLSearchParams(window.location.search).get("team"); return t ? Number(t) : null; })(),
         token: new URLSearchParams(window.location.search).get("invite"),
       };
-      const s = await fetch("/api/audit/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); const sd = await s.json(); if (!s.ok) { alert(sd.detail || "Something went wrong. Please try again."); return; } setAuditId(sd.audit_id); setStep("question"); setStartedAt(Date.now()); nav(`/audit/${sd.audit_id}?v=${selectedVersionCode}`, { replace: true }); } finally {
+      const s = await fetch("/api/audit/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); const sd = await s.json(); if (!s.ok) { alert(sd.detail || "Something went wrong. Please try again."); return; } setAuditId(sd.audit_id); saveResumeState(sd.audit_id, selectedVersionCode); setStep("question"); setStartedAt(Date.now()); nav(`/audit/${sd.audit_id}?v=${selectedVersionCode}`, { replace: true }); } finally {
       setBusy(false);
     }
   }
@@ -189,6 +298,7 @@ export default function AuditTake() {
       setStartedAt(Date.now());
       if (idx + 1 >= shuffledQuestions.length) {
         const res = await api<CompleteResult>(`/api/audit/${auditId}/complete`, { method: "POST" });
+        clearResumeState();
         setResult(res);
         setStep("done");
       } else {
@@ -199,7 +309,7 @@ export default function AuditTake() {
     }
   }
 
-  if (!version) return <p className="hig-footnote">Loading audit...</p>;
+  if (!version || (paramAuditId && !resumeChecked)) return <p className="hig-footnote">Loading audit...</p>;
 
   return (
     <div
@@ -242,6 +352,35 @@ export default function AuditTake() {
               Question {idx + 1} of {shuffledQuestions.length}
             </div>
           </div>
+        )}
+
+        {step === "resume_prompt" && resumeInfo && (
+          <Card>
+            <h1 className="hig-large-title" style={{ margin: 0 }}>Welcome back</h1>
+            <p className="hig-body" style={{ color: "var(--colour-label)", marginTop: "var(--space-3)" }}>
+              You are partway through the {resumeInfo.versionName}. You have answered{" "}
+              {resumeInfo.answeredCount} question{resumeInfo.answeredCount === 1 ? "" : "s"} so far.
+            </p>
+            <div style={{ marginTop: "var(--space-5)", display: "flex", justifyContent: "flex-end", gap: "var(--space-3)" }}>
+              <Button
+                onClick={() => {
+                  clearResumeState();
+                  setAnsweredIds(null);
+                  setResumeInfo(null);
+                  setAuditId(null);
+                  setIdx(0);
+                  setStep("intro");
+                }}
+                variant="plain"
+                size="lg"
+              >
+                Start over
+              </Button>
+              <Button onClick={() => setStep("question")} variant="filled" size="lg">
+                Continue where you left off →
+              </Button>
+            </div>
+          </Card>
         )}
 
         {step === "intro" && (
