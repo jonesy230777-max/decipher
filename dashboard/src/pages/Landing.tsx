@@ -1,7 +1,7 @@
 /**
  * Public landing / home page for Decipher. Shown when a visitor is not
- * logged in. Pitches the audit, surfaces a CTA to take the audit, and a
- * second CTA to sign in (for facilitators / directors).
+ * logged in. Header is logo-only; the "take the audit" and "client
+ * sign-in" CTAs live once, together, in the hero below.
  */
 import { Link } from "react-router-dom";
 import { Logo } from "../components/Logo";
@@ -14,7 +14,8 @@ export default function Landing() {
       background: "var(--colour-bg-system)",
       color: "var(--colour-label)",
     }}>
-      {/* Top nav */}
+      {/* Top bar: logo only. The audit/sign-in CTAs live in the hero
+          below so they are not duplicated up here. */}
       <header style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
         padding: "var(--space-4) var(--space-7)",
@@ -23,19 +24,6 @@ export default function Landing() {
         backdropFilter: "saturate(180%) blur(20px)",
       }}>
         <Logo height={40} />
-        <nav style={{ display: "flex", gap: "var(--space-3)", alignItems: "center" }}>
-          <Link to="/login"
-            style={{ color: "var(--colour-label-secondary)",
-              textDecoration: "none", fontWeight: 600 }}>
-            Sign in
-          </Link>
-          <Link to="/audit/start"
-            style={{ background: "var(--colour-accent)", color: "#FFFFFF",
-              padding: "10px 18px", borderRadius: "var(--radius-sm)",
-              textDecoration: "none", fontWeight: 600 }}>
-            Take the audit
-          </Link>
-        </nav>
       </header>
 
       {/* Hero */}
