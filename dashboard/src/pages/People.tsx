@@ -33,13 +33,14 @@ type Company = { company_id: number; name: string };
 
 export default function People() {
   const [people, setPeople] = useState<Person[] | null>(null);
-  const [teams, setTeams]   = useState<Team[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [companyFilter, setCompanyFilter] = useState<string>("");
-  const [teamFilter, setTeamFilter]       = useState<string>("");
-  const [roleFilter, setRoleFilter]       = useState<string>("");
+  const [teamFilter, setTeamFilter] = useState<string>("");
+  const [roleFilter, setRoleFilter] = useState<string>("");
   const [q, setQ] = useState<string>("");
   const [deleting, setDeleting] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     api<{ teams: Team[] }>("/api/teams").then((d) => setTeams(d.teams));
@@ -49,23 +50,46 @@ export default function People() {
   useEffect(() => {
     const p = new URLSearchParams();
     if (companyFilter) p.set("company_id", companyFilter);
-    if (teamFilter)    p.set("team_id", teamFilter);
-    if (roleFilter)    p.set("role", roleFilter);
-    if (q.trim())      p.set("q", q.trim());
+    if (teamFilter) p.set("team_id", teamFilter);
+    if (roleFilter) p.set("role", roleFilter);
+    if (q.trim()) p.set("q", q.trim());
     api<{ people: Person[] }>(`/api/people?${p}`).then((d) => setPeople(d.people));
   }, [companyFilter, teamFilter, roleFilter, q]);
 
-  async function handleDeleteShown() {
+  // Selection is scoped to whatever is currently shown: reset it any time
+  // the visible list changes (new filters, initial load, or a post-delete
+  // refresh) so stale ids never linger in the selection.
+  useEffect(() => {
+    setSelectedIds(new Set());
+  }, [people]);
+
+  function toggleOne(id: number) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleAll() {
     if (!people || people.length === 0) return;
-    const filtered = Boolean(companyFilter || teamFilter || roleFilter || q.trim());
-    const msg = `Delete ${people.length} ${filtered ? "people shown here (matching your current filters)" : "people"}? This removes them and every audit/report tied to them, permanently.`;
+    setSelectedIds((prev) =>
+      prev.size === people.length ? new Set() : new Set(people.map((p) => p.respondent_id))
+    );
+  }
+
+  async function handleDeleteSelected() {
+    if (selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+    const msg = `Delete ${ids.length} ${ids.length === 1 ? "person" : "people"}? This removes them and every audit/report tied to them, permanently.`;
     if (!window.confirm(msg)) return;
     setDeleting(true);
     try {
       await api("/api/admin/respondents/delete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ respondent_ids: people.map((p) => p.respondent_id) }),
+        body: JSON.stringify({ respondent_ids: ids }),
       });
       const params = new URLSearchParams();
       if (companyFilter) params.set("company_id", companyFilter);
@@ -88,11 +112,26 @@ export default function People() {
 
   const columns: Column<Person>[] = [
     {
+      key: "select",
+      label: "",
+      sortable: false,
+      thStyle: { width: 36 },
+      style: { width: 36 },
+      format: (p) => (
+        <input
+          type="checkbox"
+          checked={selectedIds.has(p.respondent_id)}
+          onChange={() => toggleOne(p.respondent_id)}
+          aria-label={p.name ? `Select ${p.name}` : "Select person"}
+        />
+      ),
+    },
+    {
       key: "name", label: "Name",
       sortValue: (p) => (p.name ?? "").toLowerCase(),
       format: (p) => (
         <Link to={`/respondents/${p.respondent_id}`}
-              style={{ color: "var(--colour-accent)", textDecoration: "none", fontWeight: 700 }}>
+          style={{ color: "var(--colour-accent)", textDecoration: "none", fontWeight: 700 }}>
           {p.name ?? "(no name)"}
         </Link>
       ),
@@ -139,6 +178,8 @@ export default function People() {
     },
   ];
 
+  const allShownSelected = !!people && people.length > 0 && selectedIds.size === people.length;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)", maxWidth: 1400 }}>
       <header style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "var(--space-4)" }}>
@@ -149,8 +190,8 @@ export default function People() {
           </p>
         </div>
         <div style={{ display: "flex", gap: "var(--space-3)" }}>
-          <Button variant="destructive" size="md" onClick={handleDeleteShown} disabled={deleting || !people || people.length === 0}>
-            {deleting ? "Deleting…" : `Delete ${people?.length ?? 0} Shown`}
+          <Button variant="destructive" size="md" onClick={handleDeleteSelected} disabled={deleting || selectedIds.size === 0}>
+            {deleting ? "Deleting…" : `Delete Selected${selectedIds.size > 0 ? ` (${selectedIds.size})` : ""}`}
           </Button>
           <Button variant="filled" size="md" href="/settings">Add Person +</Button>
         </div>
@@ -158,16 +199,16 @@ export default function People() {
 
       <Card>
         <div style={{ display: "grid",
-                      gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-                      gap: "var(--space-3)", alignItems: "end" }}>
+          gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+          gap: "var(--space-3)", alignItems: "end" }}>
           <Field label="Search">
             <input value={q} onChange={(e) => setQ(e.target.value)}
-                   placeholder="name or email" style={inputStyle} />
+              placeholder="name or email" style={inputStyle} />
           </Field>
           <Field label="Company">
             <select value={companyFilter}
-                    onChange={(e) => { setCompanyFilter(e.target.value); setTeamFilter(""); }}
-                    style={inputStyle}>
+              onChange={(e) => { setCompanyFilter(e.target.value); setTeamFilter(""); }}
+              style={inputStyle}>
               <option value="">All companies</option>
               {companies.map((c) => (
                 <option key={c.company_id} value={c.company_id}>{c.name.replace(/^Demo:\s*/, "")}</option>
@@ -191,6 +232,20 @@ export default function People() {
         </div>
       </Card>
 
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <label style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", cursor: people && people.length > 0 ? "pointer" : "default" }}>
+          <input
+            type="checkbox"
+            checked={allShownSelected}
+            onChange={toggleAll}
+            disabled={!people || people.length === 0}
+          />
+          <span className="hig-footnote" style={{ color: "var(--colour-label-secondary)" }}>
+            {selectedIds.size > 0 ? `${selectedIds.size} selected` : "Select all shown"}
+          </span>
+        </label>
+      </div>
+
       <SortableTable
         rows={people}
         columns={columns}
@@ -210,6 +265,7 @@ const inputStyle: React.CSSProperties = {
   fontSize: "var(--type-callout)", fontFamily: "inherit",
   width: "100%", boxSizing: "border-box",
 };
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
