@@ -243,6 +243,7 @@ function UsersAndRoles() {
   const [q, setQ]               = useState("");
   const [busy, setBusy]         = useState(false);
   const [showCreate, setShowCreate] = useState(false);
+  const [flash, setFlash] = useState<string | null>(null);
 
   // new user
   const [nEmail, setNEmail] = useState("");
@@ -315,7 +316,19 @@ function UsersAndRoles() {
       refresh();
     } finally { setBusy(false); }
   }
-
+  async function sendLoginLink(u: UserRow) {
+    setBusy(true);
+    try {
+      await api(`/api/users/${u.respondent_id}/send-login-link`, { method: "POST" });
+      setFlash(`Login link sent to ${u.email}`);
+    } catch (e) {
+      setFlash(`Failed: ${String(e)}`);
+    } finally {
+      setBusy(false);
+      setTimeout(() => setFlash(null), 3500);
+    }
+  }
+  
   return (
     <Card title="Users and Roles"
           action={<Button variant="filled" size="md" onClick={() => setShowCreate(v => !v)}>
@@ -368,6 +381,14 @@ function UsersAndRoles() {
         <Field label="Search" value={q} onChange={setQ} placeholder="email or name" />
         <Button variant="tinted" size="md" onClick={refresh}>Apply</Button>
       </div>
+      {flash && (
+        <div role="status" className="hig-caption-1"
+             style={{ padding: "var(--space-2) var(--space-3)", marginBottom: "var(--space-3)",
+                      background: "var(--colour-accent-tint-bg)", color: "var(--colour-accent)",
+                      border: "1px solid var(--colour-accent)", borderRadius: "var(--radius-sm)" }}>
+          {flash}
+        </div>
+      )}
 
       <UserRolesTable
         users={users}
@@ -376,13 +397,14 @@ function UsersAndRoles() {
         onPatchRole={patchRole}
         onPatchTeam={patchTeam}
         onPatchConsent={patchConsent}
+        onSendLoginLink={sendLoginLink}
       />
     </Card>
   );
 }
 
 function UserRolesTable({
-  users, teams, busy, onPatchRole, onPatchTeam, onPatchConsent,
+    users, teams, busy, onPatchRole, onPatchTeam, onPatchConsent, onSendLoginLink,
 }: {
   users: UserRow[] | null;
   teams: TeamLite[];
@@ -390,6 +412,7 @@ function UserRolesTable({
   onPatchRole: (u: UserRow, r: Role) => void;
   onPatchTeam: (u: UserRow, t: string) => void;
   onPatchConsent: (u: UserRow, v: boolean) => void;
+  onSendLoginLink: (u: UserRow) => void;
 }) {
   const visible = users ? users.slice(0, 200) : null;
 
@@ -445,6 +468,15 @@ function UserRolesTable({
            style={{ color: "var(--colour-accent)", textDecoration: "none", fontWeight: 600 }}>
           View ›
         </a>
+      ),
+      sortable: false,
+    },
+    {
+      key: "send_login_link", label: "",
+      format: (u) => (
+        <Button variant="tinted" size="sm" onClick={() => onSendLoginLink(u)} disabled={busy}>
+          Send link
+        </Button>
       ),
       sortable: false,
     },
