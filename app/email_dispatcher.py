@@ -292,6 +292,35 @@ def run(poll_interval: int = 5) -> None:
             print(f"[email_dispatcher] ERROR: {exc}", flush=True)
         time.sleep(poll_interval)
 
+def send_login_link_email(to_email: str, first_name: str | None, link: str, welcome: bool = False) -> None:
+  """Email a one-time Decipher sign-in link via Resend (welcome=True for first-login invites)."""
+  first = first_name or "there"
+  subject = "You've been added to Decipher" if welcome else "Your Decipher sign-in link"
+  intro = "You've just been added to Decipher. Click below to sign in for the first time." if welcome else "Click the link below to sign in to Decipher."
+  footer = "This link expires in 15 minutes and can only be used once. If you did not expect this email, you can ignore it."
+  text_body = f"Hi {first}, {intro} Sign in: {link} {footer}"
+  html_body = (
+    "<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>"
+    f"<p>Hi {first},</p><p>{intro}</p>"
+    f"<p><a href='{link}' style='background:#1A57C7;color:#fff;padding:12px 18px;text-decoration:none;border-radius:6px;font-weight:600;display:inline-block;'>Sign in to Decipher</a></p>"
+    f"<p style='font-size:13px;color:#8e8e93'>{footer}</p></body></html>"
+  )
+  if not _RESEND_API_KEY:
+    raise RuntimeError("RESEND_API_KEY not configured")
+  payload = {"from": _MAIL_FROM, "to": [to_email], "subject": subject, "text": text_body, "html": html_body}
+  req = urllib.request.Request(
+    _RESEND_API_URL,
+    data=json.dumps(payload).encode("utf-8"),
+    headers={"Authorization": f"Bearer {_RESEND_API_KEY}", "Content-Type": "application/json", "User-Agent": "decipher-app/1.0"},
+    method="POST",
+  )
+  try:
+    with urllib.request.urlopen(req, timeout=15) as resp:
+      resp.read()
+  except urllib.error.HTTPError as exc:
+    body = exc.read().decode("utf-8", "replace")
+    raise RuntimeError(f"resend_error:{exc.code}:{body[:300]}")
+
 
 if __name__ == "__main__":
     if "--once" in sys.argv:
