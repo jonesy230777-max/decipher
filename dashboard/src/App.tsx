@@ -2,6 +2,7 @@ import { NavLink, Route, Routes, useLocation, Navigate, useNavigate, useSearchPa
 import { useEffect, useState } from "react";
 import { api, ROLE_LABEL, type Bootstrap, type Role } from "./api";
 import { useAuth, type AuthMe } from "./auth";
+import { Button } from "./components/Card";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import MyProfile from "./pages/MyProfile";
@@ -305,14 +306,16 @@ function MagicLinkConsume() {
   const { loginWithToken } = useAuth();
   const nav = useNavigate();
   const [err, setErr] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const token = params.get("token");
 
-  useEffect(() => {
-    const token = params.get("token");
+  function consume() {
     if (!token) { setErr("Missing token in URL."); return; }
+    setBusy(true);
     api<{ ok: boolean; token: string; me: AuthMe }>(`/api/auth/magic-link/consume?token=${encodeURIComponent(token)}`)
       .then((r) => { loginWithToken(r.token, r.me); nav("/", { replace: true }); })
-      .catch((e) => setErr(String(e.message ?? e)));
-  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
+      .catch((e) => { setErr(String(e.message ?? e)); setBusy(false); });
+  }
 
   if (err) return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center",
@@ -329,12 +332,18 @@ function MagicLinkConsume() {
       </div>
     </div>
   );
+
   return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center",
                   justifyContent: "center", background: "var(--colour-bg-system)" }}>
-      <p className="hig-callout" style={{ color: "var(--colour-label-secondary)" }}>
-        Signing you in...
-      </p>
+      <div style={{ maxWidth: 380, textAlign: "center" }}>
+        <p className="hig-callout" style={{ color: "var(--colour-label-secondary)", marginBottom: "var(--space-4)" }}>
+          Click below to finish signing in. This confirms it's really you, not an automated link scan.
+        </p>
+        <Button onClick={consume} variant="filled" disabled={busy || !token}>
+          {busy ? "Signing in..." : "Sign in"}
+        </Button>
+      </div>
     </div>
   );
 }
