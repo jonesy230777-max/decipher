@@ -66,7 +66,7 @@ const _ALL_NAV: NavGroup[] = [
 
 // Paths permitted per role. admin = all. sales_person = own profile only.
 const _ROLE_PATHS: Partial<Record<Role, Set<string>>> = {
-  ceo:                  new Set(["/", "/funnel", "/audits", "/cohort", "/events", "/companies", "/teams", "/people"]),
+  ceo:                  new Set(["/", "/audits", "/cohort", "/companies", "/teams", "/people"]),
   sales_director:       new Set(["/", "/audits", "/cohort", "/teams", "/people"]),
   hr:                   new Set(["/people", "/companies", "/cohort", "/teams"]),
   learning_development: new Set(["/", "/audits", "/cohort", "/teams", "/people"]),
