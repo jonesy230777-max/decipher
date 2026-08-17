@@ -3948,6 +3948,39 @@ def users_patch(respondent_id: int, body: UserPatch, request: Request) -> dict[s
     return {"ok": True}
 
 
+@app.post("/api/users/{respondent_id}/send-login-link")
+def users_send_login_link(respondent_id: int, request: Request) -> dict[str, Any]:
+    """Generate a fresh magic-link token and email it to the user (admin only)."""
+    _require_admin(request)
+    rec = rows("SELECT respondent_id, email, first_name, name FROM respondents WHERE respondent_id = %s", (respondent_id,))
+    if not rec:
+        raise HTTPException(404, "user not found")
+    r = rec[0]
+    if not r.get("email"):
+        raise HTTPException(400, "user has no email on file")
+    import secrets
+    raw_token = secrets.token_urlsafe(32)
+    token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
+    with conn() as c, c.cursor() as cur:
+        cur.execute(
+            """INSERT INTO magic_link_tokens (token_hash, respondent_id, expires_at)
+               VALUES (%s, %s, now() + interval '15 minutes')""",
+            (token_hash, respondent_id),
+        )
+    web_port = os.environ.get("DECIPHER_WEB_PORT", "55173")
+    base_url = os.environ.get("DECIPHER_PUBLIC_URL", f"http://127.0.0.1:{web_port}")
+    link = f"{base_url}/auth/magic-link?token={raw_token}"
+    first = r.get("first_name") or (r.get("name") or "").split(" ")[0] or None
+    from app.email_dispatcher import send_login_link_email
+    try:
+        send_login_link_email(r["email"], first, link, welcome=True)
+    except Exception as exc:
+        event("user.login_link_failed", severity="warning", actor="admin", subject_id=str(respondent_id), payload={"error": str(exc)})
+        raise HTTPException(502, f"failed to send email: {exc}")
+    event("user.login_link_sent", actor="admin", subject_id=str(respondent_id), payload={"email": r["email"]})
+    return {"ok": True, "email": r["email"]}
+
+
 class UserCreate(BaseModel):
     email:        str
     name:         str | None = None
