@@ -163,6 +163,7 @@ export default function AuditTake() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [jobTitle, setJobTitle] = useState(""); const [company, setCompany] = useState("");
+  const [consent, setConsent] = useState(false);
 
   const [startedAt, setStartedAt] = useState<number>(Date.now());
 
@@ -287,6 +288,7 @@ export default function AuditTake() {
         name: name.trim(),
         job_title: jobTitle.trim() || null,
         company: company.trim() || null,
+        consent_share_individual: consent,
         version_code: selectedVersionCode, team_id: (() => { const t = new URLSearchParams(window.location.search).get("team"); return t ? Number(t) : null; })(),
         token: new URLSearchParams(window.location.search).get("invite"),
       };
@@ -443,6 +445,12 @@ export default function AuditTake() {
               <Field label="Job title" value={jobTitle} onChange={setJobTitle} placeholder="Sales rep, Sales Director, etc." /> <Field label="Company" value={company} onChange={setCompany} placeholder="Your company name" />
 
             </div>
+            <label style={{ display: "flex", alignItems: "flex-start", gap: 8, marginTop: "var(--space-4)", cursor: "pointer" }}>
+              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} style={{ marginTop: 3 }} />
+              <span className="hig-caption-1" style={{ color: "var(--colour-label)" }}>
+                I'm OK with my name and email being shown next to my results in team leaderboards and reports. If left unchecked, my results will be shown anonymised.
+              </span>
+            </label>
             <div style={{ marginTop: "var(--space-5)", display: "flex", justifyContent: "flex-end" }}>
               <Button onClick={start} variant="filled" size="lg">
                 {busy ? "Processing..." : "Begin audit →"}
