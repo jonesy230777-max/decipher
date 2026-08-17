@@ -4257,6 +4257,7 @@ class AuditStartIn(BaseModel):
     version_code:  str | None = None   # explicit override; takes priority
     industry_code: str | None = None; team_id: int | None = None   # S050: resolve version by industry; team link tag
     token: str | None = None  # invite_token from the emailed link; required to claim a team_id
+    consent_share_individual: bool = False  # respondent opts in to showing name/email (vs anonymised) in leaderboards
 
 
 def _resolve_audit_version(version_code: str | None, industry_code: str | None) -> int:
@@ -4350,20 +4351,23 @@ def audit_start(body: AuditStartIn, background_tasks: BackgroundTasks) -> dict[s
                           last_name  = COALESCE(NULLIF(last_name,''),  %s),
                           job_title  = COALESCE(NULLIF(job_title,''),  %s),
                           mobile     = COALESCE(NULLIF(mobile,''),     %s),
-                          name       = COALESCE(NULLIF(name,''),       %s)
+                          name       = COALESCE(NULLIF(name,''),       %s),
+                          consent_share_individual = %s
                     WHERE respondent_id = %s""",
-                (first, last, body.job_title, body.mobile, body.name, rid),
+                (first, last, body.job_title, body.mobile, body.name,
+                 body.consent_share_individual, rid),
             )
     else:
         with conn() as c:
             cur = c.cursor()
             cur.execute(
                 """INSERT INTO respondents (email, name, first_name, last_name,
-                                            mobile, job_title, company, role, source)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,'sales_person','native_audit')
+                                            mobile, job_title, company, role, source,
+                                            consent_share_individual)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,'sales_person','native_audit',%s)
                    RETURNING respondent_id""",
                 (email, body.name, first, last, body.mobile,
-                 body.job_title, body.company),
+                 body.job_title, body.company, body.consent_share_individual),
             )
             rid = cur.fetchone()[0]
 
