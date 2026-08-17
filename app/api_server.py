@@ -318,6 +318,48 @@ def bootstrap(request: Request) -> dict[str, Any]:
         "storytelling":       float(_dmr.get("storytelling")       or 0),
         "n_scored":           int(_dmr.get("n_scored")             or 0),
     }
+    _caller = _caller_from_request(request)
+    if _caller:
+        _me = rows(
+            "SELECT role, company_id FROM respondents WHERE respondent_id = %s",
+            (int(_caller["sub"]),),
+        )
+        if _me and _me[0]["role"] != "admin" and _me[0]["company_id"]:
+            _cid = _me[0]["company_id"]
+            counts["respondents"] = scalar(
+                "SELECT count(*) FROM respondents WHERE role='sales_person' AND company_id=%s", (_cid,)
+            ) or 0
+            counts["executives"] = scalar(
+                "SELECT count(*) FROM respondents WHERE role='sales_director' AND company_id=%s", (_cid,)
+            ) or 0
+            counts["audits"] = scalar(
+                "SELECT count(*) FROM audits a JOIN respondents r ON r.respondent_id=a.respondent_id "
+                "WHERE r.company_id=%s", (_cid,)
+            ) or 0
+            counts["audits_today"] = scalar(
+                "SELECT count(*) FROM audits a JOIN respondents r ON r.respondent_id=a.respondent_id "
+                "WHERE r.company_id=%s AND a.started_at::date = current_date", (_cid,)
+            ) or 0
+            counts["audits_month"] = scalar(
+                "SELECT count(*) FROM audits a JOIN respondents r ON r.respondent_id=a.respondent_id "
+                "WHERE r.company_id=%s AND date_trunc('month', a.started_at) = date_trunc('month', current_date)",
+                (_cid,),
+            ) or 0
+            counts["reports"] = scalar(
+                "SELECT count(*) FROM reports rp "
+                "JOIN audits a ON a.audit_id=rp.audit_id "
+                "JOIN respondents r ON r.respondent_id=a.respondent_id "
+                "WHERE r.company_id=%s", (_cid,)
+            ) or 0
+            counts["teams"] = scalar(
+                "SELECT count(*) FROM teams WHERE company_id=%s", (_cid,)
+            ) or 0
+            counts["companies"] = 1
+            for _k in ("operators", "patterns_doubt_passed", "industries", "bespoke_clients", "events_24h"):
+                counts[_k] = 0
+            pipeline = 0
+            sparks = {_k: [] for _k in sparks}
+
     return {
         "ports": {
             "db":   os.getenv("DECIPHER_DB_PORT"),
@@ -3645,7 +3687,7 @@ class LoginIn(BaseModel):
 @app.post("/api/auth/login")
 def auth_login(body: LoginIn) -> dict[str, Any]:
     r = rows(
-        """SELECT respondent_id, email, name, first_name, last_name, role,
+        """SELECT respondent_id, email, name, first_name, last_name, role, company_id, team_id,
                   password_hash, password_salt
              FROM respondents WHERE email = %s""",
         (body.email.lower().strip(),),
@@ -3678,6 +3720,8 @@ def auth_login(body: LoginIn) -> dict[str, Any]:
         "first_name":    rec["first_name"],
         "last_name":     rec["last_name"],
         "role":          rec["role"],
+        "company_id":    rec["company_id"],
+        "team_id":       rec["team_id"],
     }
     return {"ok": True, "token": _issue_jwt(rec["respondent_id"], rec["role"]), "me": me_out}
 
@@ -3797,7 +3841,7 @@ def magic_link_consume(token: str) -> dict[str, Any]:
     token_hash = hashlib.sha256(token.encode()).hexdigest()
     r = rows(
         """SELECT mlt.token_hash, mlt.respondent_id, mlt.expires_at, mlt.consumed_at,
-                  res.email, res.name, res.first_name, res.last_name, res.role
+                  res.email, res.name, res.first_name, res.last_name, res.role, res.company_id, res.team_id
              FROM magic_link_tokens mlt
              JOIN respondents res ON res.respondent_id = mlt.respondent_id
             WHERE mlt.token_hash = %s""",
@@ -3834,6 +3878,8 @@ def magic_link_consume(token: str) -> dict[str, Any]:
             "first_name":    rec["first_name"],
             "last_name":     rec["last_name"],
             "role":          rec["role"],
+            "company_id":    rec["company_id"],
+            "team_id":       rec["team_id"],
         },
     }
 
