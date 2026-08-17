@@ -9,6 +9,8 @@ export type AuthMe = {
   first_name?: string | null;
   last_name?: string | null;
   role: Role;
+  company_id: number | null;
+  team_id: number | null;
 };
 
 type AuthCtx = {
