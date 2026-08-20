@@ -1,0 +1,1159 @@
+{
+  "questions": [
+    {
+      "id": "Q1",
+      "qnum": 1,
+      "trait": "cognitive_empathy",
+      "prompt": "A category manager gives you a flat 'sounds fine' after you present your Q4 proposal. Your instinct is to:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Move straight to next steps and lock in the booking",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Add another data point to strengthen the case",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Say thanks and check in again next week",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Reflect it back: 'Sounds fine?' and wait",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name what you sense: 'That landed a bit flatter than I expected, what's going on?'",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q2",
+      "qnum": 2,
+      "trait": "cognitive_empathy",
+      "prompt": "A brand's trade marketing lead says their last retail media campaign 'didn't work.' Your first move is:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Reassure them: 'This time will be different, I promise.'",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Offer a discount on the next campaign to rebuild goodwill",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask: 'Can you tell me more about what happened?'",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Reflect their words back: 'Didn't work?' and hold the silence",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name the feeling underneath it: 'That result left you wary of trying again.'",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q3",
+      "qnum": 3,
+      "trait": "cognitive_empathy",
+      "prompt": "Halfway through a category brief call, the buyer's answers get shorter and shorter. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Speed up to get through the remaining questions",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Fill the gap with more detail about your offering",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask a clarifying question about the brief",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Slow down and ask what's changed in the last few minutes",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name it directly: 'You've gone quieter, has something shifted?'",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q4",
+      "qnum": 4,
+      "trait": "cognitive_empathy",
+      "prompt": "A category manager says yes to your proposal unusually quickly. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Take the win and move to paperwork",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Thank them and confirm the next steps",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask if there's anything they'd like adjusted before locking it in",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Ask what made the decision easy this time",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name what you notice: 'That was faster than I expected, what's driving the urgency?'",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q5",
+      "qnum": 5,
+      "trait": "cognitive_empathy",
+      "prompt": "An agency planner keeps steering the conversation back to CPM every time you mention a category insight. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Keep presenting the insight until it lands",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Switch entirely to CPM and drop the insight angle",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask if CPM is the priority for this brief",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Ask what's driving the focus on CPM specifically",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name it: 'It feels like CPM is standing in for a bigger concern, is that fair?'",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q6",
+      "qnum": 6,
+      "trait": "cognitive_empathy",
+      "prompt": "A buyer agrees to the plan on a video call, but something in their manner doesn't match their words. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Take the verbal agreement and move on",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Send a written recap to confirm it in writing",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask if they have any final questions",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Ask gently if everything sits right with them",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name the mismatch: 'You said yes, but something feels unresolved.'",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q7",
+      "qnum": 7,
+      "trait": "eq",
+      "prompt": "A trade lead raises their voice slightly when the rate card comes up. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Match their energy to show you're engaged",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Go quiet and let them finish",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Acknowledge the frustration and keep going",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Lower your own voice and slow your pace",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name the shift: 'I can hear this has hit a nerve, let's slow down.'",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q8",
+      "qnum": 8,
+      "trait": "eq",
+      "prompt": "You're frustrated after a category manager cancels a call for the third time. Before the reschedule, you:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Send a slightly terse message noting the cancellations",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Say nothing and just rebook",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Take a short break before writing back",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Notice your own frustration and set it aside before replying",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name it to yourself first, then reply from a clear head",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q9",
+      "qnum": 9,
+      "trait": "eq",
+      "prompt": "On a call with both an agency planner and a trade lead, you sense unspoken tension between them. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Address each of them separately after the call",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Keep the meeting moving and ignore it",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask if everyone's aligned before continuing",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Slow the pace and watch how they respond to each other",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name it in the room: 'I'm sensing two different priorities here, worth naming?'",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q10",
+      "qnum": 10,
+      "trait": "eq",
+      "prompt": "A category manager seems more enthusiastic than the numbers justify. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Match their enthusiasm and move to close",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Present the numbers plainly and let them draw conclusions",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask what's exciting them about the plan",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Notice the gap and ask what's really driving the enthusiasm",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name it: 'You sound more excited than the numbers alone explain, what's the real driver?'",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q11",
+      "qnum": 11,
+      "trait": "eq",
+      "prompt": "Mid-negotiation, you feel your own patience running thin. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Push to close before it gets worse",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Keep talking to fill the silence",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Take a breath and keep your tone steady",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Notice the feeling and consciously slow your pace",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name it internally, then choose your next words deliberately",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q12",
+      "qnum": 12,
+      "trait": "eq",
+      "prompt": "A supplier's trade lead goes unusually quiet after you mention a competing network. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Keep talking through the silence",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Change the subject to ease the tension",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask if they have any thoughts",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Sit with the silence and watch for what comes next",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Name it: 'That landed differently than I expected, what's on your mind?'",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q13",
+      "qnum": 13,
+      "trait": "pressure_composure",
+      "prompt": "A category director says your rate card is above every competing network's. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Offer an immediate discount to keep the deal moving",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Explain in detail why the number is justified",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Ask which competitor they're comparing to",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Ask what number would make this an easy yes",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Ask what would need to be true for the higher rate to be worth it",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q14",
+      "qnum": 14,
+      "trait": "pressure_composure",
+      "prompt": "A brand pushes back hard on your incrementality numbers in front of their CFO. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Concede the number may be off to keep the room calm",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Defend the methodology at length",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Offer to follow up with more detail after the call",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Ask what result would satisfy them the number is real",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Hold your position and ask them to walk through their own model first",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q15",
+      "qnum": 15,
+      "trait": "pressure_composure",
+      "prompt": "With two weeks left in the financial year, a client demands a heavy discount to use up budget. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Agree to the discount to secure the spend",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Explain why the rate card doesn't flex",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Offer a smaller concession to move things along",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Offer a value-add instead of a price cut",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Hold the price and let the silence sit",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q16",
+      "qnum": 16,
+      "trait": "pressure_composure",
+      "prompt": "You've just missed a quarterly target. Walking into your next pitch, you:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Over-explain the miss before getting to the pitch",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Avoid mentioning it and hope it doesn't come up",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Briefly note it and move on",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Mention it plainly and pivot to the plan ahead",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Run the pitch exactly as you would if the target had been hit",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q17",
+      "qnum": 17,
+      "trait": "pressure_composure",
+      "prompt": "A category manager casually mentions they're 'also talking to a competing network.' You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Immediately offer better terms to stay competitive",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Ignore the comment and continue the pitch",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Acknowledge it and keep going",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Ask what's drawing them to look elsewhere",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Ask what a good outcome from that comparison would look like for them",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q18",
+      "qnum": 18,
+      "trait": "pressure_composure",
+      "prompt": "A proposal you were confident about gets rejected outright. Your next move is:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Immediately re-pitch a discounted version",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Ask what went wrong in detail",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Thank them for the feedback and step back",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Let the rejection sit before deciding on a next step",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Ask what would need to change for this to be reconsidered later",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q19",
+      "qnum": 19,
+      "trait": "narrative_persuasion",
+      "prompt": "You're asked to explain a campaign's results to a category buyer who wasn't across the detail. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Send the full performance deck",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "List the key metrics: reach, CPM, conversion",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Summarise the top three numbers verbally",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Frame it as a before-and-after for the category",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Tell it as a story: what the brand feared, and what changed for them",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q20",
+      "qnum": 20,
+      "trait": "narrative_persuasion",
+      "prompt": "A brand asks why retail media costs more than social. Your answer leads with:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "A straight comparison of CPMs",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "A list of platform features",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "A quick explanation of purchase-intent data",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "A specific before-and-after example from a similar brand",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "A story about a sceptical brand that changed their mind, and why",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q21",
+      "qnum": 21,
+      "trait": "narrative_persuasion",
+      "prompt": "Presenting quarterly results to a room that includes a CFO, you open with:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "The full data table",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "A summary of every metric tracked",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "The headline number first",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "The headline number plus what it meant commercially",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "A single memorable line the room will repeat afterward",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q22",
+      "qnum": 22,
+      "trait": "narrative_persuasion",
+      "prompt": "You're pitching an underperforming format (in-store screens) that you believe still has value. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Present the raw dwell-time data",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "List the technical specs of the format",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Compare it to a similar competitor format",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Walk through one campaign where it worked and why",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Build the pitch around a moment: the shopper who stopped, looked, and bought",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q23",
+      "qnum": 23,
+      "trait": "narrative_persuasion",
+      "prompt": "Wrapping up a strong QBR, your closing line is:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "'Thanks for your time today.'",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "'Let's touch base again next quarter.'",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "A recap of the top three results",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "A recap plus what it means for next quarter",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "One sentence built to be repeated to their boss",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q24",
+      "qnum": 24,
+      "trait": "narrative_persuasion",
+      "prompt": "A junior category manager needs to relay your pitch to their director, who wasn't on the call. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Send the full slide deck for them to forward",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Offer to join the follow-up call yourself",
+          "score": 1
+        },
+        {
+          "letter": "C",
+          "text": "Write a short summary email",
+          "score": 3
+        },
+        {
+          "letter": "D",
+          "text": "Give them three bullet points they can repeat confidently",
+          "score": 4
+        },
+        {
+          "letter": "E",
+          "text": "Hand them a single line built to survive being retold secondhand",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "id": "Q25",
+      "qnum": 25,
+      "trait": "eq_bonus",
+      "prompt": "A category manager goes quiet after being your most responsive contact for months. Your gut says:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "They're probably just busy, keep following up on schedule",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Something changed internally, dig in before assuming anything",
+          "score": 4
+        },
+        {
+          "letter": "C",
+          "text": "The deal's cooling, move focus elsewhere",
+          "score": 2
+        },
+        {
+          "letter": "D",
+          "text": "Name what you sense: 'The timing may have shifted, I want to respect that.'",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Send a breakup message: 'I don't want to keep bugging you.'",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "Q26",
+      "qnum": 26,
+      "trait": "eq_bonus",
+      "prompt": "An agency planner suddenly gets much more formal in their emails. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Match the formality and carry on as normal",
+          "score": 2
+        },
+        {
+          "letter": "B",
+          "text": "Ask directly if something's changed",
+          "score": 4
+        },
+        {
+          "letter": "C",
+          "text": "Assume it's just their style and ignore it",
+          "score": 1
+        },
+        {
+          "letter": "D",
+          "text": "Name it gently on the next call",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Wait and see if it continues before reacting",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "Q27",
+      "qnum": 27,
+      "trait": "eq_bonus",
+      "prompt": "A trade lead who was enthusiastic last quarter seems flat this quarter. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Push the same pitch style that worked before",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Ask what's changed since last quarter",
+          "score": 4
+        },
+        {
+          "letter": "C",
+          "text": "Assume budget is tight and move on",
+          "score": 2
+        },
+        {
+          "letter": "D",
+          "text": "Name the shift directly and ask about it",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Wait for them to raise it themselves",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "Q28",
+      "qnum": 28,
+      "trait": "eq_bonus",
+      "prompt": "A category manager over-praises a mediocre campaign result. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Accept the praise and move to the next pitch",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Gently probe what's really landing well for them",
+          "score": 4
+        },
+        {
+          "letter": "C",
+          "text": "Assume they're just being polite",
+          "score": 2
+        },
+        {
+          "letter": "D",
+          "text": "Name the gap: 'That's generous, given the numbers, what's really working for you?'",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Say thank you and let it go",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "Q29",
+      "qnum": 29,
+      "trait": "eq_bonus",
+      "prompt": "A brand's CFO joins a call unannounced partway through. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Continue exactly as planned",
+          "score": 2
+        },
+        {
+          "letter": "B",
+          "text": "Pause and read the room before continuing",
+          "score": 4
+        },
+        {
+          "letter": "C",
+          "text": "Speed up to finish before they ask questions",
+          "score": 1
+        },
+        {
+          "letter": "D",
+          "text": "Acknowledge them and ask what's most useful for them to hear",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Wait for them to speak first",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "Q30",
+      "qnum": 30,
+      "trait": "eq_bonus",
+      "prompt": "You sense a category manager is under pressure from their own leadership, though they haven't said so. You:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Stick to the agenda as planned",
+          "score": 1
+        },
+        {
+          "letter": "B",
+          "text": "Gently ask how things are going on their side",
+          "score": 4
+        },
+        {
+          "letter": "C",
+          "text": "Assume it's not your concern",
+          "score": 2
+        },
+        {
+          "letter": "D",
+          "text": "Name it: 'You seem stretched at the moment, is now still a good time?'",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Wait for them to bring it up",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "Q31",
+      "qnum": 31,
+      "trait": "eq_bonus",
+      "prompt": "A long-quiet client suddenly books a call with no agenda given. Your gut says:",
+      "options": [
+        {
+          "letter": "A",
+          "text": "It's probably a routine catch-up",
+          "score": 2
+        },
+        {
+          "letter": "B",
+          "text": "Something's changed, prepare for a few scenarios",
+          "score": 4
+        },
+        {
+          "letter": "C",
+          "text": "It's probably bad news, brace for it",
+          "score": 1
+        },
+        {
+          "letter": "D",
+          "text": "Go in curious and ask directly what prompted the call",
+          "score": 5
+        },
+        {
+          "letter": "E",
+          "text": "Wait to see how the call opens before reacting",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "EQ1",
+      "trait": "eq_identity",
+      "prompt": "EQ Identity EQ1",
+      "options": [
+        {
+          "letter": "EQ-A",
+          "text": "When a buyer is emotional, my strength is staying calm and not reacting",
+          "identity": "regulator"
+        },
+        {
+          "letter": "EQ-B",
+          "text": "My strength is using their emotion as information to guide my next move",
+          "identity": "edge_builder"
+        },
+        {
+          "letter": "EQ-C",
+          "text": "My strength is noticing the emotion before they've said anything",
+          "identity": "observer"
+        },
+        {
+          "letter": "EQ-D",
+          "text": "My strength is naming the emotion out loud, even when it's uncomfortable",
+          "identity": "namer"
+        }
+      ]
+    },
+    {
+      "id": "EQ2",
+      "trait": "eq_identity",
+      "prompt": "EQ Identity EQ2",
+      "options": [
+        {
+          "letter": "EQ-A",
+          "text": "Under pressure I stay logical and don't let feelings cloud my judgement",
+          "identity": "regulator"
+        },
+        {
+          "letter": "EQ-B",
+          "text": "Under pressure I look for the emotional lever the other person hasn't used yet",
+          "identity": "edge_builder"
+        },
+        {
+          "letter": "EQ-C",
+          "text": "Under pressure, I watch and wait, reading the room before I act",
+          "identity": "observer"
+        },
+        {
+          "letter": "EQ-D",
+          "text": "Under pressure, I call out what's really happening, even if it's awkward",
+          "identity": "namer"
+        }
+      ]
+    },
+    {
+      "id": "EQ3",
+      "trait": "eq_identity",
+      "prompt": "EQ Identity EQ3",
+      "options": [
+        {
+          "letter": "EQ-A",
+          "text": "After a difficult meeting I debrief by reviewing what logic/data I used",
+          "identity": "regulator"
+        },
+        {
+          "letter": "EQ-B",
+          "text": "After a difficult meeting I debrief by thinking about what emotional leverage I did or didn't use",
+          "identity": "edge_builder"
+        },
+        {
+          "letter": "EQ-C",
+          "text": "After a difficult meeting, I replay what I noticed: body language, silence, energy",
+          "identity": "observer"
+        },
+        {
+          "letter": "EQ-D",
+          "text": "After a difficult meeting I think about whether I named the hard thing or avoided it",
+          "identity": "namer"
+        }
+      ]
+    }
+  ],
+  "dimensions": {
+    "cognitive_empathy": "Cognitive Empathy",
+    "eq": "Emotional Intelligence",
+    "pressure_composure": "Pressure Composure",
+    "narrative_persuasion": "Narrative Persuasion"
+  },
+  "band_thresholds": {
+    "elite": 85,
+    "performing": 65,
+    "practising": 40,
+    "developing": 0
+  },
+  "eq_identity_codes": [
+    "regulator",
+    "edge_builder",
+    "observer",
+    "namer"
+  ],
+  "trait_by_qnum": {
+    "1": "cognitive_empathy",
+    "2": "cognitive_empathy",
+    "3": "cognitive_empathy",
+    "4": "cognitive_empathy",
+    "5": "cognitive_empathy",
+    "6": "cognitive_empathy",
+    "7": "eq",
+    "8": "eq",
+    "9": "eq",
+    "10": "eq",
+    "11": "eq",
+    "12": "eq",
+    "13": "pressure_composure",
+    "14": "pressure_composure",
+    "15": "pressure_composure",
+    "16": "pressure_composure",
+    "17": "pressure_composure",
+    "18": "pressure_composure",
+    "19": "narrative_persuasion",
+    "20": "narrative_persuasion",
+    "21": "narrative_persuasion",
+    "22": "narrative_persuasion",
+    "23": "narrative_persuasion",
+    "24": "narrative_persuasion",
+    "25": "eq_bonus",
+    "26": "eq_bonus",
+    "27": "eq_bonus",
+    "28": "eq_bonus",
+    "29": "eq_bonus",
+    "30": "eq_bonus",
+    "31": "eq_bonus"
+  }
+}
