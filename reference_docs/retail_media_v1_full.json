@@ -8,27 +8,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Move straight to next steps and lock in the booking",
+          "text": "Lock in the booking and move straight to next steps",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Add another data point to strengthen the case",
+          "text": "Add another data point to the case",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Say thanks and check in again next week",
+          "text": "Thank them and follow up next week",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Reflect it back: 'Sounds fine?' and wait",
+          "text": "Check with them directly whether that flat response actually meant a genuine yes",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name what you sense: 'That landed a bit flatter than I expected, what's going on?'",
+          "text": "Pause and ask what's underneath the tone",
           "score": 5
         }
       ]
@@ -41,27 +41,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Reassure them: 'This time will be different, I promise.'",
+          "text": "Reassure them that this campaign will run differently and get better results than last time",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Offer a discount on the next campaign to rebuild goodwill",
+          "text": "Offer a discount to rebuild goodwill",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Ask: 'Can you tell me more about what happened?'",
+          "text": "Ask what happened, in more detail",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Reflect their words back: 'Didn't work?' and hold the silence",
+          "text": "Reflect their words back and hold the silence",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name the feeling underneath it: 'That result left you wary of trying again.'",
+          "text": "Say you can see why that left them wary",
           "score": 5
         }
       ]
@@ -74,27 +74,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Speed up to get through the remaining questions",
+          "text": "Speed up to get through the rest",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Fill the gap with more detail about your offering",
+          "text": "Add a bit more detail to fill the gap they've left",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Ask a clarifying question about the brief",
+          "text": "Ask a clarifying question about a specific part of the brief that might need more context",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Slow down and ask what's changed in the last few minutes",
+          "text": "Slow down and check what's changed",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name it directly: 'You've gone quieter, has something shifted?'",
+          "text": "Name the shift and ask about it",
           "score": 5
         }
       ]
@@ -107,27 +107,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Take the win and move to paperwork",
+          "text": "Take the win and get the paperwork started right away",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Thank them and confirm the next steps",
+          "text": "Thank them and confirm next steps",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Ask if there's anything they'd like adjusted before locking it in",
+          "text": "Check if they'd like anything adjusted",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Ask what made the decision easy this time",
+          "text": "Ask what made this decision easy",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name what you notice: 'That was faster than I expected, what's driving the urgency?'",
+          "text": "Ask what's actually driving the urgency behind such a fast decision on their end",
           "score": 5
         }
       ]
@@ -140,27 +140,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Keep presenting the insight until it lands",
+          "text": "Keep presenting the insight anyway",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Switch entirely to CPM and drop the insight angle",
+          "text": "Drop the insight and focus entirely on CPM for the rest of the call, since that's clearly the priority",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Ask if CPM is the priority for this brief",
+          "text": "Ask if CPM is the real priority",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Ask what's driving the focus on CPM specifically",
+          "text": "Ask what's driving the CPM focus",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name it: 'It feels like CPM is standing in for a bigger concern, is that fair?'",
+          "text": "Name the pattern and ask about it",
           "score": 5
         }
       ]
@@ -178,7 +178,7 @@
         },
         {
           "letter": "B",
-          "text": "Send a written recap to confirm it in writing",
+          "text": "Send a written recap to confirm it",
           "score": 1
         },
         {
@@ -188,12 +188,12 @@
         },
         {
           "letter": "D",
-          "text": "Ask gently if everything sits right with them",
+          "text": "Check gently whether everything actually sits right with them before locking anything in",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name the mismatch: 'You said yes, but something feels unresolved.'",
+          "text": "Say what you're picking up on",
           "score": 5
         }
       ]
@@ -206,27 +206,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Match their energy to show you're engaged",
+          "text": "Match their energy to stay engaged",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Go quiet and let them finish",
+          "text": "Go quiet and just let them finish what they're saying",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Acknowledge the frustration and keep going",
+          "text": "Acknowledge the frustration directly and keep the conversation moving forward from there",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Lower your own voice and slow your pace",
+          "text": "Lower your own voice and slow down",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name the shift: 'I can hear this has hit a nerve, let's slow down.'",
+          "text": "Say this has clearly hit a nerve",
           "score": 5
         }
       ]
@@ -239,12 +239,12 @@
       "options": [
         {
           "letter": "A",
-          "text": "Send a slightly terse message noting the cancellations",
+          "text": "Send a message pointing out that this is now the third time it's happened",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Say nothing and just rebook",
+          "text": "Say nothing about it and just get on with rebooking",
           "score": 1
         },
         {
@@ -254,12 +254,12 @@
         },
         {
           "letter": "D",
-          "text": "Notice your own frustration and set it aside before replying",
+          "text": "Set the frustration aside deliberately",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name it to yourself first, then reply from a clear head",
+          "text": "Notice it in yourself, then reply",
           "score": 5
         }
       ]
@@ -272,7 +272,7 @@
       "options": [
         {
           "letter": "A",
-          "text": "Address each of them separately after the call",
+          "text": "Address each of them separately once the call has ended",
           "score": 1
         },
         {
@@ -287,12 +287,12 @@
         },
         {
           "letter": "D",
-          "text": "Slow the pace and watch how they respond to each other",
+          "text": "Slow the pace and watch how they respond",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name it in the room: 'I'm sensing two different priorities here, worth naming?'",
+          "text": "Name what you're sensing and ask if it's worth addressing before going any further",
           "score": 5
         }
       ]
@@ -305,12 +305,12 @@
       "options": [
         {
           "letter": "A",
-          "text": "Match their enthusiasm and move to close",
+          "text": "Match the enthusiasm and move to close",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Present the numbers plainly and let them draw conclusions",
+          "text": "Present the numbers plainly and let them draw their own conclusions from what's actually there",
           "score": 1
         },
         {
@@ -320,12 +320,12 @@
         },
         {
           "letter": "D",
-          "text": "Notice the gap and ask what's really driving the enthusiasm",
+          "text": "Notice the gap and gently probe it",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name it: 'You sound more excited than the numbers alone explain, what's the real driver?'",
+          "text": "Ask what's really driving the reaction",
           "score": 5
         }
       ]
@@ -343,7 +343,7 @@
         },
         {
           "letter": "B",
-          "text": "Keep talking to fill the silence",
+          "text": "Keep talking so the silence doesn't sit there unfilled",
           "score": 1
         },
         {
@@ -353,12 +353,12 @@
         },
         {
           "letter": "D",
-          "text": "Notice the feeling and consciously slow your pace",
+          "text": "Notice it in yourself and consciously slow your own pace down before saying anything else",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name it internally, then choose your next words deliberately",
+          "text": "Name it internally before speaking",
           "score": 5
         }
       ]
@@ -376,22 +376,22 @@
         },
         {
           "letter": "B",
-          "text": "Change the subject to ease the tension",
+          "text": "Change the subject so the moment passes more easily",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Ask if they have any thoughts",
+          "text": "Ask if they have any thoughts on it, since the silence has gone on a little longer than usual",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Sit with the silence and watch for what comes next",
+          "text": "Sit with the silence and watch",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Name it: 'That landed differently than I expected, what's on your mind?'",
+          "text": "Say that landed differently than expected",
           "score": 5
         }
       ]
@@ -404,12 +404,12 @@
       "options": [
         {
           "letter": "A",
-          "text": "Offer an immediate discount to keep the deal moving",
+          "text": "Offer an immediate discount so the conversation can move forward without further delay",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Explain in detail why the number is justified",
+          "text": "Explain why the number is justified",
           "score": 1
         },
         {
@@ -419,12 +419,12 @@
         },
         {
           "letter": "D",
-          "text": "Ask what number would make this an easy yes",
+          "text": "Ask what number gets an easy yes",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Ask what would need to be true for the higher rate to be worth it",
+          "text": "Ask what would make the rate worth it",
           "score": 5
         }
       ]
@@ -437,7 +437,7 @@
       "options": [
         {
           "letter": "A",
-          "text": "Concede the number may be off to keep the room calm",
+          "text": "Concede that the number may be a little off after all",
           "score": 1
         },
         {
@@ -447,17 +447,17 @@
         },
         {
           "letter": "C",
-          "text": "Offer to follow up with more detail after the call",
+          "text": "Offer to follow up with more detail",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Ask what result would satisfy them the number is real",
+          "text": "Ask what would satisfy them it's real",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Hold your position and ask them to walk through their own model first",
+          "text": "Hold your ground and ask them to walk through how their own model gets to a different number",
           "score": 5
         }
       ]
@@ -470,27 +470,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Agree to the discount to secure the spend",
+          "text": "Agree to the discount and get the deal signed off",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Explain why the rate card doesn't flex",
+          "text": "Explain why the rate doesn't flex",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Offer a smaller concession to move things along",
+          "text": "Offer a smaller concession that still moves things along without giving away the full ask",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Offer a value-add instead of a price cut",
+          "text": "Offer a value-add instead of a cut",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Hold the price and let the silence sit",
+          "text": "Hold the price and let it sit",
           "score": 5
         }
       ]
@@ -503,27 +503,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Over-explain the miss before getting to the pitch",
+          "text": "Over-explain the miss up front",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Avoid mentioning it and hope it doesn't come up",
+          "text": "Avoid mentioning it entirely, hoping it doesn't come up naturally over the course of the meeting",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Briefly note it and move on",
+          "text": "Note it briefly and move on",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Mention it plainly and pivot to the plan ahead",
+          "text": "Mention it plainly, then pivot",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Run the pitch exactly as you would if the target had been hit",
+          "text": "Run the pitch as if it hadn't happened",
           "score": 5
         }
       ]
@@ -536,12 +536,12 @@
       "options": [
         {
           "letter": "A",
-          "text": "Immediately offer better terms to stay competitive",
+          "text": "Immediately offer better terms",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Ignore the comment and continue the pitch",
+          "text": "Ignore the comment and continue",
           "score": 1
         },
         {
@@ -551,12 +551,12 @@
         },
         {
           "letter": "D",
-          "text": "Ask what's drawing them to look elsewhere",
+          "text": "Ask what specifically is drawing their interest toward looking at other options right now",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Ask what a good outcome from that comparison would look like for them",
+          "text": "Ask what a good outcome looks like",
           "score": 5
         }
       ]
@@ -569,7 +569,7 @@
       "options": [
         {
           "letter": "A",
-          "text": "Immediately re-pitch a discounted version",
+          "text": "Immediately re-pitch a discounted version before they've had time to fully settle on the rejection",
           "score": 1
         },
         {
@@ -579,17 +579,17 @@
         },
         {
           "letter": "C",
-          "text": "Thank them for the feedback and step back",
+          "text": "Thank them and step back",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Let the rejection sit before deciding on a next step",
+          "text": "Let the rejection sit before deciding",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Ask what would need to change for this to be reconsidered later",
+          "text": "Ask what would need to change",
           "score": 5
         }
       ]
@@ -602,27 +602,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Send the full performance deck",
+          "text": "Send over the full performance deck for them to review",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "List the key metrics: reach, CPM, conversion",
+          "text": "List reach, CPM, and conversion",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Summarise the top three numbers verbally",
+          "text": "Summarise the top three numbers verbally so they have something concrete to hold onto",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Frame it as a before-and-after for the category",
+          "text": "Frame it as a before-and-after",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Tell it as a story: what the brand feared, and what changed for them",
+          "text": "Tell it as what the brand feared, then changed",
           "score": 5
         }
       ]
@@ -635,27 +635,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "A straight comparison of CPMs",
+          "text": "Give a straight comparison of the CPM numbers involved",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "A list of platform features",
+          "text": "A full list of every platform feature relevant to their category and how each one functions",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "A quick explanation of purchase-intent data",
+          "text": "A quick note on purchase-intent data",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "A specific before-and-after example from a similar brand",
+          "text": "A before-and-after from a similar brand",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "A story about a sceptical brand that changed their mind, and why",
+          "text": "A story of a sceptic who changed their mind",
           "score": 5
         }
       ]
@@ -668,12 +668,12 @@
       "options": [
         {
           "letter": "A",
-          "text": "The full data table",
+          "text": "Show the full data table right from the start",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "A summary of every metric tracked",
+          "text": "A summary of every metric",
           "score": 1
         },
         {
@@ -683,12 +683,12 @@
         },
         {
           "letter": "D",
-          "text": "The headline number plus what it meant commercially",
+          "text": "The headline number, then a short line on what it actually meant commercially for them",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "A single memorable line the room will repeat afterward",
+          "text": "One line built for the room to repeat",
           "score": 5
         }
       ]
@@ -701,27 +701,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Present the raw dwell-time data",
+          "text": "Present the raw dwell-time data first, before getting into anything else about the format",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "List the technical specs of the format",
+          "text": "List out the technical specs of the format itself",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Compare it to a similar competitor format",
+          "text": "Compare it to a competitor format",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Walk through one campaign where it worked and why",
+          "text": "Walk through one campaign that worked",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Build the pitch around a moment: the shopper who stopped, looked, and bought",
+          "text": "Build it around the shopper who stopped and bought",
           "score": 5
         }
       ]
@@ -734,12 +734,12 @@
       "options": [
         {
           "letter": "A",
-          "text": "'Thanks for your time today.'",
+          "text": "A plain thank-you for their time, nothing more added",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "'Let's touch base again next quarter.'",
+          "text": "'Let's touch base next quarter.'",
           "score": 1
         },
         {
@@ -749,12 +749,12 @@
         },
         {
           "letter": "D",
-          "text": "A recap plus what it means for next quarter",
+          "text": "A recap plus next quarter's plan",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "One sentence built to be repeated to their boss",
+          "text": "One sentence built specifically to be the line they repeat to their boss afterward",
           "score": 5
         }
       ]
@@ -767,27 +767,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Send the full slide deck for them to forward",
+          "text": "Send over the full deck for them to forward along",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Offer to join the follow-up call yourself",
+          "text": "Offer to join the follow-up call",
           "score": 1
         },
         {
           "letter": "C",
-          "text": "Write a short summary email",
+          "text": "Write a short summary email that covers the main points without going into too much depth",
           "score": 3
         },
         {
           "letter": "D",
-          "text": "Give them three bullet points they can repeat confidently",
+          "text": "Give them three confident bullet points",
           "score": 4
         },
         {
           "letter": "E",
-          "text": "Hand them a single line built to survive being retold secondhand",
+          "text": "Hand them one line built to survive a retelling",
           "score": 5
         }
       ]
@@ -800,12 +800,12 @@
       "options": [
         {
           "letter": "A",
-          "text": "They're probably just busy, keep following up on schedule",
+          "text": "They're probably just caught up with something else",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Something changed internally, dig in before assuming anything",
+          "text": "Something changed, dig in before assuming",
           "score": 4
         },
         {
@@ -815,12 +815,12 @@
         },
         {
           "letter": "D",
-          "text": "Name what you sense: 'The timing may have shifted, I want to respect that.'",
+          "text": "The timing may have shifted, and it's worth respecting that rather than pushing straight through",
           "score": 5
         },
         {
           "letter": "E",
-          "text": "Send a breakup message: 'I don't want to keep bugging you.'",
+          "text": "Send a breakup message and step back",
           "score": 3
         }
       ]
@@ -833,7 +833,7 @@
       "options": [
         {
           "letter": "A",
-          "text": "Match the formality and carry on as normal",
+          "text": "Match the formality and carry on as usual, assuming it's simply how they've chosen to communicate",
           "score": 2
         },
         {
@@ -843,7 +843,7 @@
         },
         {
           "letter": "C",
-          "text": "Assume it's just their style and ignore it",
+          "text": "Assume it's simply their usual style of writing",
           "score": 1
         },
         {
@@ -853,7 +853,7 @@
         },
         {
           "letter": "E",
-          "text": "Wait and see if it continues before reacting",
+          "text": "Wait and see if it continues",
           "score": 3
         }
       ]
@@ -866,7 +866,7 @@
       "options": [
         {
           "letter": "A",
-          "text": "Push the same pitch style that worked before",
+          "text": "Push the same pitch style as before",
           "score": 1
         },
         {
@@ -881,7 +881,7 @@
         },
         {
           "letter": "D",
-          "text": "Name the shift directly and ask about it",
+          "text": "Name the shift directly and ask what's behind it, rather than guessing or letting it sit unspoken",
           "score": 5
         },
         {
@@ -899,27 +899,27 @@
       "options": [
         {
           "letter": "A",
-          "text": "Accept the praise and move to the next pitch",
+          "text": "Accept the praise and move on",
           "score": 1
         },
         {
           "letter": "B",
-          "text": "Gently probe what's really landing well for them",
+          "text": "Gently probe what's landing for them",
           "score": 4
         },
         {
           "letter": "C",
-          "text": "Assume they're just being polite",
+          "text": "Assume they're just being polite, since that's often what people default to on these kinds of calls",
           "score": 2
         },
         {
           "letter": "D",
-          "text": "Name the gap: 'That's generous, given the numbers, what's really working for you?'",
+          "text": "Point out that's generous given the numbers",
           "score": 5
         },
         {
           "letter": "E",
-          "text": "Say thank you and let it go",
+          "text": "Say thanks and let it go",
           "score": 3
         }
       ]
@@ -937,17 +937,17 @@
         },
         {
           "letter": "B",
-          "text": "Pause and read the room before continuing",
+          "text": "Pause briefly and read the room before deciding how to bring them into what's already happening",
           "score": 4
         },
         {
           "letter": "C",
-          "text": "Speed up to finish before they ask questions",
+          "text": "Speed up before they ask questions",
           "score": 1
         },
         {
           "letter": "D",
-          "text": "Acknowledge them and ask what's most useful for them to hear",
+          "text": "Ask what's most useful for them to hear",
           "score": 5
         },
         {
@@ -970,7 +970,7 @@
         },
         {
           "letter": "B",
-          "text": "Gently ask how things are going on their side",
+          "text": "Gently ask how things are going",
           "score": 4
         },
         {
@@ -980,12 +980,12 @@
         },
         {
           "letter": "D",
-          "text": "Name it: 'You seem stretched at the moment, is now still a good time?'",
+          "text": "Ask if now's still a good time",
           "score": 5
         },
         {
           "letter": "E",
-          "text": "Wait for them to bring it up",
+          "text": "Wait for them to bring it up in their own time, rather than raising it before they're ready",
           "score": 3
         }
       ]
@@ -998,12 +998,12 @@
       "options": [
         {
           "letter": "A",
-          "text": "It's probably a routine catch-up",
+          "text": "It's probably a routine catch-up, nothing more than that given how these things usually go",
           "score": 2
         },
         {
           "letter": "B",
-          "text": "Something's changed, prepare for a few scenarios",
+          "text": "Something's changed, prepare a few scenarios",
           "score": 4
         },
         {
@@ -1013,12 +1013,12 @@
         },
         {
           "letter": "D",
-          "text": "Go in curious and ask directly what prompted the call",
+          "text": "Go in curious and ask what prompted it",
           "score": 5
         },
         {
           "letter": "E",
-          "text": "Wait to see how the call opens before reacting",
+          "text": "Wait to see how the call opens",
           "score": 3
         }
       ]
