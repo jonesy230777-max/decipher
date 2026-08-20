@@ -414,7 +414,7 @@ export default function AuditTake() {
                         <br /><br />
                         Ready? Let's begin.
             </p>
-            {versionList && versionList.filter((v) => v.code === "media_sales_v1" || v.code === "generic_sales_v2" || v.code === "charity_fundraising_v1").length > 1 && (
+            {versionList && versionList.filter((v) => v.code === "media_sales_v1" || v.code === "generic_sales_v2" || v.code === "charity_fundraising_v1" || v.code === "retail_media_v1").length > 1 && (
               <div style={{ marginTop: "var(--space-4)" }}>
                 <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                   <span className="hig-caption-1" style={{ color: "var(--colour-label)" }}>Audit type</span>
@@ -432,8 +432,8 @@ export default function AuditTake() {
                       fontFamily: "inherit",
                     }}
                   >
-                    {versionList.filter((v) => v.code === "media_sales_v1" || v.code === "generic_sales_v2" || v.code === "charity_fundraising_v1").map((v) => (
-                      <option key={v.code} value={v.code}>{v.code === "media_sales_v1" ? "Media Sales" : v.code === "generic_sales_v2" ? "The Hunter" : v.code === "charity_fundraising_v1" ? "Charity & NFP Fundraising" : v.name}</option>
+                 {versionList.filter((v) => v.code === "media_sales_v1" || v.code === "generic_sales_v2" || v.code === "charity_fundraising_v1" || v.code === "retail_media_v1").map((v) => (
+<option key={v.code} value={v.code}>{v.code === "media_sales_v1" ? "Media Sales" : v.code === "generic_sales_v2" ? "The Hunter" : v.code === "charity_fundraising_v1" ? "Charity & NFP Fundraising" : v.code === "retail_media_v1" ? "Retail Media Sales" : v.name}</option>                   
                     ))}
                   </select>
                 </label>
