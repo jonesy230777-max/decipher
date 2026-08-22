@@ -181,6 +181,15 @@ export default function AuditTake() {
   // longer in_progress -- the link is still valid to click, it just
   // does not reopen the questions. See DoneCard render below.
   const [alreadyCompleted, setAlreadyCompleted] = useState(false);
+  const [teamInfo, setTeamInfo] = useState<{ team_name: string; company_name: string } | null>(null);
+
+  useEffect(() => {
+    const teamId = new URLSearchParams(window.location.search).get("team");
+    if (!teamId) return;
+    api<{ team_name: string; company_name: string }>(`/api/teams/${teamId}/public-info`)
+      .then(setTeamInfo)
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const saved = loadResumeState();
@@ -398,6 +407,13 @@ export default function AuditTake() {
 
         {step === "intro" && (
           <Card>
+            {teamInfo && (
+              <div style={{ background: "var(--colour-fill-secondary)", borderRadius: 12, padding: "12px 16px", marginBottom: "var(--space-4)" }}>
+                <p className="hig-body" style={{ margin: 0, color: "var(--colour-label-secondary)" }}>
+                  You are completing this for <strong>{teamInfo.company_name}</strong> ({teamInfo.team_name}).
+                </p>
+              </div>
+            )}
             <h1 className="hig-large-title" style={{ margin: 0 }}>{version.version.name}</h1>
             <p className="hig-body" style={{ color: "var(--colour-label)", marginTop: "var(--space-3)" }}>
                         Before you begin, a few quick notes.
