@@ -77,7 +77,7 @@ export default function CompanyDetail() {
       }
       setCreatingLink(false);
     }
-    const link = `${window.location.origin}/take-audit?team=${teamId}`;
+    const link = `${window.location.origin}/audit/start?team=${teamId}`;
     await navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -158,7 +158,7 @@ export default function CompanyDetail() {
         </p>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
           <code style={{ flex: 1, padding: "8px 12px", background: "var(--colour-fill-secondary)", borderRadius: 8, fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {data.teams.length > 0 ? `${window.location.origin}/take-audit?team=${data.teams[0].team_id}` : "No link yet"}
+            {data.teams.length > 0 ? `${window.location.origin}/audit/start?team=${data.teams[0].team_id}` : "No link yet"}
           </code>
           <Button variant="filled" size="md" onClick={ensureTeamAndCopy} disabled={creatingLink}>
             {creatingLink ? "Creating..." : copied ? "Copied!" : data.teams.length > 0 ? "Copy link" : "Get invite link"}
