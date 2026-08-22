@@ -3760,7 +3760,7 @@ def _send_magic_link_email(to_email: str, first_name: str | None, link: str) -> 
     name = first_name or "there"
     msg.set_content(
         f"Hi {name},\n\nClick the link below to sign in to Decipher.\n\n"
-        f"{link}\n\nThis link expires in 15 minutes and can only be used once.\n\n"
+        f"{link}\n\nThis link expires in 48 hours and can only be used once.\n\n"
         f"If you did not request this, you can ignore this email."
     )
     msg.add_alternative(
@@ -3769,7 +3769,7 @@ def _send_magic_link_email(to_email: str, first_name: str | None, link: str) -> 
 <p>Click below to sign in to <strong>Decipher</strong>.</p>
 <p><a href='{link}' style='background:#1A57C7;color:#fff;padding:12px 18px;
 text-decoration:none;border-radius:6px;font-weight:600;display:inline-block;'>Sign in to Decipher</a></p>
-<p style='color:#636366;font-size:12px;'>This link expires in 15 minutes and can only be used once.
+<p style='color:#636366;font-size:12px;'>This link expires in 48 hours and can only be used once.
 If you did not request this, you can ignore this email.</p>
 </body></html>""",
         subtype="html",
