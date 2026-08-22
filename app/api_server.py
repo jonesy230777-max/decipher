@@ -4251,6 +4251,22 @@ def teams_create(body: TeamCreate, request: Request) -> dict[str, Any]:
     return {"ok": True, "team_id": tid}
 
 
+@app.get("/api/teams/{team_id}/public-info")
+def teams_public_info(team_id: int) -> dict[str, Any]:
+    """Public, unauthenticated lookup for the audit-taking landing page: given a
+    team_id from a shared invite link, return just the team/company names so the
+    page can show a confirmation banner before anyone signs in."""
+    rec = rows(
+        "SELECT t.name AS team_name, c.name AS company_name "
+        "FROM teams t JOIN companies c ON c.company_id = t.company_id "
+        "WHERE t.team_id = %s",
+        (team_id,),
+    )
+    if not rec:
+        raise HTTPException(404, "invite link not found")
+    return {"team_name": rec[0]["team_name"], "company_name": rec[0]["company_name"]}
+
+
 # ---------------------------------------------------------------------------
 # Team roster (Owen Wright -> Grant Smith drill-down user story)
 # ---------------------------------------------------------------------------
