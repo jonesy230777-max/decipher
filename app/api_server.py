@@ -4177,6 +4177,38 @@ def companies_create(body: CompanyCreate, request: Request) -> dict[str, Any]:
              body.contact_mobile, body.website, body.country, body.abn, body.industry_id),
         )
         cid = cur.fetchone()[0]
+    if body.contact_email:
+        with conn() as c, c.cursor() as cur:
+            cur.execute(
+                """INSERT INTO respondents (email, name, role, company_id, source)
+                   VALUES (%s,%s,'ceo',%s,'company_create')
+                   ON CONFLICT (email) DO UPDATE SET
+                      role = EXCLUDED.role,
+                      company_id = COALESCE(EXCLUDED.company_id, respondents.company_id),
+                      name = COALESCE(EXCLUDED.name, respondents.name)
+                   RETURNING respondent_id""",
+                (body.contact_email, body.contact_name, cid),
+            )
+            rid = cur.fetchone()[0]
+        import secrets
+        raw_token = secrets.token_urlsafe(32)
+        token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
+        with conn() as c, c.cursor() as cur:
+            cur.execute(
+                """INSERT INTO magic_link_tokens (token_hash, respondent_id, expires_at)
+                   VALUES (%s, %s, now() + interval '15 minutes')""",
+                (token_hash, rid),
+            )
+        web_port = os.environ.get("DECIPHER_WEB_PORT", "55173")
+        base_url = os.environ.get("DECIPHER_PUBLIC_URL", f"http://127.0.0.1:{web_port}")
+        link = f"{base_url}/auth/magic-link?token={raw_token}"
+        first = (body.contact_name or "").split(" ")[0] or None
+        try:
+            from app.email_dispatcher import send_login_link_email
+            send_login_link_email(body.contact_email, first, link, welcome=True)
+            event("company.welcome_email_sent", actor="admin", subject_id=str(cid), payload={"email": body.contact_email})
+        except Exception as exc:
+            event("company.welcome_email_failed", severity="warning", actor="admin", subject_id=str(cid), payload={"error": str(exc)})
     return {"ok": True, "company_id": cid}
 
 
