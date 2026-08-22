@@ -3568,10 +3568,10 @@ def permissions_patch(role: str, capability: str, body: PermissionPatch, request
         raise HTTPException(400, f"unknown role: {role}")
     if capability not in CAPABILITY_LABELS:
         raise HTTPException(400, f"unknown capability: {capability}")
-        caller = _caller_from_request(request)
-        if not caller:
-                raise HTTPException(401, "not authenticated")
-        me = rows("SELECT role, email FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
+    caller = _caller_from_request(request)
+    if not caller:
+        raise HTTPException(401, "not authenticated")
+    me = rows("SELECT role, email FROM respondents WHERE respondent_id = %s", (int(caller["sub"]),))
     if not me or me[0]["role"] != "admin":
         raise HTTPException(403, "only admin can manage role permissions")
     with conn() as c:
