@@ -55,6 +55,33 @@ export default function CompanyDetail() {
   const [overview, setOverview] = useState<Overview | null>(null);
   const [dist, setDist] = useState<Distribution | null>(null);
   const [adding, setAdding] = useState(params.get("add") === "team");
+  const [creatingLink, setCreatingLink] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  async function ensureTeamAndCopy() {
+    let teamId = data?.teams[0]?.team_id;
+    if (!teamId) {
+      setCreatingLink(true);
+      try {
+        const res = await api<{ ok: boolean; team_id: number }>("/api/teams", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: "All Employees", company_id: id }),
+        });
+        teamId = res.team_id;
+        const refreshed = await api<Payload>(`/api/companies/${id}/teams`);
+        setData(refreshed);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Failed to create invite link. Please try again.");
+        setCreatingLink(false);
+        return;
+      }
+      setCreatingLink(false);
+    }
+    const link = `${window.location.origin}/take-audit?team=${teamId}`;
+    await navigator.clipboard.writeText(link);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const { me } = useAuth();
@@ -124,6 +151,20 @@ export default function CompanyDetail() {
           Click a team to drop into the director-scoped executive view.
         </p>
       </header>
+
+      <Card title="Employee invite link">
+        <p className="hig-body" style={{ color: "var(--colour-label-secondary)", marginBottom: "var(--space-3)" }}>
+          Share this link with anyone at the company. Everyone who completes the audit through it lands in the company dashboard automatically.
+        </p>
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
+          <code style={{ flex: 1, padding: "8px 12px", background: "var(--colour-fill-secondary)", borderRadius: 8, fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {data.teams.length > 0 ? `${window.location.origin}/take-audit?team=${data.teams[0].team_id}` : "No link yet"}
+          </code>
+          <Button variant="filled" size="md" onClick={ensureTeamAndCopy} disabled={creatingLink}>
+            {creatingLink ? "Creating..." : copied ? "Copied!" : data.teams.length > 0 ? "Copy link" : "Get invite link"}
+          </Button>
+        </div>
+      </Card>
 
       {/* KPI strip — 4 equal, mirrors the team executive view */}
       <section style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "var(--space-4)" }}>
