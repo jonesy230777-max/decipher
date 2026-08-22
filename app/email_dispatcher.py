@@ -322,6 +322,42 @@ def send_login_link_email(to_email: str, first_name: str | None, link: str, welc
     raise RuntimeError(f"resend_error:{exc.code}:{body[:300]}")
 
 
+def send_audit_invite_email(to_email: str, first_name: str | None, link: str) -> None:
+    """Email a personal Decipher DNA Audit invite link via Resend."""
+    first = first_name or "there"
+    subject = "Your Decipher DNA Audit invite"
+    text_body = (
+        f"Hi {first},\n\nYou have been invited to take the Decipher DNA "
+        f"Audit. It takes about 15 minutes.\n\nStart here: {link}\n\n"
+        f"This link is personal to you and expires in 30 days."
+    )
+    html_body = (
+        "<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>"
+        f"<p>Hi {first},</p>"
+        f"<p>You have been invited to take the Decipher DNA Audit. It takes about 15 minutes.</p>"
+        f"<p><a href='{link}' style='background:#1B8A4F;color:#fff;padding:12px 18px;"
+        "text-decoration:none;border-radius:6px;font-weight:600;display:inline-block;'>"
+        "Start the audit</a></p>"
+        "<p style='color:#636366;font-size:12px;'>This link is personal to you and expires in 30 days.</p>"
+        "</body></html>"
+    )
+    if not _RESEND_API_KEY:
+        raise RuntimeError("RESEND_API_KEY not configured")
+    payload = {"from": _MAIL_FROM, "to": [to_email], "subject": subject, "text": text_body, "html": html_body}
+    req = urllib.request.Request(
+        _RESEND_API_URL,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Authorization": f"Bearer {_RESEND_API_KEY}", "Content-Type": "application/json", "User-Agent": "decipher-app/1.0"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            resp.read()
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", "replace")
+        raise RuntimeError(f"resend_error:{exc.code}:{body[:300]}")
+
+
 if __name__ == "__main__":
     if "--once" in sys.argv:
         dispatched = dispatch_one()
