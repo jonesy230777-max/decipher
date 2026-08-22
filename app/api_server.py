@@ -2417,35 +2417,9 @@ def _resolve_caller_role(invited_by_email: str | None, invited_by_role: str | No
 
 
 def _send_invite_email(to_email: str, first_name: str | None, link: str) -> None:
-    """Drop an HTML invite into Mailpit (local SMTP). Steve sends from
-    his real Gmail later; project rule 17 forbids sending from his
-    account via tooling."""
-    host = os.environ.get("DECIPHER_MAIL_HOST", "127.0.0.1")
-    port = int(os.environ.get("DECIPHER_MAIL_PORT", "1025"))
-    msg = EmailMessage()
-    msg["From"] = "noreply@decipher.com.au"
-    msg["To"] = to_email
-    msg["Subject"] = "Your Decipher DNA Audit invite"
-    name = first_name or "there"
-    msg.set_content(
-        f"Hi {name},\n\nYou've been invited to take the Decipher DNA "
-        f"Audit. It takes 15 minutes.\n\nStart here: {link}\n\n"
-        f"This link is personal to you and expires in 30 days."
-    )
-    msg.add_alternative(
-        f"""<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>
-        <p>Hi {name},</p>
-        <p>You've been invited to take the <strong>Decipher DNA Audit</strong>.
-        It takes about 15 minutes.</p>
-        <p><a href='{link}' style='background:#1B8A4F;color:#fff;padding:12px 18px;
-        text-decoration:none;border-radius:6px;font-weight:600;'>Start the audit</a></p>
-        <p style='color:#636366;font-size:12px;'>This link is personal to you and
-        expires in 30 days.</p>
-        </body></html>""",
-        subtype="html",
-    )
-    with smtplib.SMTP(host, port, timeout=5) as s:
-        s.send_message(msg)
+    """Email an audit invite link via Resend."""
+    from app.email_dispatcher import send_audit_invite_email
+    send_audit_invite_email(to_email, first_name, link)
 
 
 def _enqueue_email_job(audit_id: int, report_id: int, pdf_path: str) -> int:
@@ -3750,32 +3724,9 @@ def auth_demo_credentials() -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 def _send_magic_link_email(to_email: str, first_name: str | None, link: str) -> None:
-    """Drop a magic-link sign-in email into Mailpit (rule 17)."""
-    host = os.environ.get("DECIPHER_MAIL_HOST", "127.0.0.1")
-    port = int(os.environ.get("DECIPHER_MAIL_PORT", "1025"))
-    msg = EmailMessage()
-    msg["From"] = "noreply@decipher.com.au"
-    msg["To"]   = to_email
-    msg["Subject"] = "Your Decipher sign-in link"
-    name = first_name or "there"
-    msg.set_content(
-        f"Hi {name},\n\nClick the link below to sign in to Decipher.\n\n"
-        f"{link}\n\nThis link expires in 48 hours and can only be used once.\n\n"
-        f"If you did not request this, you can ignore this email."
-    )
-    msg.add_alternative(
-        f"""<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>
-<p>Hi {name},</p>
-<p>Click below to sign in to <strong>Decipher</strong>.</p>
-<p><a href='{link}' style='background:#1A57C7;color:#fff;padding:12px 18px;
-text-decoration:none;border-radius:6px;font-weight:600;display:inline-block;'>Sign in to Decipher</a></p>
-<p style='color:#636366;font-size:12px;'>This link expires in 48 hours and can only be used once.
-If you did not request this, you can ignore this email.</p>
-</body></html>""",
-        subtype="html",
-    )
-    with smtplib.SMTP(host, port, timeout=5) as s:
-        s.send_message(msg)
+    """Email a magic-link sign-in link via Resend."""
+    from app.email_dispatcher import send_login_link_email
+    send_login_link_email(to_email, first_name, link)
 
 
 class MagicLinkRequestIn(BaseModel):
