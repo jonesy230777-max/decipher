@@ -297,7 +297,7 @@ def send_login_link_email(to_email: str, first_name: str | None, link: str, welc
   first = first_name or "there"
   subject = "You've been added to Decipher" if welcome else "Your Decipher sign-in link"
   intro = "You've just been added to Decipher. Click below to sign in for the first time." if welcome else "Click the link below to sign in to Decipher."
-  footer = "This link expires in 15 minutes and can only be used once. If you did not expect this email, you can ignore it."
+  footer = "This link expires in 48 hours and can only be used once. If you did not expect this email, you can ignore it."
   text_body = f"Hi {first}, {intro} Sign in: {link} {footer}"
   html_body = (
     "<html><body style='font-family:-apple-system,sans-serif;color:#1c1c1e'>"
