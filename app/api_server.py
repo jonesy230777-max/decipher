@@ -3814,7 +3814,7 @@ def magic_link_request(body: MagicLinkRequestIn) -> dict[str, Any]:
     with conn() as c, c.cursor() as cur:
         cur.execute(
             """INSERT INTO magic_link_tokens (token_hash, respondent_id, expires_at)
-               VALUES (%s, %s, now() + interval '15 minutes')""",
+               VALUES (%s, %s, now() + interval '48 hours')""",
             (token_hash, rec["respondent_id"]),
         )
 
@@ -4010,7 +4010,7 @@ def users_send_login_link(respondent_id: int, request: Request) -> dict[str, Any
     with conn() as c, c.cursor() as cur:
         cur.execute(
             """INSERT INTO magic_link_tokens (token_hash, respondent_id, expires_at)
-               VALUES (%s, %s, now() + interval '15 minutes')""",
+               VALUES (%s, %s, now() + interval '48 hours')""",
             (token_hash, respondent_id),
         )
     web_port = os.environ.get("DECIPHER_WEB_PORT", "55173")
@@ -4196,7 +4196,7 @@ def companies_create(body: CompanyCreate, request: Request) -> dict[str, Any]:
         with conn() as c, c.cursor() as cur:
             cur.execute(
                 """INSERT INTO magic_link_tokens (token_hash, respondent_id, expires_at)
-                   VALUES (%s, %s, now() + interval '15 minutes')""",
+                   VALUES (%s, %s, now() + interval '48 hours')""",
                 (token_hash, rid),
             )
         web_port = os.environ.get("DECIPHER_WEB_PORT", "55173")
