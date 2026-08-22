@@ -142,7 +142,7 @@ export default function Login() {
                 <p className="hig-footnote"
                    style={{ color: "var(--colour-label-secondary)", marginTop: "var(--space-2)" }}>
                   A sign-in link was sent to <strong>{magicEmail}</strong>.
-                  It expires in 15 minutes.
+                  It expires in 48 hours.
                 </p>
                 <button onClick={() => { setMagicSent(false); setMagicEmail(""); }}
                         style={{ marginTop: "var(--space-3)", background: "transparent",
